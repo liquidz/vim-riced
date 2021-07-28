@@ -1,0 +1,12 @@
+= vim-diced
+
+Clojure Interactive Development Environment powered by https://deno.land[Deno] and https://github.com/vim-denops/denops.vim[Denops].
+
+WIP
+
+== License
+
+Copyright (c) 2021 http://twitter.com/uochan[Masashi Iizuka]
+
+Distributed under the MIT License.
+
