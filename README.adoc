@@ -1,6 +1,8 @@
 = vim-diced
 
-Clojure Interactive Development Environment powered by https://deno.land[Deno] and https://github.com/vim-denops/denops.vim[Denops].
+image:https://github.com/liquidz/vim-diced/actions/workflows/test.yml/badge.svg["GitHub Actions for test workflow", link="https://github.com/liquidz/vim-diced/actions/workflows/test.yml"]
+
+Clojure Interactive Development Environment for Vim/Neovim powered by https://deno.land[Deno] and https://github.com/vim-denops/denops.vim[Denops].
 
 WIP
 
