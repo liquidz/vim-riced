@@ -3,7 +3,9 @@ import { ConnectionManager, Diced, Hook } from "./types.ts";
 import * as connect from "./connect/core.ts";
 import * as ops from "./nrepl/operation/core.ts";
 import * as hook from "./hook/core.ts";
+import * as paredit from "./paredit/core.ts";
 import { ConnectedHook } from "./hook/connected.ts";
+import { detectPortFromNreplPortFile } from "./connect/auto.ts";
 
 export class DicedImpl implements Diced {
   readonly denops: Denops;
@@ -44,17 +46,27 @@ export async function main(denops: Denops) {
     // }
 
     async test(): Promise<void> {
-      const res = await denops.batch(["getpos", "'<"], ["getpos", "'>"]);
+      const res = await paredit.getCurrentTopForm(denops).catch(() => "");
+      //const res = await denops.batch(["getpos", "'<"], ["getpos", "'>"]);
       console.log(res);
     },
 
     async connect(portStr: unknown): Promise<void> {
       unknownutil.ensureString(portStr);
+      let port: number = NaN;
 
       if (portStr === "") {
         // auto connect
+        try {
+          port = await detectPortFromNreplPortFile();
+        } catch (err) {
+          console.log("port file is not found");
+          return;
+        }
+      } else {
+        port = parseInt(portStr);
       }
-      const port = parseInt(portStr);
+
       if (isNaN(port)) {
         return;
       }
