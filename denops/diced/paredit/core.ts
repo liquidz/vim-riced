@@ -1,50 +1,71 @@
 import { Denops, fns } from "../deps.ts";
+import { Cursor } from "../types.ts";
 import * as nav from "./navigator.ts";
 
-type Cursor = {
-  line: number;
-  column: number;
-};
-type LineRange = {
-  startLine: number;
-  endLine: number;
-};
+async function currentCursor(denops: Denops): Promise<Cursor> {
+  const pos = await fns.getpos(denops, ".");
+  const [, lnum, col] = pos;
+  // lnum and cnum is 1-based index, so convert to 0-based index
+  return { line: lnum - 1, column: col - 1 };
+}
+
+export function cursorToIndex(
+  lines: string[],
+  baseLineNumber: number,
+  cursor: Cursor,
+): number {
+  const lnum = cursor.line - baseLineNumber;
+
+  let idx = lines.slice(0, lnum).reduce((acc, v) => acc + v.length + 1, 0);
+  idx += cursor.column;
+
+  return idx;
+}
 
 async function getAroundSrcAndIdx(
   denops: Denops,
-  start: Cursor,
+  cursor: Cursor,
   offset: number,
-  end?: Cursor,
-): Promise<[string, number, number, LineRange]> {
-  const { line: fromLine, column: fromColumn } = start;
-  const { line: toLine, column: toColumn } = (end === undefined) ? start : end;
+): Promise<[string, number]> {
+  const startLnum = Math.max(0, cursor.line - offset);
+  const endLnum = cursor.line + offset;
 
-  const startLine = Math.max(0, fromLine - offset);
-  const endLine = toLine + offset;
-  const lines = await fns.getline(denops, fromLine, toLine + offset);
-
-  let src = lines.join("\n");
-  let idx = fromColumn;
-  // WARN: In linewise visual mode, toColumn seems to be too large number (e.g. 2147483649)
-  let endIdx = Math.min(
-    lines[Math.max(0, toLine - fromLine - 1)].length - 1,
-    toColumn,
-  );
-
-  if (toLine !== fromLine) {
-    const srcBeforeEndCursor =
-      lines.slice(0, Math.min(lines.length - 1, toLine - fromLine)).join("\n") +
-      "\n";
-    endIdx += srcBeforeEndCursor.length;
-  }
-
-  if (startLine !== fromLine) {
-    const exLines = await fns.getline(denops, startLine, fromLine - 1);
-    const exSrc = exLines.join("\n") + "\n";
-    src = exSrc + src;
-    idx += exSrc.length;
-    endIdx += exSrc.length;
-  }
-
-  return [src, idx, endIdx, { startLine: startLine, endLine: endLine }];
+  const lines = await fns.getline(denops, startLnum, endLnum);
+  return [lines.join("\n"), cursorToIndex(lines, startLnum, cursor)];
 }
+
+export async function getCurrentTopForm(denops: Denops): Promise<string> {
+  const c = await currentCursor(denops);
+  const [src, idx] = await getAroundSrcAndIdx(denops, c, 100);
+
+  const range = nav.rangeForDefun(src, idx);
+  if (range == null) {
+    return Promise.reject("not found");
+  }
+
+  // TODO form in comment form
+
+  return src.substring(range[0], range[1]);
+}
+
+// export async function getCurrentForm(denops: Denops): Promise<string> {
+//   await denops.cmd("normal! yab");
+//   await vars.g.set(denops, "denops_helloworld", "Global HOGEHOGE");
+// }
+
+//
+// function! iced#util#save_context() abort
+//   return {
+//         \ 'reg': @@,
+//         \ 'bufnr': bufnr('%'),
+//         \ 'view': winsaveview(),
+//         \ 'marks': s:__save_local_marks(),
+//         \ }
+// endfunction
+//
+// function! iced#util#restore_context(saved_context) abort
+//   silent exe printf('b %d', a:saved_context.bufnr)
+//   silent call winrestview(a:saved_context.view)
+//   call s:__restore_local_marks(a:saved_context.marks)
+//   let @@ = a:saved_context.reg
+// endfunction

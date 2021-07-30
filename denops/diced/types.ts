@@ -1,5 +1,17 @@
 import { Denops, nrepl } from "./deps.ts";
 
+// 0-based
+export type Cursor = {
+  line: number;
+  column: number;
+};
+
+// 0-based
+export type LineRange = {
+  startLine: number;
+  endLine: number;
+};
+
 export type Connection = {
   client: nrepl.NreplClient;
   session: string;
