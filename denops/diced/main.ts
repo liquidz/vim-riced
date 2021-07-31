@@ -6,6 +6,7 @@ import * as hook from "./hook/core.ts";
 import * as paredit from "./paredit/core.ts";
 import { ConnectedHook } from "./hook/connected.ts";
 import { detectPortFromNreplPortFile } from "./connect/auto.ts";
+import * as msg from "./message/core.ts";
 
 export class DicedImpl implements Diced {
   readonly denops: Denops;
@@ -43,20 +44,10 @@ export async function main(denops: Denops) {
       );
     },
 
-    //     async function visualRange(vim: denops.Vim): Promise<[Cursor, Cursor]> {
-    //   const start = parsePos(
-    //     await vim.call("getpos", "'<"),
-    //   );
-    //   const end = parsePos(
-    //     await vim.call("getpos", "'>"),
-    //   );
-    //   return Promise.resolve([start, end]);
-    // }
-
     async test(): Promise<void> {
-      const res = await paredit.getCurrentTopForm(denops).catch(() => "");
-      //const res = await denops.batch(["getpos", "'<"], ["getpos", "'>"]);
-      console.log(res);
+      // const res = await paredit.getCurrentTopForm(denops).catch(() => "");
+      // //const res = await denops.batch(["getpos", "'<"], ["getpos", "'>"]);
+      // console.log(res);
     },
 
     async connect(portStr: unknown): Promise<void> {
@@ -68,7 +59,7 @@ export async function main(denops: Denops) {
         try {
           port = await detectPortFromNreplPortFile();
         } catch (err) {
-          console.log("port file is not found");
+          await msg.error(diced, "NoPortFile");
           return;
         }
       } else {
@@ -98,7 +89,7 @@ export async function main(denops: Denops) {
         const code = await paredit.getCurrentTopForm(denops);
         await evalCode(diced, code);
       } catch (ex) {
-        console.log("code not found");
+        await msg.warning(diced, "NotFound");
       }
     },
     // async get_variables(): Promise<void> {
@@ -171,7 +162,7 @@ export async function main(denops: Denops) {
     // },
   };
 
-  console.log(`FIXME ready ${denops.name}`);
+  console.log(`${denops.name}: Ready`);
   await vars.g.set(denops, "diced#initialized", true);
   await denops.cmd("doautocmd <nomodeline> User DicedReady");
 }

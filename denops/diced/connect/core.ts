@@ -1,5 +1,6 @@
 import { nrepl } from "../deps.ts";
 import { Diced } from "../types.ts";
+import * as msg from "../message/core.ts";
 
 // Re export
 export * from "./manager.ts";
@@ -29,7 +30,7 @@ export async function connect(
 ): Promise<boolean> {
   try {
     if (diced.connectionManager.ports.indexOf(port) !== -1) {
-      console.log("FIXME already connected");
+      msg.info(diced, "AlreadyConnected");
       return false;
     }
 
@@ -40,25 +41,22 @@ export async function connect(
     const session = cloneRes.getFirst("new-session");
 
     if (typeof session !== "string") {
-      console.log("FIXME");
+      await msg.error(diced, "UnexpectedError");
       return false;
     }
-
-    console.log(`DEBUG session = ${session}`);
 
     diced.connectionManager.add({ port: port, conn: conn, session: session });
     diced.connectionManager.switch(port);
 
     return true;
   } catch (err) {
-    console.log(`FIXME ${err}`);
+    await msg.error(diced, "UnexpectedError");
     return false;
   }
 }
 
 export function disconnect(diced: Diced) {
   if (!diced.connectionManager.isConnected) {
-    console.log("FIXME not connected");
     return;
   }
 
