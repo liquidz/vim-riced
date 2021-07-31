@@ -19,6 +19,13 @@ export class DicedImpl implements Diced {
   }
 }
 
+async function evalCode(diced: Diced, code: string) {
+  const res = await ops.evalOp(diced, code);
+  for (const v of res.getAll("value")) {
+    console.log(v);
+  }
+}
+
 export async function main(denops: Denops) {
   const diced = new DicedImpl(denops);
 
@@ -30,6 +37,7 @@ export async function main(denops: Denops) {
         command! -nargs=? DicedConnect    call denops#notify("${denops.name}", "connect", [<q-args>])
         command!          DicedDisconnect call denops#notify("${denops.name}", "disconnect", [])
         command! -nargs=1 DicedEval       call denops#notify("${denops.name}", "evalCode", [<q-args>])
+        command!          DicedEvalOuterTopList      call denops#notify("${denops.name}", "evalOuterTopList", [])
         command! -range   DicedTest call denops#notify("${denops.name}", "test", [])
         `,
       );
@@ -83,10 +91,14 @@ export async function main(denops: Denops) {
 
     async evalCode(code: unknown): Promise<void> {
       unknownutil.ensureString(code);
-
-      const res = await ops.evalOp(diced, code);
-      for (const v of res.getAll("value")) {
-        console.log(v);
+      await evalCode(diced, code);
+    },
+    async evalOuterTopList(): Promise<void> {
+      try {
+        const code = await paredit.getCurrentTopForm(denops);
+        await evalCode(diced, code);
+      } catch (ex) {
+        console.log("code not found");
       }
     },
     // async get_variables(): Promise<void> {
