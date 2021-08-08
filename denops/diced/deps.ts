@@ -9,6 +9,7 @@ export * as fs from "https://deno.land/std@0.103.0/fs/mod.ts";
 export * as nrepl from "https://deno.land/x/deno_nrepl_client@1.0.0/mod.ts";
 export * as path from "https://deno.land/std@0.103.0/path/mod.ts";
 export * as unknownutil from "https://deno.land/x/unknownutil@v0.1.1/mod.ts";
+export * as interceptor from "https://deno.land/x/deno_interceptor@1.0.0/mod.ts";
 
 import paredit from "https://github.com/liquidz/paredit.js/raw/main/esm.js";
 export { paredit };

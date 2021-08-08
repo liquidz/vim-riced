@@ -1,7 +1,8 @@
 // https://nrepl.org/nrepl/0.8/ops.html
 import { nrepl } from "../../deps.ts";
-import { Diced } from "../../types.ts";
+import { Diced, Params } from "../../types.ts";
 import { request } from "../common.ts";
+import { execute } from "../../interceptor/core.ts";
 
 export function closeOp(
   diced: Diced,
@@ -20,7 +21,7 @@ export function describeOp(diced: Diced): Promise<nrepl.NreplDoneResponse> {
   return request(diced, { op: "describe" });
 }
 
-export function evalOp(
+export async function evalOp(
   diced: Diced,
   code: string,
   option?: {
@@ -32,19 +33,32 @@ export function evalOp(
     namespace?: string;
   },
 ): Promise<nrepl.NreplDoneResponse> {
-  const _option = option || {};
-  const req: nrepl.NreplRequest = {
-    op: "eval",
+  const params: Params = {
+    ...(option || {}),
     code: code,
   };
 
-  if (_option.session != null) req["session"] = _option.session;
-  if (_option.column != null) req["column"] = _option.column;
-  if (_option.line != null) req["line"] = _option.line;
-  if (_option.filePath != null) req["file"] = _option.filePath;
-  if (_option.namespace != null) req["ns"] = _option.namespace;
+  const res = await execute(diced, "eval", params, async (ctx) => {
+    const req: nrepl.NreplRequest = {
+      op: "eval",
+      code: ctx.params["code"] || code,
+    };
 
-  return request(diced, req, _option.context);
+    if (ctx.params["session"] != null) req["session"] = ctx.params["session"];
+    if (ctx.params["column"] != null) req["column"] = ctx.params["column"];
+    if (ctx.params["line"] != null) req["line"] = ctx.params["line"];
+    if (ctx.params["filePath"] != null) req["file"] = ctx.params["filePath"];
+    if (ctx.params["namespace"] != null) req["ns"] = ctx.params["namespace"];
+
+    ctx.params["response"] = await request(
+      ctx.diced,
+      req,
+      ctx.params["context"] || {},
+    );
+    return ctx;
+  });
+
+  return res["response"];
 }
 
 export function interruptOp(

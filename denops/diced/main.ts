@@ -1,21 +1,35 @@
 import { Denops, execute, unknownutil, vars } from "./deps.ts";
-import { ConnectionManager, Diced, Hook } from "./types.ts";
+import {
+  BaseInterceptor,
+  ConnectionManager,
+  Diced,
+  InterceptorType,
+  Params,
+} from "./types.ts";
 import * as connect from "./connect/core.ts";
 import * as ops from "./nrepl/operation/core.ts";
-import * as hook from "./hook/core.ts";
+import * as interceptor from "./interceptor/core.ts";
 import * as paredit from "./paredit/core.ts";
-import { ConnectedHook } from "./hook/connected.ts";
-import { detectPortFromNreplPortFile } from "./connect/auto.ts";
+import {
+  ConnectedInterceptor,
+  PortDetectionInterceptor,
+} from "./interceptor/connect.ts";
+import { NormalizeCodeInterceptor } from "./interceptor/eval.ts";
 import * as msg from "./message/core.ts";
 
 export class DicedImpl implements Diced {
   readonly denops: Denops;
-  readonly hooks: Hook[];
+  readonly interceptors: Record<InterceptorType, BaseInterceptor[]>;
   readonly connectionManager: ConnectionManager;
 
   constructor(denops: Denops) {
     this.denops = denops;
-    this.hooks = [new ConnectedHook()];
+    this.interceptors = {
+      "connect": [new PortDetectionInterceptor(), new ConnectedInterceptor()],
+      "disconnect": [],
+      "eval": [new NormalizeCodeInterceptor()],
+      "none": [],
+    };
     this.connectionManager = new connect.ConnectionManagerImpl();
   }
 }
@@ -24,6 +38,24 @@ async function evalCode(diced: Diced, code: string) {
   const res = await ops.evalOp(diced, code);
   for (const v of res.getAll("value")) {
     console.log(v);
+  }
+}
+
+async function initializeGlobalVariable(
+  denops: Denops,
+  name: string,
+  defaultValue: unknown,
+) {
+  const value = await vars.g.get(denops, name, defaultValue);
+  await vars.g.set(denops, name, value);
+}
+
+async function initializeGlobalVariables(
+  denops: Denops,
+  m: Record<string, unknown>,
+) {
+  for (const name in m) {
+    await initializeGlobalVariable(denops, name, m[name]);
   }
 }
 
@@ -42,6 +74,11 @@ export async function main(denops: Denops) {
         command! -range   DicedTest call denops#notify("${denops.name}", "test", [])
         `,
       );
+
+      await initializeGlobalVariables(
+        denops,
+        { diced_does_eval_inside_comment: true },
+      );
     },
 
     async test(): Promise<void> {
@@ -52,28 +89,20 @@ export async function main(denops: Denops) {
 
     async connect(portStr: unknown): Promise<void> {
       unknownutil.ensureString(portStr);
-      let port: number = NaN;
-
-      if (portStr === "") {
-        // auto connect
-        try {
-          port = await detectPortFromNreplPortFile();
-        } catch (err) {
-          await msg.error(diced, "NoPortFile");
-          return;
-        }
-      } else {
-        port = parseInt(portStr);
-      }
-
-      if (isNaN(port)) {
-        return;
-      }
-
-      const res = await connect.connect(diced, "127.0.0.1", port);
-      if (res) {
-        await hook.runHook(diced, "connected", {});
-      }
+      const port: number = (portStr === "") ? NaN : parseInt(portStr);
+      const params: Params = {
+        "host": "127.0.0.1",
+        "port": port,
+      };
+      interceptor.execute(diced, "connect", params, async (ctx) => {
+        const conn = await connect.connect(
+          ctx.diced,
+          ctx.params["host"] || "127.0.0.1",
+          ctx.params["port"] || port,
+        );
+        ctx.params["connection"] = conn;
+        return ctx;
+      });
     },
 
     async disconnect(): Promise<void> {

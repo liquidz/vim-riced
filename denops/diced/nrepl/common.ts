@@ -1,7 +1,8 @@
 import { nrepl } from "../deps.ts";
 import { Diced } from "../types.ts";
+import { execute } from "../interceptor/core.ts";
 
-export function request(
+export async function request(
   diced: Diced,
   message: nrepl.NreplRequest,
   context?: nrepl.Context,
@@ -14,6 +15,11 @@ export function request(
   if (message["session"] == null) {
     message["session"] = conn.session;
   }
+
+  // execute(diced, message['op'], {message: message, context: context}, async (ctx) => {
+  //     ctx['response'] =
+  //
+  // })
 
   return conn.client.write(message, context || {});
 }

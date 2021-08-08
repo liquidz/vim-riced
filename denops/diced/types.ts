@@ -1,4 +1,4 @@
-import { Denops, nrepl } from "./deps.ts";
+import { Denops, interceptor, nrepl } from "./deps.ts";
 
 // 0-based
 export type Cursor = {
@@ -34,27 +34,41 @@ export interface ConnectionManager {
   clear(): void;
 }
 
-export type HookType =
-  | "connection prepared"
-  | "connecting"
-  | "connected"
-  | "disconnected"
-  | "test finished"
-  | "namespace required"
-  | "session switched"
-  | "evaluation prepared"
-  | "evaluated"
-  | "none";
-
-export type HookParams = Record<string, any>;
-
-export abstract class Hook {
-  type: HookType = "none";
-  abstract run(diced: Diced, params: HookParams): Promise<HookParams>;
-}
-
 export interface Diced {
   readonly denops: Denops;
-  readonly hooks: Hook[];
+  readonly interceptors: Record<InterceptorType, BaseInterceptor[]>;
   readonly connectionManager: ConnectionManager;
+}
+
+export type Params = Record<string, any>;
+export type InterceptorParams = {
+  diced: Diced;
+  params: Params;
+};
+
+export type InterceptorType =
+  | "connect"
+  | "disconnect"
+  | "eval"
+  | "none";
+
+export type InterceptorContext = interceptor.Context<InterceptorParams>;
+
+export abstract class BaseInterceptor
+  implements interceptor.Interceptor<InterceptorParams> {
+  readonly type: InterceptorType = "none";
+  readonly name: string = "none";
+  readonly requires?: string[];
+
+  enter(
+    ctx: InterceptorContext,
+  ): Promise<InterceptorContext> {
+    return Promise.resolve(ctx);
+  }
+
+  leave(
+    ctx: InterceptorContext,
+  ): Promise<InterceptorContext> {
+    return Promise.resolve(ctx);
+  }
 }
