@@ -7,11 +7,24 @@ import {
 } from "../types.ts";
 import { interceptor } from "../deps.ts";
 
+export function hasInterceptor(
+  diced: Diced,
+  interceptor: BaseInterceptor,
+): boolean {
+  const res = (diced.interceptors[interceptor.type] ?? []).find((i) => {
+    return i.name === interceptor.name;
+  });
+  return res != null;
+}
+
 export function addInterceptor(diced: Diced, interceptor: BaseInterceptor) {
   if (diced.interceptors[interceptor.type] == null) {
     diced.interceptors[interceptor.type] = [interceptor];
+  } else {
+    if (!hasInterceptor(diced, interceptor)) {
+      (diced.interceptors[interceptor.type] || []).push(interceptor);
+    }
   }
-  (diced.interceptors[interceptor.type] || []).push(interceptor);
 }
 
 export function removeInterceptor(diced: Diced, interceptor: BaseInterceptor) {
@@ -21,7 +34,7 @@ export function removeInterceptor(diced: Diced, interceptor: BaseInterceptor) {
   }
 
   diced.interceptors[interceptor.type] = interceptors.filter((i) => {
-    i.name !== interceptor.name;
+    return i.name !== interceptor.name;
   });
 }
 
