@@ -34,7 +34,7 @@ export class PortDetectionInterceptor extends BaseInterceptor {
     try {
       const filePath = await findFileUpwards(".nrepl-port");
       port = parseInt(await Deno.readTextFile(filePath));
-    } catch (err) {
+    } catch (_err) {
       return Promise.reject("FIXME");
     }
 

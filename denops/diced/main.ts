@@ -94,7 +94,7 @@ export async function main(denops: Denops) {
         "host": "127.0.0.1",
         "port": port,
       };
-      interceptor.execute(diced, "connect", params, async (ctx) => {
+      await interceptor.execute(diced, "connect", params, async (ctx) => {
         const conn = await connect.connect(
           ctx.diced,
           ctx.params["host"] || "127.0.0.1",
@@ -105,8 +105,8 @@ export async function main(denops: Denops) {
       });
     },
 
-    async disconnect(): Promise<void> {
-      return connect.disconnect(diced);
+    disconnect(): Promise<void> {
+      return Promise.resolve(connect.disconnect(diced));
     },
 
     async evalCode(code: unknown): Promise<void> {
@@ -117,7 +117,7 @@ export async function main(denops: Denops) {
       try {
         const code = await paredit.getCurrentTopForm(denops);
         await evalCode(diced, code);
-      } catch (ex) {
+      } catch (_err) {
         await msg.warning(diced, "NotFound");
       }
     },

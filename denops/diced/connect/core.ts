@@ -16,7 +16,7 @@ async function handler(conn: nrepl.NreplClient) {
         console.log(out);
       }
     }
-  } catch (err) {
+  } catch (_err) {
     if (!conn.isClosed) {
       conn.close();
     }
@@ -49,7 +49,7 @@ export async function connect(
     diced.connectionManager.switch(port);
 
     return true;
-  } catch (err) {
+  } catch (_err) {
     await msg.error(diced, "UnexpectedError");
     return false;
   }
