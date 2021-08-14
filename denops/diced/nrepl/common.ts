@@ -1,9 +1,10 @@
 import { nrepl } from "../deps.ts";
-import { Diced } from "../types.ts";
+import { Diced, NreplOp } from "../types.ts";
 import { execute } from "../interceptor/core.ts";
 
 export async function request(
   diced: Diced,
+  op: NreplOp,
   message: nrepl.NreplRequest,
   context?: nrepl.Context,
 ): Promise<nrepl.NreplDoneResponse> {
@@ -12,14 +13,22 @@ export async function request(
   }
   const conn = diced.connectionManager.currentConnection;
 
-  if (message["session"] == null) {
-    message["session"] = conn.session;
-  }
+  message["op"] = op;
+  message["id"] ??= crypto.randomUUID();
+  message["session"] ??= conn.session;
 
-  // execute(diced, message['op'], {message: message, context: context}, async (ctx) => {
-  //     ctx['response'] =
-  //
-  // })
+  const res = await execute(
+    diced,
+    op,
+    { message: message, context: context },
+    async (ctx) => {
+      ctx.params["response"] = await conn.client.write(
+        ctx.params["message"],
+        ctx.params["context"] || {},
+      );
+      return ctx;
+    },
+  );
 
-  return conn.client.write(message, context || {});
+  return res["response"];
 }

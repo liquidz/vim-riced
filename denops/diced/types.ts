@@ -1,15 +1,11 @@
 import { Denops, interceptor, nrepl } from "./deps.ts";
 
+export type NreplOp = "eval" | "close" | "describe" | "interrupt" | "load-file";
+
 // 0-based
 export type Cursor = {
   line: number;
   column: number;
-};
-
-// 0-based
-export type LineRange = {
-  startLine: number;
-  endLine: number;
 };
 
 export type Connection = {
@@ -36,10 +32,11 @@ export interface ConnectionManager {
 
 export interface Diced {
   readonly denops: Denops;
-  readonly interceptors: Record<InterceptorType, BaseInterceptor[]>;
+  readonly interceptors: { [key in InterceptorType]+?: BaseInterceptor[] };
   readonly connectionManager: ConnectionManager;
 }
 
+//deno-lint-ignore no-explicit-any
 export type Params = Record<string, any>;
 export type InterceptorParams = {
   diced: Diced;
@@ -49,8 +46,8 @@ export type InterceptorParams = {
 export type InterceptorType =
   | "connect"
   | "disconnect"
-  | "eval"
-  | "none";
+  | "none"
+  | NreplOp;
 
 export type InterceptorContext = interceptor.Context<InterceptorParams>;
 

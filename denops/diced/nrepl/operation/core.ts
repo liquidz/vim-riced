@@ -1,27 +1,24 @@
 // https://nrepl.org/nrepl/0.8/ops.html
 import { nrepl } from "../../deps.ts";
-import { Diced, Params } from "../../types.ts";
+import { Diced } from "../../types.ts";
 import { request } from "../common.ts";
-import { execute } from "../../interceptor/core.ts";
 
 export function closeOp(
   diced: Diced,
   option?: { session?: string },
 ): Promise<nrepl.NreplDoneResponse> {
-  return request(diced, {
-    op: "close",
-    session: (option || {}).session ||
-      diced.connectionManager.currentConnection.session,
-  });
+  const session = (option || {}).session ||
+    diced.connectionManager.currentConnection.session;
+  return request(diced, "close", { session: session });
 }
 
 // completions(prefix)
 
 export function describeOp(diced: Diced): Promise<nrepl.NreplDoneResponse> {
-  return request(diced, { op: "describe" });
+  return request(diced, "describe", {});
 }
 
-export async function evalOp(
+export function evalOp(
   diced: Diced,
   code: string,
   option?: {
@@ -33,32 +30,18 @@ export async function evalOp(
     namespace?: string;
   },
 ): Promise<nrepl.NreplDoneResponse> {
-  const params: Params = {
-    ...(option || {}),
+  const req: nrepl.NreplRequest = {
     code: code,
   };
+  const _option = option || {};
 
-  const res = await execute(diced, "eval", params, async (ctx) => {
-    const req: nrepl.NreplRequest = {
-      op: "eval",
-      code: ctx.params["code"] || code,
-    };
+  if (_option.session != null) req["session"] = _option.session;
+  if (_option.column != null) req["column"] = _option.column;
+  if (_option.line != null) req["line"] = _option.line;
+  if (_option.filePath != null) req["file"] = _option.filePath;
+  if (_option.namespace != null) req["ns"] = _option.namespace;
 
-    if (ctx.params["session"] != null) req["session"] = ctx.params["session"];
-    if (ctx.params["column"] != null) req["column"] = ctx.params["column"];
-    if (ctx.params["line"] != null) req["line"] = ctx.params["line"];
-    if (ctx.params["filePath"] != null) req["file"] = ctx.params["filePath"];
-    if (ctx.params["namespace"] != null) req["ns"] = ctx.params["namespace"];
-
-    ctx.params["response"] = await request(
-      ctx.diced,
-      req,
-      ctx.params["context"] || {},
-    );
-    return ctx;
-  });
-
-  return res["response"];
+  return request(diced, "eval", req, _option.context || {});
 }
 
 export function interruptOp(
@@ -67,14 +50,13 @@ export function interruptOp(
 ): Promise<nrepl.NreplDoneResponse> {
   const _option = option || {};
   const req: nrepl.NreplRequest = {
-    op: "interrupt",
     session: _option.session ||
       diced.connectionManager.currentConnection.session,
   };
 
   if (_option.id != null) req["interrupt-id"] = _option.id;
 
-  return request(diced, req);
+  return request(diced, "interrupt", req);
 }
 
 export function loadFileOp(
@@ -84,14 +66,13 @@ export function loadFileOp(
 ): Promise<nrepl.NreplDoneResponse> {
   const _option = option || {};
   const req: nrepl.NreplRequest = {
-    op: "load-file",
     file: content,
   };
 
   if (_option.fileName != null) req["file-name"] = _option.fileName;
   if (_option.filePath != null) req["file-path"] = _option.filePath;
 
-  return request(diced, req);
+  return request(diced, "load-file", req);
 }
 
 // TODO: lookup
