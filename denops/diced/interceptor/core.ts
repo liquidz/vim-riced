@@ -14,6 +14,17 @@ export function addInterceptor(diced: Diced, interceptor: BaseInterceptor) {
   (diced.interceptors[interceptor.type] || []).push(interceptor);
 }
 
+export function removeInterceptor(diced: Diced, interceptor: BaseInterceptor) {
+  const interceptors = diced.interceptors[interceptor.type];
+  if (interceptors == null) {
+    return;
+  }
+
+  diced.interceptors[interceptor.type] = interceptors.filter((i) => {
+    i.name !== interceptor.name;
+  });
+}
+
 export async function execute(
   diced: Diced,
   interceptorType: InterceptorType,
