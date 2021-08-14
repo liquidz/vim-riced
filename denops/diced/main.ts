@@ -130,7 +130,7 @@ export async function main(denops: Denops) {
       }
     },
 
-    async toggleDebug(): Promise<void> {
+    toggleDebug(): Promise<void> {
       const debug = new DebuggingEvaluationInterceptor();
       if (interceptor.hasInterceptor(diced, debug)) {
         interceptor.removeInterceptor(diced, debug);
@@ -141,6 +141,8 @@ export async function main(denops: Denops) {
         // TODO
         msg.info(diced, "Enabled");
       }
+
+      return Promise.resolve();
     },
     // async get_variables(): Promise<void> {
     //   // Access global variable
