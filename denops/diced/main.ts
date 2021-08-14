@@ -22,7 +22,6 @@ const initialInterceptors: BaseInterceptor[] = [
   new PortDetectionInterceptor(),
   new ConnectedInterceptor(),
   new NormalizeCodeInterceptor(),
-  new DebuggingEvaluationInterceptor(),
 ];
 
 export class DicedImpl implements Diced {
@@ -79,6 +78,8 @@ export async function main(denops: Denops) {
         command! -nargs=1 DicedEval       call denops#notify("${denops.name}", "evalCode", [<q-args>])
         command!          DicedEvalOuterTopList      call denops#notify("${denops.name}", "evalOuterTopList", [])
         command! -range   DicedTest call denops#notify("${denops.name}", "test", [])
+
+        command!          DicedToggleDebug call denops#notify("${denops.name}", "toggleDebug", [])
         `,
       );
 
@@ -126,6 +127,19 @@ export async function main(denops: Denops) {
         await evalCode(diced, code);
       } catch (_err) {
         await msg.warning(diced, "NotFound");
+      }
+    },
+
+    async toggleDebug(): Promise<void> {
+      const debug = new DebuggingEvaluationInterceptor();
+      if (interceptor.hasInterceptor(diced, debug)) {
+        interceptor.removeInterceptor(diced, debug);
+        // TODO
+        msg.info(diced, "Disabled");
+      } else {
+        interceptor.addInterceptor(diced, debug);
+        // TODO
+        msg.info(diced, "Enabled");
       }
     },
     // async get_variables(): Promise<void> {

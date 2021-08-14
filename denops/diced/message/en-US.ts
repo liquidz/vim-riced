@@ -1,4 +1,6 @@
 export const Translation = {
+  Enabled: "%s: Enabled.",
+  Disabled: "%s: Disabled.",
   AliasExists: 'Alias "%s" already exists.',
   AllNsLoading: "Loading all namespaces...",
   AllReloaded: "All reloaded.",
