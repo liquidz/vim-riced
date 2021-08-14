@@ -18,31 +18,26 @@ import { NormalizeCodeInterceptor } from "./interceptor/eval/normalize.ts";
 import { DebuggingEvaluationInterceptor } from "./interceptor/eval/debug.ts";
 import * as msg from "./message/core.ts";
 
+const initialInterceptors: BaseInterceptor[] = [
+  new PortDetectionInterceptor(),
+  new ConnectedInterceptor(),
+  new NormalizeCodeInterceptor(),
+  new DebuggingEvaluationInterceptor(),
+];
+
 export class DicedImpl implements Diced {
   readonly denops: Denops;
-  readonly interceptors: Record<InterceptorType, BaseInterceptor[]>;
+  readonly interceptors: { [key in InterceptorType]+?: BaseInterceptor[] };
   readonly connectionManager: ConnectionManager;
 
   constructor(denops: Denops) {
     this.denops = denops;
-
-    this.interceptors = {
-      "connect": [
-        new PortDetectionInterceptor(),
-        new ConnectedInterceptor(),
-      ],
-      "eval": [
-        new NormalizeCodeInterceptor(),
-        new DebuggingEvaluationInterceptor(),
-      ],
-      "close": [],
-      "none": [],
-      "disconnect": [],
-      "describe": [],
-      "interrupt": [],
-      "load-file": [],
-    };
+    this.interceptors = {};
     this.connectionManager = new connect.ConnectionManagerImpl();
+
+    for (const i of initialInterceptors) {
+      interceptor.addInterceptor(this, i);
+    }
   }
 }
 
