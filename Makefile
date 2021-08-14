@@ -11,3 +11,10 @@ lint-deno:
 
 .PHONY: lint
 lint: lint-deno
+
+.PHONY: update
+# https://github.com/hayd/deno-udd
+# deno install -A -f -n udd https://deno.land/x/udd@0.5.0/main.ts
+update:
+	udd denops/diced/deps.ts
+
