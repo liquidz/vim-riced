@@ -134,12 +134,10 @@ export async function main(denops: Denops) {
       const debug = new DebuggingEvaluationInterceptor();
       if (interceptor.hasInterceptor(diced, debug)) {
         interceptor.removeInterceptor(diced, debug);
-        // TODO
-        msg.info(diced, "Disabled");
+        msg.info(diced, "Disabled", { name: "debug" });
       } else {
         interceptor.addInterceptor(diced, debug);
-        // TODO
-        msg.info(diced, "Enabled");
+        msg.info(diced, "Enabled", { name: "debug" });
       }
 
       return Promise.resolve();

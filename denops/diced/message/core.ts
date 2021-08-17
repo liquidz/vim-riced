@@ -1,19 +1,16 @@
-//import { dejs, Denops, fns } from "../deps.ts";
+import { dejs } from "../deps.ts";
 import { Diced } from "../types.ts";
 import * as en from "./en-US.ts";
 
 type TranslationKey = keyof typeof en.Translation;
 
-function getMessage(key: TranslationKey): string {
-  return en.Translation[key];
+async function getMessage(
+  key: TranslationKey,
+  params?: dejs.Params,
+): Promise<string> {
+  const msg = en.Translation[key];
+  return await dejs.renderToString(msg, params ?? {});
 }
-
-// async function render(
-//   content: string,
-//   params?: dejs.Params,
-// ): Promise<string> {
-//   return (params == null) ? content : dejs.renderToString(content, params);
-// }
 
 export async function echom(
   diced: Diced,
@@ -42,17 +39,26 @@ export function errorStr(diced: Diced, message: string): Promise<void> {
   return echom(diced, "ErrorMsg", message);
 }
 
-export function info(diced: Diced, key: TranslationKey): Promise<void> {
-  return infoStr(diced, getMessage(key));
-}
-
-export function warning(
+export async function info(
   diced: Diced,
   key: TranslationKey,
+  params?: dejs.Params,
 ): Promise<void> {
-  return warningStr(diced, getMessage(key));
+  return infoStr(diced, await getMessage(key, params));
 }
 
-export function error(diced: Diced, key: TranslationKey): Promise<void> {
-  return errorStr(diced, getMessage(key));
+export async function warning(
+  diced: Diced,
+  key: TranslationKey,
+  params?: dejs.Params,
+): Promise<void> {
+  return warningStr(diced, await getMessage(key, params));
+}
+
+export async function error(
+  diced: Diced,
+  key: TranslationKey,
+  params?: dejs.Params,
+): Promise<void> {
+  return errorStr(diced, await getMessage(key, params));
 }
