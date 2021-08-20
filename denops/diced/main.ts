@@ -7,7 +7,6 @@ import {
   Params,
 } from "./types.ts";
 import * as connect from "./connect/core.ts";
-import * as ops from "./nrepl/operation/core.ts";
 import * as interceptor from "./interceptor/core.ts";
 import * as paredit from "./paredit/core.ts";
 import {
@@ -17,7 +16,7 @@ import {
 import { NormalizeCodeInterceptor } from "./interceptor/eval/normalize.ts";
 import { DebuggingEvaluationInterceptor } from "./interceptor/eval/debug.ts";
 import * as msg from "./message/core.ts";
-import { evalCode } from "./nrepl/eval.ts";
+import * as nreplEval from "./nrepl/eval.ts";
 
 const initialInterceptors: BaseInterceptor[] = [
   new PortDetectionInterceptor(),
@@ -113,12 +112,12 @@ export async function main(denops: Denops) {
 
     async evalCode(code: unknown): Promise<void> {
       unknownutil.ensureString(code);
-      await evalCode(diced, code);
+      await nreplEval.evalCode(diced, code);
     },
     async evalOuterTopList(): Promise<void> {
       try {
         const code = await paredit.getCurrentTopForm(denops);
-        await evalCode(diced, code);
+        await nreplEval.evalCode(diced, code);
       } catch (_err) {
         await msg.warning(diced, "NotFound");
       }
