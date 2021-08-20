@@ -25,6 +25,7 @@ export function evalOp(
 ): Promise<nrepl.NreplDoneResponse> {
   const req: nrepl.NreplRequest = {
     code: code,
+    "nrepl.middleware.print/stream?": 1,
   };
   const _option = option || {};
 
