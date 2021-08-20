@@ -6,7 +6,7 @@ export async function name(diced: Diced): Promise<string> {
     context: { verbose: "false" },
   });
   if (res.length === 0) {
-    return Promise.reject("FIXME");
+    return Promise.reject(new Deno.errors.InvalidData("invalid response"));
   }
   return res[0];
 }

@@ -9,7 +9,7 @@ export async function request(
   context?: nrepl.Context,
 ): Promise<nrepl.NreplDoneResponse> {
   if (!diced.connectionManager.isConnected) {
-    return Promise.reject("FIXME not connected");
+    return Promise.reject(new Deno.errors.NotConnected());
   }
   const conn = diced.connectionManager.currentConnection;
 

@@ -40,7 +40,7 @@ export async function getCurrentTopForm(denops: Denops): Promise<string> {
 
   const range = nav.rangeForDefun(src, idx);
   if (range == null) {
-    return Promise.reject("not found");
+    return Promise.reject(new Deno.errors.NotFound());
   }
 
   // TODO form in comment form

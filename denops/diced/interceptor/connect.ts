@@ -45,12 +45,12 @@ export class PortDetectionInterceptor extends BaseInterceptor {
     try {
       const filePath = await findFileUpwards(".nrepl-port");
       port = parseInt(await Deno.readTextFile(filePath));
-    } catch (_err) {
-      return Promise.reject("FIXME");
+    } catch (err) {
+      return Promise.reject(err);
     }
 
     if (isNaN(port)) {
-      return Promise.reject("Invali");
+      return Promise.reject(new Deno.errors.InvalidData("port is nan"));
     }
 
     ctx.request.params["port"] = port;

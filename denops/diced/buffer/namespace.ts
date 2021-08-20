@@ -38,7 +38,7 @@ export async function extractName(diced: Diced): Promise<string> {
   try {
     const doesExists = await searchNsForm(diced);
     if (!doesExists) {
-      return Promise.reject(Deno.errors.NotFound("ns form is not found"));
+      return Promise.reject(new Deno.errors.NotFound("ns form is not found"));
     }
 
     const form = await paredit.getCurrentTopForm(diced.denops);
