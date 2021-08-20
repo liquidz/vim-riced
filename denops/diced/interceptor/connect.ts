@@ -5,7 +5,9 @@ import {
 } from "../types.ts";
 import { findFileUpwards } from "../util/fs.ts";
 import * as msg from "../message/core.ts";
-import * as ns from "../nrepl/namespace.ts";
+import * as nreplNs from "../nrepl/namespace.ts";
+import * as nreplEval from "../nrepl/eval.ts";
+import * as bufNs from "../buffer/namespace.ts";
 
 export class ConnectedInterceptor extends BaseInterceptor {
   readonly type: InterceptorType = "connect";
@@ -21,15 +23,27 @@ export class ConnectedInterceptor extends BaseInterceptor {
     }
 
     const result = ctx.response.params["result"] ?? false;
-    if (result) {
-      // set initial namespace
-      const initialNamespace = await ns.name(diced);
-      diced.connectionManager.currentConnection.initialNamespace =
-        initialNamespace;
+    if (!result) {
+      await msg.error(diced, "ConnectError");
+      return ctx;
+    }
+
+    // set initial namespace
+    const initialNamespace = await nreplNs.name(diced);
+    diced.connectionManager.currentConnection.initialNamespace =
+      initialNamespace;
+
+    // switch namespace
+    const currentBufferNamespace = await bufNs.extractName(diced);
+    if (currentBufferNamespace === initialNamespace) {
+      await nreplNs.inNs(diced, currentBufferNamespace);
+    } else {
+      if (await nreplEval.loadFile(diced)) {
+        await nreplNs.inNs(diced, currentBufferNamespace);
+      }
     }
 
     await msg.info(diced, "Connected");
-
     return ctx;
   }
 }
