@@ -1,7 +1,7 @@
 import { asserts } from "../test_deps.ts";
 import * as sut from "./core.ts";
 
-Deno.test("cursorToIndex", () => {
+Deno.test("paredit.core.cursorToIndex", () => {
   const lines = ["aa", "bbb", "cccc"];
 
   asserts.assertEquals(sut.cursorToIndex(lines, 0, { line: 0, column: 0 }), 0);
