@@ -97,12 +97,12 @@ export async function main(denops: Denops) {
         "port": port,
       };
       await interceptor.execute(diced, "connect", params, async (ctx) => {
-        const conn = await connect.connect(
+        const result = await connect.connect(
           ctx.diced,
           ctx.params["host"] || "127.0.0.1",
           ctx.params["port"] || port,
         );
-        ctx.params["connection"] = conn;
+        ctx.params["result"] = result;
         return ctx;
       });
     },

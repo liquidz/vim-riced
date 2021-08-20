@@ -11,6 +11,7 @@ export type Cursor = {
 export type Connection = {
   client: nrepl.NreplClient;
   session: string;
+  initialNamespace?: string;
 };
 
 export interface ConnectionManager {

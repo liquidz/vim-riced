@@ -3,8 +3,9 @@ import {
   InterceptorContext,
   InterceptorType,
 } from "../types.ts";
-import * as msg from "../message/core.ts";
 import { findFileUpwards } from "../util/fs.ts";
+import * as msg from "../message/core.ts";
+import * as ns from "../nrepl/namespace.ts";
 
 export class ConnectedInterceptor extends BaseInterceptor {
   readonly type: InterceptorType = "connect";
@@ -13,11 +14,21 @@ export class ConnectedInterceptor extends BaseInterceptor {
   async leave(
     ctx: InterceptorContext,
   ): Promise<InterceptorContext> {
-    await msg.info(ctx.request.diced, "Connected");
+    const diced = ctx.request.diced;
+    if (ctx.response == null) {
+      await msg.error(diced, "ConnectError");
+      return ctx;
+    }
 
-    if (ctx.response == null) return ctx;
+    const result = ctx.response.params["result"] ?? false;
+    if (result) {
+      // set initial namespace
+      const initialNamespace = await ns.name(diced);
+      diced.connectionManager.currentConnection.initialNamespace =
+        initialNamespace;
+    }
 
-    ctx.response.diced;
+    await msg.info(diced, "Connected");
 
     return ctx;
   }
