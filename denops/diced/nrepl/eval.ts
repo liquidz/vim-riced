@@ -34,3 +34,23 @@ export async function evalCode(
 
   return values as string[];
 }
+
+export async function loadFile(diced: Diced): Promise<boolean> {
+  const denops = diced.denops;
+  const content = (await fns.getline(denops, 1, "$")).join("\n");
+  const [fileName, filePath] = await denops.batch(
+    ["expand", "%"],
+    ["expand", "%:p"],
+  );
+  unknownutil.ensureString(fileName);
+  unknownutil.ensureString(filePath);
+
+  const resp = await ops.loadFileOp(diced, content, {
+    fileName: fileName,
+    filePath: filePath,
+  });
+
+  const errors = resp.getAll("error").concat(resp.getAll("err"));
+  // TODO: error handling
+  return (errors.length === 0);
+}
