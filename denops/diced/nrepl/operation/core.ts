@@ -1,6 +1,6 @@
 // https://nrepl.org/nrepl/0.8/ops.html
 import { nrepl } from "../../deps.ts";
-import { Diced } from "../../types.ts";
+import { Diced, NreplEvalOption } from "../../types.ts";
 import { request } from "../common.ts";
 
 export function closeOp(
@@ -21,14 +21,7 @@ export function describeOp(diced: Diced): Promise<nrepl.NreplDoneResponse> {
 export function evalOp(
   diced: Diced,
   code: string,
-  option?: {
-    context?: nrepl.Context;
-    session?: string;
-    column?: number;
-    filePath?: string;
-    line?: number;
-    namespace?: string;
-  },
+  option?: NreplEvalOption,
 ): Promise<nrepl.NreplDoneResponse> {
   const req: nrepl.NreplRequest = {
     code: code,

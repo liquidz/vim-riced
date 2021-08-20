@@ -17,6 +17,7 @@ import {
 import { NormalizeCodeInterceptor } from "./interceptor/eval/normalize.ts";
 import { DebuggingEvaluationInterceptor } from "./interceptor/eval/debug.ts";
 import * as msg from "./message/core.ts";
+import { evalCode } from "./nrepl/eval.ts";
 
 const initialInterceptors: BaseInterceptor[] = [
   new PortDetectionInterceptor(),
@@ -37,13 +38,6 @@ export class DicedImpl implements Diced {
     for (const i of initialInterceptors) {
       interceptor.addInterceptor(this, i);
     }
-  }
-}
-
-async function evalCode(diced: Diced, code: string) {
-  const res = await ops.evalOp(diced, code);
-  for (const v of res.getAll("value")) {
-    console.log(v);
   }
 }
 

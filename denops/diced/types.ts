@@ -69,3 +69,12 @@ export abstract class BaseInterceptor
     return Promise.resolve(ctx);
   }
 }
+
+export type NreplEvalOption = {
+  context?: nrepl.Context;
+  session?: string;
+  column?: number;
+  filePath?: string;
+  line?: number;
+  namespace?: string;
+};
