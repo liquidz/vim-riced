@@ -136,7 +136,6 @@ export async function main(denops: Denops) {
     },
 
     async complete(keyword: unknown): Promise<Array<CompleteCandidate>> {
-      console.log(`kiteru?? ${keyword}`);
       unknownutil.ensureString(keyword);
       return await nreplComplete.candidates(diced, keyword);
     },
