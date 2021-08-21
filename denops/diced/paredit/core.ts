@@ -1,6 +1,7 @@
-import { Denops, fns } from "../deps.ts";
+import { Denops, fns, unknownutil, vars } from "../deps.ts";
 import { Cursor } from "../types.ts";
 import * as nav from "./navigator.ts";
+import * as utilVim from "../util/vim.ts";
 
 async function currentCursor(denops: Denops): Promise<Cursor> {
   const pos = await fns.getpos(denops, ".");
@@ -43,29 +44,17 @@ export async function getCurrentTopForm(denops: Denops): Promise<string> {
     return Promise.reject(new Deno.errors.NotFound());
   }
 
-  // TODO form in comment form
-
   return src.substring(range[0], range[1]);
 }
 
-// export async function getCurrentForm(denops: Denops): Promise<string> {
-//   await denops.cmd("normal! yab");
-//   await vars.g.set(denops, "denops_helloworld", "Global HOGEHOGE");
-// }
-
-//
-// function! iced#util#save_context() abort
-//   return {
-//         \ 'reg': @@,
-//         \ 'bufnr': bufnr('%'),
-//         \ 'view': winsaveview(),
-//         \ 'marks': s:__save_local_marks(),
-//         \ }
-// endfunction
-//
-// function! iced#util#restore_context(saved_context) abort
-//   silent exe printf('b %d', a:saved_context.bufnr)
-//   silent call winrestview(a:saved_context.view)
-//   call s:__restore_local_marks(a:saved_context.marks)
-//   let @@ = a:saved_context.reg
-// endfunction
+export async function getCurrentForm(denops: Denops): Promise<string> {
+  const view = await utilVim.saveView(denops);
+  try {
+    await denops.cmd("normal! yab");
+    const code = await vars.register.get(denops, "@");
+    unknownutil.ensureString(code);
+    return code;
+  } finally {
+    await utilVim.restView(denops, view);
+  }
+}
