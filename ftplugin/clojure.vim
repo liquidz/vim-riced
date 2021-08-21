@@ -6,6 +6,8 @@ let g:loaded_vim_diced = 1
 let s:save_cpo = &cpoptions
 set cpoptions&vim
 
+let g:diced_plugin_name = 'diced'
+
 if !exists('g:diced#initialized')
   execute 'autocmd User DicedReady call denops#request_async("diced", "setup", [], {-> v:null}, {-> v:null})'
 else
