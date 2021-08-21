@@ -1,6 +1,12 @@
 import { Denops, interceptor, nrepl } from "./deps.ts";
 
-export type NreplOp = "eval" | "close" | "describe" | "interrupt" | "load-file";
+export type NreplOp =
+  | "eval"
+  | "close"
+  | "describe"
+  | "interrupt"
+  | "load-file"
+  | "complete";
 
 // 0-based
 export type Cursor = {
