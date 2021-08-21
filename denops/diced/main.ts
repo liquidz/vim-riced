@@ -83,9 +83,6 @@ export async function main(denops: Denops) {
     },
 
     async test(): Promise<void> {
-      // const res = await paredit.getCurrentTopForm(denops).catch(() => "");
-      // //const res = await denops.batch(["getpos", "'<"], ["getpos", "'>"]);
-      // console.log(res);
     },
 
     async connect(portStr: unknown): Promise<void> {
@@ -135,74 +132,6 @@ export async function main(denops: Denops) {
 
       return Promise.resolve();
     },
-    // async get_variables(): Promise<void> {
-    //   // Access global variable
-    //   console.log(
-    //     "g:denops_helloworld",
-    //     await vars.g.get(denops, "denops_helloworld"),
-    //   );
-    //   // Access buffer-local variable
-    //   console.log(
-    //     "b:denops_helloworld",
-    //     await vars.b.get(denops, "denops_helloworld"),
-    //   );
-    //   // Access window-local variable
-    //   console.log(
-    //     "w:denops_helloworld",
-    //     await vars.w.get(denops, "denops_helloworld"),
-    //   );
-    //   // Access tabpage-local variable
-    //   console.log(
-    //     "t:denops_helloworld",
-    //     await vars.t.get(denops, "denops_helloworld"),
-    //   );
-    //   // Access Vim's variable
-    //   console.log("v:errmsg", await vars.v.get(denops, "errmsg"));
-    // },
-    //
-    // async set_variables(): Promise<void> {
-    //   // Replace global variable
-    //   await vars.g.set(denops, "denops_helloworld", "Global HOGEHOGE");
-    //   // Replace buffer-local variable
-    //   await vars.b.set(denops, "denops_helloworld", "Buffer HOGEHOGE");
-    //   // Replace window-local variable
-    //   await vars.w.set(denops, "denops_helloworld", "Window HOGEHOGE");
-    //   // Replace tabpage-local variable
-    //   await vars.t.set(denops, "denops_helloworld", "Tabpage HOGEHOGE");
-    //   // Replace Vim's variable
-    //   await vars.v.set(denops, "errmsg", "Vim HOGEHOGE");
-    // },
-    //
-    // async remove_variables(): Promise<void> {
-    //   // Remove global variable
-    //   await vars.g.remove(denops, "denops_helloworld");
-    //   // Remove buffer-local variable
-    //   await vars.b.remove(denops, "denops_helloworld");
-    //   // Remove window-local variable
-    //   await vars.w.remove(denops, "denops_helloworld");
-    //   // Remove tabpage-local variable
-    //   await vars.t.remove(denops, "denops_helloworld");
-    // },
-    //
-    // async register_autocmd(): Promise<void> {
-    //   await denops.cmd("new");
-    //   // Register autocmd
-    //   await autocmd.group(denops, "denops_helloworld", (helper) => {
-    //     // Use 'helper.remove()' to remove autocmd
-    //     helper.remove("*", "<buffer>");
-    //     // Use 'helper.define()' to define autocmd
-    //     helper.define(
-    //       "CursorHold",
-    //       "<buffer>",
-    //       "echomsg 'Hello Denops CursorHold'",
-    //     );
-    //     helper.define(
-    //       ["BufEnter", "BufLeave"],
-    //       "<buffer>",
-    //       "echomsg 'Hello Denops BufEnter/BufLeave'",
-    //     );
-    //   });
-    // },
   };
 
   console.log(`${denops.name}: Ready`);
