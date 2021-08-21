@@ -85,3 +85,11 @@ export type NreplEvalOption = {
   line?: number;
   namespace?: string;
 };
+
+export type CompleteCandidate = {
+  word: string;
+  kind?: string;
+  menu?: string;
+  info?: string;
+  icase?: number;
+};
