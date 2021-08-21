@@ -1,5 +1,4 @@
-import { fns, vars } from "../deps.ts";
-import { Diced } from "../types.ts";
+import { Denops, fns, vars } from "../deps.ts";
 
 type SavedView = {
   reg: unknown;
@@ -8,8 +7,7 @@ type SavedView = {
   marks: unknown;
 };
 
-export async function saveView(diced: Diced): Promise<SavedView> {
-  const denops = diced.denops;
+export async function saveView(denops: Denops): Promise<SavedView> {
   return {
     reg: await vars.register.get(denops, "@"),
     bufnr: await fns.bufnr(denops, "%"),
@@ -18,8 +16,7 @@ export async function saveView(diced: Diced): Promise<SavedView> {
   };
 }
 
-export async function restView(diced: Diced, view: SavedView): Promise<void> {
-  const denops = diced.denops;
+export async function restView(denops: Denops, view: SavedView): Promise<void> {
   await denops.cmd(`b ${view.bufnr}`);
   await fns.winrestview(denops, view.view);
   await vars.register.set(denops, "@", view.reg);

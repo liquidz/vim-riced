@@ -34,7 +34,7 @@ async function searchNsForm(diced: Diced): Promise<boolean> {
 }
 
 export async function extractName(diced: Diced): Promise<string> {
-  const view = await utilVim.saveView(diced);
+  const view = await utilVim.saveView(diced.denops);
   try {
     const doesExists = await searchNsForm(diced);
     if (!doesExists) {
@@ -46,6 +46,6 @@ export async function extractName(diced: Diced): Promise<string> {
   } catch (err) {
     return Promise.reject(err);
   } finally {
-    await utilVim.restView(diced, view);
+    await utilVim.restView(diced.denops, view);
   }
 }
