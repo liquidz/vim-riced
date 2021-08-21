@@ -1,6 +1,7 @@
 import { Denops, execute, unknownutil, vars } from "./deps.ts";
 import {
   BaseInterceptor,
+  CompleteCandidate,
   ConnectionManager,
   Diced,
   InterceptorType,
@@ -17,6 +18,7 @@ import { NormalizeCodeInterceptor } from "./interceptor/eval/normalize.ts";
 import { DebuggingEvaluationInterceptor } from "./interceptor/eval/debug.ts";
 import * as msg from "./message/core.ts";
 import * as nreplEval from "./nrepl/eval.ts";
+import * as nreplComplete from "./nrepl/complete.ts";
 
 const initialInterceptors: BaseInterceptor[] = [
   new PortDetectionInterceptor(),
@@ -131,6 +133,12 @@ export async function main(denops: Denops) {
       }
 
       return Promise.resolve();
+    },
+
+    async complete(keyword: unknown): Promise<Array<CompleteCandidate>> {
+      console.log(`kiteru?? ${keyword}`);
+      unknownutil.ensureString(keyword);
+      return await nreplComplete.candidates(diced, keyword);
     },
   };
 
