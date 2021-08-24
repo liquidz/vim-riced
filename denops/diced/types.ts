@@ -1,12 +1,16 @@
 import { Denops, interceptor, nrepl } from "./deps.ts";
 
 export type NreplOp =
-  | "eval"
+  // nrepl built-in
   | "close"
   | "describe"
+  | "eval"
   | "interrupt"
   | "load-file"
-  | "complete";
+  // cider-nrepl
+  | "complete"
+  | "ns-vars-with-meta"
+  | "test-var-query";
 
 // 0-based
 export type Cursor = {

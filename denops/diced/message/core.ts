@@ -4,7 +4,7 @@ import * as en from "./en-US.ts";
 
 type TranslationKey = keyof typeof en.Translation;
 
-async function getMessage(
+export async function getMessage(
   key: TranslationKey,
   params?: dejs.Params,
 ): Promise<string> {

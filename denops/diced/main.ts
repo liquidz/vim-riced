@@ -19,6 +19,7 @@ import { DebuggingEvaluationInterceptor } from "./interceptor/eval/debug.ts";
 import * as msg from "./message/core.ts";
 import * as nreplEval from "./nrepl/eval.ts";
 import * as nreplComplete from "./nrepl/complete.ts";
+import * as nreplTest from "./nrepl/test.ts";
 
 const initialInterceptors: BaseInterceptor[] = [
   new PortDetectionInterceptor(),
@@ -73,6 +74,8 @@ export async function main(denops: Denops) {
         command! -nargs=1 DicedEval       call denops#notify("${denops.name}", "evalCode", [<q-args>])
         command!          DicedEvalOuterList      call denops#notify("${denops.name}", "evalOuterList", [])
         command!          DicedEvalOuterTopList      call denops#notify("${denops.name}", "evalOuterTopList", [])
+        command! -range   DicedTestUnderCursor call denops#notify("${denops.name}", "testUnderCursor", [])
+
         command! -range   DicedTest call denops#notify("${denops.name}", "test", [])
 
         command!          DicedToggleDebug call denops#notify("${denops.name}", "toggleDebug", [])
@@ -86,6 +89,7 @@ export async function main(denops: Denops) {
     },
 
     async test(): Promise<void> {
+      await nreplTest.runTestUnderCursor(diced);
     },
 
     async connect(portStr: unknown): Promise<void> {
@@ -147,6 +151,21 @@ export async function main(denops: Denops) {
     async complete(keyword: unknown): Promise<Array<CompleteCandidate>> {
       unknownutil.ensureString(keyword);
       return await nreplComplete.candidates(diced, keyword);
+    },
+
+    async testUnderCursor(): Promise<void> {
+      try {
+        await nreplTest.runTestUnderCursor(diced);
+      } catch (err) {
+        if (
+          err instanceof Deno.errors.InvalidData ||
+          err instanceof Deno.errors.NotFound
+        ) {
+          await msg.warning(diced, "NotFound");
+        } else {
+          throw err;
+        }
+      }
     },
   };
 

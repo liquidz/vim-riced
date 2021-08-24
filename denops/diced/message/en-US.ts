@@ -105,7 +105,7 @@ export const Translation = {
   StopToTrace: "Stop to trace: %s.",
   StoppedSideloader: "Sideloader has stopped.",
   TestSummary:
-    "%s: Ran %d assertions, in %d test functions. %d failures, %d errors.",
+    "<%= nsName %>: Ran <%= testCount %> assertions, in <%= varCount %> test functions. <%= failCount %> failures, <%= errorCount %> errors.",
   Testing: "Testing...",
   TestingVar: "Testing: %s",
   Timeout: "Timed out.",
