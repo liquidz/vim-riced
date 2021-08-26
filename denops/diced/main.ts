@@ -20,6 +20,7 @@ import * as msg from "./message/core.ts";
 import * as nreplEval from "./nrepl/eval.ts";
 import * as nreplComplete from "./nrepl/complete.ts";
 import * as nreplTest from "./nrepl/test.ts";
+import * as nreplDesc from "./nrepl/describe.ts";
 
 const initialInterceptors: BaseInterceptor[] = [
   new PortDetectionInterceptor(),
@@ -89,7 +90,7 @@ export async function main(denops: Denops) {
     },
 
     async test(): Promise<void> {
-      await nreplTest.runTestUnderCursor(diced);
+      await nreplDesc.isSupportedOperation(diced, "foo");
     },
 
     async connect(portStr: unknown): Promise<void> {

@@ -1,21 +1,74 @@
-import { Diced } from "../../types.ts";
 import { nrepl, unknownutil } from "../../deps.ts";
 import * as msg from "../../message/core.ts";
 
-type Summary = {
+type TestSummary = {
   isSuccess: boolean;
   summary: string;
 };
 
-type ParsedError = {
-  errors: any;
-  passes: any;
-  summary: Summary;
+type TestError = { [key: string]: nrepl.bencode.Bencode };
+type TestPass = { [key: string]: nrepl.bencode.Bencode };
+
+type TestActualValue = {
+  actual: string;
+  diffs?: string;
 };
 
-export async function extractSummary(
+type TestParsedError = {
+  errors: Array<TestError>;
+  passes: Array<TestPass>;
+  summary: TestSummary;
+};
+
+export function extractErrorMessage(
+  testObj: nrepl.bencode.BencodeObject,
+): string {
+  const varName = testObj["var"];
+  if (!unknownutil.isString(varName)) return "";
+
+  const context = testObj["context"];
+  if (unknownutil.isString(context)) {
+    return `${varName}: ${context}`;
+  }
+  const message = testObj["message"];
+  if (unknownutil.isString(message)) {
+    return `${varName}: ${message}`;
+  }
+  return varName;
+}
+
+export function extractActualValues(
+  testObj: nrepl.bencode.BencodeObject,
+): TestActualValue {
+  const diffs = testObj["diffs"];
+  //const actual = testObj['actual']
+  const actual = unknownutil.isString(testObj["actual"])
+    ? testObj["actual"].trim()
+    : "";
+  if (!unknownutil.isArray(diffs)) return { actual: actual };
+
+  const firstDiff = diffs[0];
+  if (!unknownutil.isArray(firstDiff)) return { actual: actual };
+
+  const diffActual = firstDiff[0];
+  if (!unknownutil.isString(diffActual)) return { actual: actual };
+
+  const diffContent = firstDiff[1];
+  if (!unknownutil.isArray<string>(diffContent)) return { actual: actual };
+
+  const diffBefore = diffContent[0];
+  const diffAfter = diffContent[1];
+  if (diffBefore == null || diffAfter == null) return { actual: actual };
+
+  return {
+    actual: diffActual,
+    diffs: `- ${diffBefore.trim()}\n+ ${diffAfter.trim()}`,
+  };
+}
+
+async function extractSummary(
   resp: nrepl.NreplDoneResponse,
-): Promise<Summary> {
+): Promise<TestSummary> {
   const summary = resp.getFirst("summary");
   if (!nrepl.bencode.isObject(summary)) {
     return {
@@ -54,112 +107,107 @@ export async function extractSummary(
   };
 }
 
-// function! s:summary(resp) abort
-//   for resp in iced#util#ensure_array(a:resp)
-//     if has_key(resp, 'summary')
-//       let summary = resp['summary']
-//
-//       if summary['test'] == 0
-//         return {
-//               \ 'summary': iced#message#get('no_test_summary'),
-//               \ 'is_success': 1,
-//               \ }
-//       else
-//         return {
-//               \ 'summary': iced#message#get('test_summary',
-//               \              get(resp, 'testing-ns', ''),
-//               \              summary['test'], summary['var'],
-//               \              summary['fail'], summary['error']),
-//               \ 'is_success': ((summary['fail'] + summary['error']) == 0),
-//               \ }
-//       endif
-//     endif
-//   endfor
-//
-//   return ''
-// endfunction
+function getFileNameByTestObj(testObj: nrepl.bencode.BencodeObject): string {
+  //           if is_ns_path_op_supported
+  //             let ns_path_resp = iced#nrepl#op#cider#sync#ns_path(ns_name)
+  //
+  //             if type(ns_path_resp) != v:t_dict || !has_key(ns_path_resp, 'path')
+  //               continue
+  //             endif
+  //
+  //             if empty(ns_path_resp['path'])
+  //               if !has_key(test, 'file') || type(test['file']) != v:t_string
+  //                 continue
+  //               endif
+  //               let filename = printf('%s%s%s',
+  //                     \ iced#nrepl#system#user_dir(),
+  //                     \ iced#nrepl#system#separator(),
+  //                     \ test['file'])
+  //             else
+  //               let filename = ns_path_resp['path']
+  //             endif
+  //           else
+  //             let filename = get(test, 'file')
+  //           endif
+  const file = testObj["file"];
+  return unknownutil.isString(file) ? file : "";
+}
 
-// export function parseResponse(resp: nrepl.NreplDoneResponse): ParsedError {
-//   resp.responses;
-//
-//   //   if iced#util#has_status(a:resp, 'namespace-not-found')
-//   //   return iced#message#error('not_found')
-//   // endif
-//
-//   // let [errors, passes] = s:collect_errors_and_passes(a:resp)
-//   // return {
-//   //       \ 'errors': errors,
-//   //       \ 'passes': passes,
-//   //       \ 'summary': s:summary(a:resp),
-//   //       \ }
-// }
+export function collectErrorsAndPasses(
+  resp: nrepl.NreplDoneResponse,
+): { errors: Array<TestError>; passes: Array<TestPass> } {
+  const errors: Array<TestError> = [];
+  const passes: Array<TestPass> = [];
 
-// function! s:collect_errors_and_passes(resp) abort
-//   let errors  = []
-//   let passes = []
-//
-//   let is_ns_path_op_supported = iced#nrepl#is_supported_op('ns-path')
-//
-//   for response in iced#util#ensure_array(a:resp)
-//     let results = get(response, 'results', {})
-//
-//     for ns_name in keys(results)
-//       let ns_results = results[ns_name]
-//
-//       for test_name in keys(ns_results)
-//         let test_results = ns_results[test_name]
-//
-//         for test in test_results
-//           if test['type'] !=# 'fail' && test['type'] !=# 'error'
-//             call add(passes, {'var': get(test, 'var', '')})
-//             continue
-//           endif
-//
-//           if is_ns_path_op_supported
-//             let ns_path_resp = iced#nrepl#op#cider#sync#ns_path(ns_name)
-//
-//             if type(ns_path_resp) != v:t_dict || !has_key(ns_path_resp, 'path')
-//               continue
-//             endif
-//
-//             if empty(ns_path_resp['path'])
-//               if !has_key(test, 'file') || type(test['file']) != v:t_string
-//                 continue
-//               endif
-//               let filename = printf('%s%s%s',
-//                     \ iced#nrepl#system#user_dir(),
-//                     \ iced#nrepl#system#separator(),
-//                     \ test['file'])
-//             else
-//               let filename = ns_path_resp['path']
-//             endif
-//           else
-//             let filename = get(test, 'file')
-//           endif
-//
-//           let err = {
-//                   \ 'filename': filename,
-//                   \ 'text': s:error_message(test),
-//                   \ 'expected': trim(get(test, 'expected', '')),
-//                   \ 'type': 'E',
-//                   \ 'var': get(test, 'var', ''),
-//                   \ }
-//           if has_key(test, 'line') && type(test['line']) == v:t_number
-//             let err['lnum'] = test['line']
-//           endif
-//
-//           if test['type'] ==# 'fail'
-//             call add(errors, extend(copy(err), s:extract_actual_values(test)))
-//           elseif test['type'] ==# 'error'
-//             call add(errors, extend(copy(err), {'actual': get(test, 'error', get(test, 'actual', ''))}))
-//           endif
-//         endfor
-//       endfor
-//     endfor
-//   endfor
-//
-//   return [errors, passes]
-// endfunction
+  for (const response of resp.responses) {
+    for (const result of response.getAll("results")) {
+      if (!nrepl.bencode.isObject(result)) continue;
+
+      for (const nsName of Object.keys(result)) {
+        const nsResults = result[nsName];
+        if (!nrepl.bencode.isObject(nsResults)) continue;
+
+        for (const testName of Object.keys(nsResults)) {
+          const testResults = nsResults[testName];
+          if (!unknownutil.isArray<nrepl.bencode.BencodeObject>(testResults)) {
+            continue;
+          }
+
+          for (const testObj of testResults) {
+            const testType = testObj["type"] ?? "unkown";
+            if (testType !== "fail" && testType !== "error") {
+              passes.push({ var: testObj["var"] ?? "" });
+              continue;
+            }
+
+            const fileName = getFileNameByTestObj(testObj);
+            const error: nrepl.bencode.BencodeObject = {
+              filename: fileName,
+              text: extractErrorMessage(testObj),
+              type: "E",
+              var: testObj["var"] ?? "",
+            };
+            const lnum = testObj["line"];
+            if (unknownutil.isNumber(lnum)) {
+              error["lnum"] = lnum;
+            }
+
+            if (testType === "fail") {
+              const actual = extractActualValues(testObj);
+              error["actual"] = actual.actual;
+              if (actual.diffs != null) {
+                error["diffs"] = actual.diffs;
+              }
+            } else {
+              error["actual"] = testObj["error"] ?? testObj["actual"] ?? "";
+            }
+            errors.push(error);
+          }
+        }
+      }
+    }
+  }
+
+  return {
+    errors: errors,
+    passes: passes,
+  };
+}
+
+export async function parseResponse(
+  resp: nrepl.NreplDoneResponse,
+): Promise<TestParsedError> {
+  // if iced#util#has_status(a:resp, 'namespace-not-found')
+  //   return iced#message#error('not_found')
+  // endif
+
+  const { errors, passes } = collectErrorsAndPasses(resp);
+  return {
+    errors: errors,
+    passes: passes,
+    summary: await extractSummary(resp),
+  };
+}
 
 // ::errors [::error]
 //
@@ -178,9 +226,6 @@ export async function extractSummary(
 // - req
 //   :summary String
 //   :is_success Bool
-
-// nrepl.NreplDoneResponse
-// k
 
 // {
 //   "gen-input": [],
