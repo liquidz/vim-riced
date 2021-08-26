@@ -20,7 +20,7 @@ type TestParsedError = {
   summary: TestSummary;
 };
 
-export function extractErrorMessage(
+function extractErrorMessage(
   testObj: nrepl.bencode.BencodeObject,
 ): string {
   const varName = testObj["var"];
@@ -37,7 +37,7 @@ export function extractErrorMessage(
   return varName;
 }
 
-export function extractActualValues(
+function extractActualValues(
   testObj: nrepl.bencode.BencodeObject,
 ): TestActualValue {
   const diffs = testObj["diffs"];
@@ -161,9 +161,14 @@ export function collectErrorsAndPasses(
             }
 
             const fileName = getFileNameByTestObj(testObj);
+            const expected = unknownutil.isString(testObj["expected"])
+              ? testObj["expected"]
+              : "";
+
             const error: nrepl.bencode.BencodeObject = {
               filename: fileName,
               text: extractErrorMessage(testObj),
+              expected: expected,
               type: "E",
               var: testObj["var"] ?? "",
             };
@@ -194,21 +199,6 @@ export function collectErrorsAndPasses(
   };
 }
 
-export async function parseResponse(
-  resp: nrepl.NreplDoneResponse,
-): Promise<TestParsedError> {
-  // if iced#util#has_status(a:resp, 'namespace-not-found')
-  //   return iced#message#error('not_found')
-  // endif
-
-  const { errors, passes } = collectErrorsAndPasses(resp);
-  return {
-    errors: errors,
-    passes: passes,
-    summary: await extractSummary(resp),
-  };
-}
-
 // ::errors [::error]
 //
 // ::error
@@ -226,17 +216,17 @@ export async function parseResponse(
 // - req
 //   :summary String
 //   :is_success Bool
+export async function parseResponse(
+  resp: nrepl.NreplDoneResponse,
+): Promise<TestParsedError> {
+  // if iced#util#has_status(a:resp, 'namespace-not-found')
+  //   return iced#message#error('not_found')
+  // endif
 
-// {
-//   "gen-input": [],
-//   id: "e06d8fe2-cc0d-4bd6-8e4b-d1c7e4c2a414",
-//   results: { "antq.log-test": { "info-test": [ [Object] ] } },
-//   session: "037dd4a4-6c42-46be-893a-cad99c475767",
-//   summary: { error: 0, fail: 0, ns: 1, pass: 1, test: 1, var: 1 },
-//   "testing-ns": "antq.log-test"
-// }
-// {
-//   id: "e06d8fe2-cc0d-4bd6-8e4b-d1c7e4c2a414",
-//   session: "037dd4a4-6c42-46be-893a-cad99c475767",
-//   status: [ "done" ]
-// }
+  const { errors, passes } = collectErrorsAndPasses(resp);
+  return {
+    errors: errors,
+    passes: passes,
+    summary: await extractSummary(resp),
+  };
+}
