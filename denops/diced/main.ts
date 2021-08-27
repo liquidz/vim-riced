@@ -11,6 +11,7 @@ import * as connect from "./connect/core.ts";
 import * as interceptor from "./interceptor/core.ts";
 import * as paredit from "./paredit/core.ts";
 import {
+  BufferInitializationInterceptor,
   ConnectedInterceptor,
   PortDetectionInterceptor,
 } from "./interceptor/connect.ts";
@@ -20,12 +21,13 @@ import * as msg from "./message/core.ts";
 import * as nreplEval from "./nrepl/eval.ts";
 import * as nreplComplete from "./nrepl/complete.ts";
 import * as nreplTest from "./nrepl/test.ts";
-import * as nreplDesc from "./nrepl/describe.ts";
+import * as vimBufInfo from "./vim/buffer/info.ts";
 
 const initialInterceptors: BaseInterceptor[] = [
   new PortDetectionInterceptor(),
   new ConnectedInterceptor(),
   new NormalizeCodeInterceptor(),
+  new BufferInitializationInterceptor(),
 ];
 
 export class DicedImpl implements Diced {

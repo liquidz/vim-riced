@@ -9,6 +9,8 @@ import * as nreplNs from "../nrepl/namespace.ts";
 import * as nreplEval from "../nrepl/eval.ts";
 import * as bufNs from "../buffer/namespace.ts";
 
+import * as vimBufInfo from "../vim/buffer/info.ts";
+
 export class ConnectedInterceptor extends BaseInterceptor {
   readonly type: InterceptorType = "connect";
   readonly name: string = "diced connection";
@@ -68,6 +70,19 @@ export class PortDetectionInterceptor extends BaseInterceptor {
     }
 
     ctx.request.params["port"] = port;
+    return ctx;
+  }
+}
+
+export class BufferInitializationInterceptor extends BaseInterceptor {
+  readonly type: InterceptorType = "connect";
+  readonly name: string = "diced buffer initialization";
+
+  async leave(
+    ctx: InterceptorContext,
+  ): Promise<InterceptorContext> {
+    const denops = ctx.request.diced.denops;
+    await vimBufInfo.ready(denops);
     return ctx;
   }
 }
