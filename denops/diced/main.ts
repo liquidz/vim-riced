@@ -82,6 +82,7 @@ export async function main(denops: Denops) {
         command! -range   DicedTest call denops#notify("${denops.name}", "test", [])
 
         command!          DicedToggleDebug call denops#notify("${denops.name}", "toggleDebug", [])
+        command!          DicedOpenInfoBuffer call denops#notify("${denops.name}", "openInfoBuffer", [])
         `,
       );
 
@@ -92,7 +93,7 @@ export async function main(denops: Denops) {
     },
 
     async test(): Promise<void> {
-      await nreplDesc.isSupportedOperation(diced, "foo");
+      await Promise.resolve(true);
     },
 
     async connect(portStr: unknown): Promise<void> {
@@ -154,6 +155,10 @@ export async function main(denops: Denops) {
     async complete(keyword: unknown): Promise<Array<CompleteCandidate>> {
       unknownutil.ensureString(keyword);
       return await nreplComplete.candidates(diced, keyword);
+    },
+
+    async openInfoBuffer(): Promise<void> {
+      await vimBufInfo.open(denops);
     },
 
     async testUnderCursor(): Promise<void> {
