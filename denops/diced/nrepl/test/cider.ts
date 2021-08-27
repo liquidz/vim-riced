@@ -1,25 +1,32 @@
 import { nrepl, unknownutil } from "../../deps.ts";
+import {
+  ParsedTestActualValue,
+  ParsedTestError,
+  ParsedTestPass,
+  ParsedTestResult,
+  ParsedTestSummary,
+} from "../../types.ts";
 import * as msg from "../../message/core.ts";
 import { isTestResult, isTestSummary, TestResult } from "../../types/cider.ts";
 
-type ParsedTestSummary = {
-  isSuccess: boolean;
-  summary: string;
-};
-
-type ParsedTestError = { [key: string]: nrepl.bencode.Bencode };
-type ParsedTestPass = { [key: string]: nrepl.bencode.Bencode };
-
-type ParsedTestActualValue = {
-  actual: string;
-  diffs?: string;
-};
-
-type ParsedTestResult = {
-  errors: Array<ParsedTestError>;
-  passes: Array<ParsedTestPass>;
-  summary: ParsedTestSummary;
-};
+// type ParsedTestSummary = {
+//   isSuccess: boolean;
+//   summary: string;
+// };
+//
+// type ParsedTestError = { [key: string]: nrepl.bencode.Bencode };
+// type ParsedTestPass = { [key: string]: nrepl.bencode.Bencode };
+//
+// type ParsedTestActualValue = {
+//   actual: string;
+//   diffs?: string;
+// };
+//
+// type ParsedTestResult = {
+//   errors: Array<ParsedTestError>;
+//   passes: Array<ParsedTestPass>;
+//   summary: ParsedTestSummary;
+// };
 
 function extractErrorMessage(testRes: TestResult): string {
   if (typeof testRes.context === "string") {

@@ -1,4 +1,4 @@
-import { Diced } from "../types.ts";
+import { Diced, ParsedTestResult } from "../types.ts";
 import { nrepl, unknownutil } from "../deps.ts";
 import * as paredit from "../paredit/core.ts";
 import * as nreplEval from "./eval.ts";
@@ -6,6 +6,7 @@ import * as nreplNs from "./namespace.ts";
 import * as opsCider from "./operation/cider.ts";
 import * as msg from "../message/core.ts";
 import * as nreplTestCider from "./test/cider.ts";
+import * as vimBufInfo from "../vim/buffer/info.ts";
 
 async function testVarsByNsName(
   diced: Diced,
@@ -116,20 +117,68 @@ async function runTestVars(diced: Diced, nsName: string, vars: Array<string>) {
   //await msg.info(diced, 'TestingVar')
   const resp = await opsCider.testVarQueryOp(diced, query);
   const parsed = await nreplTestCider.parseResponse(resp);
+  await doneTest(diced, parsed);
+}
 
-  if (parsed.summary.isSuccess) {
-    await msg.infoStr(diced, parsed.summary.summary);
+async function doneTest(diced: Diced, result: ParsedTestResult): Promise<void> {
+  // TODO sign
+
+  const errLines: Array<string> = [];
+  for (const err of result.errors) {
+    const lnum = err.lnum == null ? "" : ` (Line: ${err.lnum})`;
+
+    if (err.actual != null && err.diffs != null) {
+      errLines.push(`;; ${err.text}${lnum}`);
+
+      if (err.expected != null) {
+        errLines.push(`Expected: ${err.expected}`);
+        errLines.push(`  Actual: ${err.actual}`);
+        errLines.push(`   Diffs: ${err.diffs}`);
+      } else {
+        errLines.push(`Actual: ${err.expected}`);
+      }
+    }
+  }
+
+  if (errLines.length !== 0) {
+    await vimBufInfo.appendLines(diced.denops, errLines);
+  }
+
+  if (result.summary.isSuccess) {
+    await msg.infoStr(diced, result.summary.summary);
   } else {
-    await msg.errorStr(diced, parsed.summary.summary);
+    await msg.errorStr(diced, result.summary.summary);
   }
 }
 
-// function! s:__run_test_vars(ns_name, vars) abort
-//   let query = {
-//         \ 'ns-query': {'exactly': [a:ns_name]},
-//         \ 'exactly': a:vars}
-//   let s:last_test = {'type': 'test-var', 'query': query}
-//   call s:__echo_testing_message(query)
-//   return iced#promise#call('iced#nrepl#op#cider#test_var_query', [query])
-//         \.then(funcref('s:__clojure_test_out'))
+//   for err in errors
+//     let lnum = ''
+//
+//     if has_key(err, 'lnum')
+//       call sign.place(s:sign_name, err['lnum'], err['filename'], err['var'])
+//       let lnum = printf(' (Line: %s)', err['lnum'])
+//     endif
+//
+//     if has_key(err, 'actual') && !empty(err['actual'])
+//       if has_key(err, 'expected') && !empty(err['expected'])
+//         let expected_and_actuals = expected_and_actuals + [
+//               \ printf(';; %s%s', err['text'], lnum),
+//               \ s:__dict_to_str(err, ['expected', 'actual', 'diffs']),
+//               \ '']
+//       else
+//         let expected_and_actuals = expected_and_actuals + [
+//               \ printf(';; %s%s', err['text'], lnum),
+//               \ err['actual'],
+//               \ '']
+//       endif
+//     endif
+//   endfor
+//
+//   call iced#buffer#error#show(join(expected_and_actuals, "\n"))
+//   call iced#qf#set(errors)
+//
+//
+//   call iced#hook#run('test_finished', {
+//         \ 'result': summary['is_success'] ? 'succeeded' : 'failed',
+//         \ 'summary': summary['summary']})
 // endfunction

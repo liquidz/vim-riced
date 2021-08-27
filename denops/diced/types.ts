@@ -97,3 +97,24 @@ export type CompleteCandidate = {
   info?: string;
   icase?: number;
 };
+
+export type ParsedTestSummary = {
+  isSuccess: boolean;
+  summary: string;
+};
+
+// TODO clarify value type
+export type ParsedTestError = { [key: string]: nrepl.bencode.Bencode };
+// TODO clarify value type
+export type ParsedTestPass = { [key: string]: nrepl.bencode.Bencode };
+
+export type ParsedTestActualValue = {
+  actual: string;
+  diffs?: string;
+};
+
+export type ParsedTestResult = {
+  errors: Array<ParsedTestError>;
+  passes: Array<ParsedTestPass>;
+  summary: ParsedTestSummary;
+};
