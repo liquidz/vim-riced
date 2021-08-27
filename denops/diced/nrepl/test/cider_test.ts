@@ -5,7 +5,14 @@ import * as sut from "./cider.ts";
 Deno.test("parseResponse summary", async () => {
   const result = await sut.parseResponse(
     nrepl.util.doneResponse([{
-      "summary": { "test": 1, "var": 2, "fail": 0, "error": 0 },
+      "summary": {
+        "test": 1,
+        "var": 2,
+        "fail": 0,
+        "error": 0,
+        "ns": 0,
+        "pass": 1,
+      },
       "testing-ns": "foo.success",
       "results": {},
     }]),
@@ -23,14 +30,15 @@ Deno.test("parseResponse summary", async () => {
 Deno.test("parseResponse success", async () => {
   const result = await sut.parseResponse(nrepl.util.doneResponse([
     {
-      "summary": { "test": 0, "var": 0, "fail": 0, "error": 0 },
+      "summary": {},
       "testing-ns": "foo.core-test",
       "results": {
         "foo.core-test": {
           "err-test": [{
             "context": [],
+            "index": 0,
+            "message": "",
             "ns": "foo.core-test",
-            "message": [],
             "type": "pass",
             "var": "err-test-var",
           }],
@@ -45,14 +53,15 @@ Deno.test("parseResponse success", async () => {
 Deno.test("parseResponse failed without diffs", async () => {
   const result = await sut.parseResponse(nrepl.util.doneResponse([
     {
-      "summary": { "test": 0, "var": 0, "fail": 0, "error": 0 },
+      "summary": {},
       "testing-ns": "foo.core-test",
       "results": {
         "foo.core-test": {
           "err-test": [{
             "context": "dummy-context",
+            "index": 0,
             "ns": "foo.core-test",
-            "message": [],
+            "message": "",
             "type": "fail",
             "var": "err-test-var",
             "file": "/path/to/file.clj",
@@ -80,12 +89,13 @@ Deno.test("parseResponse failed without diffs", async () => {
 Deno.test("parseResponse failed with diff", async () => {
   const result = await sut.parseResponse(nrepl.util.doneResponse([
     {
-      "summary": { "test": 0, "var": 0, "fail": 0, "error": 0 },
+      "summary": {},
       "testing-ns": "foo.core-test",
       "results": {
         "foo.core-test": {
           "err-test": [{
             "context": [],
+            "index": 0,
             "ns": "foo.core-test",
             "message": "dummy-message",
             "type": "fail",
@@ -116,14 +126,15 @@ Deno.test("parseResponse failed with diff", async () => {
 Deno.test("parseResponse error", async () => {
   const result = await sut.parseResponse(nrepl.util.doneResponse([
     {
-      "summary": { "test": 0, "var": 0, "fail": 0, "error": 0 },
+      "summary": {},
       "testing-ns": "foo.core-test",
       "results": {
         "foo.core-test": {
           "err-test": [{
             "context": [],
+            "index": 0,
             "ns": "foo.core-test",
-            "message": [],
+            "message": "",
             "type": "error",
             "var": "err-test-var",
             "file": "/path/to/file.clj",

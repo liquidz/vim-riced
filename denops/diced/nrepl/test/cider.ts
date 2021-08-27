@@ -1,53 +1,41 @@
 import { nrepl, unknownutil } from "../../deps.ts";
 import * as msg from "../../message/core.ts";
+import { isTestResult, isTestSummary, TestResult } from "../../types/cider.ts";
 
-type TestSummary = {
+type ParsedTestSummary = {
   isSuccess: boolean;
   summary: string;
 };
 
-type TestError = { [key: string]: nrepl.bencode.Bencode };
-type TestPass = { [key: string]: nrepl.bencode.Bencode };
+type ParsedTestError = { [key: string]: nrepl.bencode.Bencode };
+type ParsedTestPass = { [key: string]: nrepl.bencode.Bencode };
 
-type TestActualValue = {
+type ParsedTestActualValue = {
   actual: string;
   diffs?: string;
 };
 
-type TestParsedError = {
-  errors: Array<TestError>;
-  passes: Array<TestPass>;
-  summary: TestSummary;
+type ParsedTestResult = {
+  errors: Array<ParsedTestError>;
+  passes: Array<ParsedTestPass>;
+  summary: ParsedTestSummary;
 };
 
-function extractErrorMessage(
-  testObj: nrepl.bencode.BencodeObject,
-): string {
-  const varName = testObj["var"];
-  if (!unknownutil.isString(varName)) return "";
-
-  const context = testObj["context"];
-  if (unknownutil.isString(context)) {
-    return `${varName}: ${context}`;
+function extractErrorMessage(testRes: TestResult): string {
+  if (typeof testRes.context === "string") {
+    return `${testRes.var}: ${testRes.context}`;
   }
-  const message = testObj["message"];
-  if (unknownutil.isString(message)) {
-    return `${varName}: ${message}`;
+  if (testRes.message !== "") {
+    return `${testRes.var}: ${testRes.message}`;
   }
-  return varName;
+  return testRes.var;
 }
 
-function extractActualValues(
-  testObj: nrepl.bencode.BencodeObject,
-): TestActualValue {
-  const diffs = testObj["diffs"];
-  //const actual = testObj['actual']
-  const actual = unknownutil.isString(testObj["actual"])
-    ? testObj["actual"].trim()
-    : "";
-  if (!unknownutil.isArray(diffs)) return { actual: actual };
+function extractActualValues(testRes: TestResult): ParsedTestActualValue {
+  const actual = testRes.actual ?? "";
 
-  const firstDiff = diffs[0];
+  if (testRes.diffs == null) return { actual: actual };
+  const firstDiff = testRes.diffs[0];
   if (!unknownutil.isArray(firstDiff)) return { actual: actual };
 
   const diffActual = firstDiff[0];
@@ -68,46 +56,32 @@ function extractActualValues(
 
 async function extractSummary(
   resp: nrepl.NreplDoneResponse,
-): Promise<TestSummary> {
+): Promise<ParsedTestSummary> {
   const summary = resp.getFirst("summary");
-  if (!nrepl.bencode.isObject(summary)) {
-    return {
-      isSuccess: true,
-      summary: await msg.getMessage("NoTestSummary"),
-    };
-  }
-
-  if (summary["test"] == null) {
-    return {
-      isSuccess: true,
-      summary: await msg.getMessage("NoTestSummary"),
-    };
-  }
-
   const nsName = resp.getFirst("testing-ns") ?? "";
-  unknownutil.ensureString(nsName);
-  const testCount = summary["test"];
-  unknownutil.ensureNumber(testCount);
-  const varCount = summary["var"];
-  unknownutil.ensureNumber(varCount);
-  const failCount = summary["fail"];
-  unknownutil.ensureNumber(failCount);
-  const errorCount = summary["error"];
-  unknownutil.ensureNumber(errorCount);
+  if (
+    !isTestSummary(summary) ||
+    !unknownutil.isString(nsName)
+  ) {
+    return {
+      isSuccess: true,
+      summary: await msg.getMessage("NoTestSummary"),
+    };
+  }
 
   return {
-    isSuccess: (failCount + errorCount) === 0,
+    isSuccess: (summary.fail + summary.error) === 0,
     summary: await msg.getMessage("TestSummary", {
       nsName: nsName,
-      testCount: testCount,
-      varCount: varCount,
-      failCount: failCount,
-      errorCount: errorCount,
+      testCount: summary.test,
+      varCount: summary.var,
+      failCount: summary.fail,
+      errorCount: summary.error,
     }),
   };
 }
 
-function getFileNameByTestObj(testObj: nrepl.bencode.BencodeObject): string {
+function getFileNameByTestObj(testRes: TestResult): string {
   //           if is_ns_path_op_supported
   //             let ns_path_resp = iced#nrepl#op#cider#sync#ns_path(ns_name)
   //
@@ -129,15 +103,14 @@ function getFileNameByTestObj(testObj: nrepl.bencode.BencodeObject): string {
   //           else
   //             let filename = get(test, 'file')
   //           endif
-  const file = testObj["file"];
-  return unknownutil.isString(file) ? file : "";
+  return testRes.file ?? "";
 }
 
 export function collectErrorsAndPasses(
   resp: nrepl.NreplDoneResponse,
-): { errors: Array<TestError>; passes: Array<TestPass> } {
-  const errors: Array<TestError> = [];
-  const passes: Array<TestPass> = [];
+): { errors: Array<ParsedTestError>; passes: Array<ParsedTestPass> } {
+  const errors: Array<ParsedTestError> = [];
+  const passes: Array<ParsedTestPass> = [];
 
   for (const response of resp.responses) {
     for (const result of response.getAll("results")) {
@@ -153,38 +126,34 @@ export function collectErrorsAndPasses(
             continue;
           }
 
-          for (const testObj of testResults) {
-            const testType = testObj["type"] ?? "unkown";
-            if (testType !== "fail" && testType !== "error") {
-              passes.push({ var: testObj["var"] ?? "" });
+          for (const testRes of testResults) {
+            if (!isTestResult(testRes)) continue;
+
+            if (testRes.type !== "fail" && testRes.type !== "error") {
+              passes.push({ var: testRes.var });
               continue;
             }
 
-            const fileName = getFileNameByTestObj(testObj);
-            const expected = unknownutil.isString(testObj["expected"])
-              ? testObj["expected"]
-              : "";
-
+            const fileName = getFileNameByTestObj(testRes);
             const error: nrepl.bencode.BencodeObject = {
               filename: fileName,
-              text: extractErrorMessage(testObj),
-              expected: expected,
+              text: extractErrorMessage(testRes),
+              expected: testRes.expected ?? "",
               type: "E",
-              var: testObj["var"] ?? "",
+              var: testRes.var,
             };
-            const lnum = testObj["line"];
-            if (unknownutil.isNumber(lnum)) {
-              error["lnum"] = lnum;
+            if (testRes.line != null) {
+              error["lnum"] = testRes.line;
             }
 
-            if (testType === "fail") {
-              const actual = extractActualValues(testObj);
+            if (testRes.type === "fail") {
+              const actual = extractActualValues(testRes);
               error["actual"] = actual.actual;
               if (actual.diffs != null) {
                 error["diffs"] = actual.diffs;
               }
             } else {
-              error["actual"] = testObj["error"] ?? testObj["actual"] ?? "";
+              error["actual"] = testRes.error ?? testRes.actual ?? "";
             }
             errors.push(error);
           }
@@ -218,7 +187,7 @@ export function collectErrorsAndPasses(
 //   :is_success Bool
 export async function parseResponse(
   resp: nrepl.NreplDoneResponse,
-): Promise<TestParsedError> {
+): Promise<ParsedTestResult> {
   // if iced#util#has_status(a:resp, 'namespace-not-found')
   //   return iced#message#error('not_found')
   // endif
