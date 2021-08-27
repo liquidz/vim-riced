@@ -5,6 +5,7 @@ import * as nreplEval from "./eval.ts";
 import * as nreplNs from "./namespace.ts";
 import * as opsCider from "./operation/cider.ts";
 import * as msg from "../message/core.ts";
+import * as nreplTestCider from "./test/cider.ts";
 
 async function testVarsByNsName(
   diced: Diced,
@@ -18,7 +19,6 @@ async function testVarsByNsName(
   const nsVarMap = nsVars.reduce((accm, varMap) => {
     return { ...accm, ...varMap };
   }, {});
-  console.log(nsVarMap);
 
   return Object.keys(nsVarMap).reduce((accm, k) => {
     const v = nsVarMap[k];
@@ -37,26 +37,20 @@ export async function runTestUnderCursor(diced: Diced): Promise<boolean> {
   });
 
   if (res.length < 1) {
-    console.log("kotti?");
     return Promise.reject(new Deno.errors.InvalidData());
   }
   if (res[0] == null) {
     return Promise.reject(new Deno.errors.NotFound());
   }
   const qualifiedVarName = res[0].replace(/^#'/, "");
-  console.log(`qualifiedVarName = [${qualifiedVarName}]`);
   const [nsName, varName] = qualifiedVarName.split("/", 2);
   if (nsName == null || varName == null) {
     return Promise.reject(new Deno.errors.NotFound());
   }
 
   const testVars = await testVarsByNsName(diced, nsName);
-  console.log("test vars>>>>");
-  console.log(testVars);
-  console.log(`varName = [${varName}]`);
 
   if (testVars.indexOf(varName) !== -1) {
-    console.log("kiteru?");
     // Form under the cursor is a test
     await runTestVars(diced, nsName, [qualifiedVarName]);
   } else if (nsName.endsWith("-test")) {
@@ -121,8 +115,12 @@ async function runTestVars(diced: Diced, nsName: string, vars: Array<string>) {
   };
   //await msg.info(diced, 'TestingVar')
   const resp = await opsCider.testVarQueryOp(diced, query);
-  for (const r of resp.responses) {
-    console.log(r.response);
+  const parsed = await nreplTestCider.parseResponse(resp);
+
+  if (parsed.summary.isSuccess) {
+    await msg.infoStr(diced, parsed.summary.summary);
+  } else {
+    await msg.errorStr(diced, parsed.summary.summary);
   }
 }
 
