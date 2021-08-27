@@ -1,6 +1,6 @@
 import { fns, unknownutil } from "../deps.ts";
 import { Diced } from "../types.ts";
-import * as utilVim from "../util/vim.ts";
+import * as vimView from "../vim/view.ts";
 import * as paredit from "../paredit/core.ts";
 import * as strNs from "../string/namespace.ts";
 
@@ -34,7 +34,7 @@ async function searchNsForm(diced: Diced): Promise<boolean> {
 }
 
 export async function extractName(diced: Diced): Promise<string> {
-  const view = await utilVim.saveView(diced.denops);
+  const view = await vimView.saveView(diced.denops);
   try {
     const doesExists = await searchNsForm(diced);
     if (!doesExists) {
@@ -46,6 +46,6 @@ export async function extractName(diced: Diced): Promise<string> {
   } catch (err) {
     return Promise.reject(err);
   } finally {
-    await utilVim.restView(diced.denops, view);
+    await vimView.restView(diced.denops, view);
   }
 }

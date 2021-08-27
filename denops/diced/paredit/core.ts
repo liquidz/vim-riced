@@ -1,7 +1,7 @@
 import { Denops, fns, unknownutil, vars } from "../deps.ts";
 import { Cursor } from "../types.ts";
 import * as nav from "./navigator.ts";
-import * as utilVim from "../util/vim.ts";
+import * as vimView from "../vim/view.ts";
 
 async function currentCursor(denops: Denops): Promise<Cursor> {
   const pos = await fns.getpos(denops, ".");
@@ -48,13 +48,13 @@ export async function getCurrentTopForm(denops: Denops): Promise<string> {
 }
 
 export async function getCurrentForm(denops: Denops): Promise<string> {
-  const view = await utilVim.saveView(denops);
+  const view = await vimView.saveView(denops);
   try {
     await denops.cmd("normal! yab");
     const code = await vars.register.get(denops, "@");
     unknownutil.ensureString(code);
     return code;
   } finally {
-    await utilVim.restView(denops, view);
+    await vimView.restView(denops, view);
   }
 }
