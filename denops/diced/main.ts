@@ -17,6 +17,7 @@ import {
 } from "./interceptor/connect.ts";
 import { NormalizeCodeInterceptor } from "./interceptor/eval/normalize.ts";
 import { DebuggingEvaluationInterceptor } from "./interceptor/eval/debug.ts";
+import { NormalizeNsPathInterceptor } from "./interceptor/ns_path.ts";
 import * as msg from "./message/core.ts";
 import * as nreplEval from "./nrepl/eval.ts";
 import * as nreplComplete from "./nrepl/complete.ts";
@@ -28,6 +29,7 @@ const initialInterceptors: BaseInterceptor[] = [
   new ConnectedInterceptor(),
   new NormalizeCodeInterceptor(),
   new BufferInitializationInterceptor(),
+  new NormalizeNsPathInterceptor(),
 ];
 
 export class DicedImpl implements Diced {
