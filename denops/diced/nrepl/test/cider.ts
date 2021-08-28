@@ -1,5 +1,6 @@
-import { nrepl, unknownutil } from "../../deps.ts";
+import { fs, nrepl, unknownutil } from "../../deps.ts";
 import {
+  Diced,
   ParsedTestActualValue,
   ParsedTestError,
   ParsedTestPass,
@@ -8,25 +9,8 @@ import {
 } from "../../types.ts";
 import * as msg from "../../message/core.ts";
 import { isTestResult, isTestSummary, TestResult } from "../../types/cider.ts";
-
-// type ParsedTestSummary = {
-//   isSuccess: boolean;
-//   summary: string;
-// };
-//
-// type ParsedTestError = { [key: string]: nrepl.bencode.Bencode };
-// type ParsedTestPass = { [key: string]: nrepl.bencode.Bencode };
-//
-// type ParsedTestActualValue = {
-//   actual: string;
-//   diffs?: string;
-// };
-//
-// type ParsedTestResult = {
-//   errors: Array<ParsedTestError>;
-//   passes: Array<ParsedTestPass>;
-//   summary: ParsedTestSummary;
-// };
+import * as opsCider from "../operation/cider.ts";
+import * as nreplDesc from "../describe.ts";
 
 function extractErrorMessage(testRes: TestResult): string {
   if (typeof testRes.context === "string") {
@@ -88,34 +72,29 @@ async function extractSummary(
   };
 }
 
-function getFileNameByTestObj(testRes: TestResult): string {
-  //           if is_ns_path_op_supported
-  //             let ns_path_resp = iced#nrepl#op#cider#sync#ns_path(ns_name)
-  //
-  //             if type(ns_path_resp) != v:t_dict || !has_key(ns_path_resp, 'path')
-  //               continue
-  //             endif
-  //
-  //             if empty(ns_path_resp['path'])
-  //               if !has_key(test, 'file') || type(test['file']) != v:t_string
-  //                 continue
-  //               endif
-  //               let filename = printf('%s%s%s',
-  //                     \ iced#nrepl#system#user_dir(),
-  //                     \ iced#nrepl#system#separator(),
-  //                     \ test['file'])
-  //             else
-  //               let filename = ns_path_resp['path']
-  //             endif
-  //           else
-  //             let filename = get(test, 'file')
-  //           endif
+async function getFileNameByTestObj(
+  diced: Diced,
+  nsName: string,
+  testRes: TestResult,
+): Promise<string> {
+  const file = testRes.file ?? "";
+  if (
+    !await fs.exists(file) && nreplDesc.isSupportedOperation(diced, "ns-path")
+  ) {
+    const resp = await opsCider.nsPathOp(diced, nsName);
+    const path = resp.getFirst("path");
+    if (unknownutil.isString(path)) {
+      return path;
+    }
+  }
+
   return testRes.file ?? "";
 }
 
-export function collectErrorsAndPasses(
+async function collectErrorsAndPasses(
+  diced: Diced,
   resp: nrepl.NreplDoneResponse,
-): { errors: Array<ParsedTestError>; passes: Array<ParsedTestPass> } {
+): Promise<{ errors: Array<ParsedTestError>; passes: Array<ParsedTestPass> }> {
   const errors: Array<ParsedTestError> = [];
   const passes: Array<ParsedTestPass> = [];
 
@@ -141,7 +120,7 @@ export function collectErrorsAndPasses(
               continue;
             }
 
-            const fileName = getFileNameByTestObj(testRes);
+            const fileName = await getFileNameByTestObj(diced, nsName, testRes);
             const error: nrepl.bencode.BencodeObject = {
               filename: fileName,
               text: extractErrorMessage(testRes),
@@ -193,13 +172,14 @@ export function collectErrorsAndPasses(
 //   :summary String
 //   :is_success Bool
 export async function parseResponse(
+  diced: Diced,
   resp: nrepl.NreplDoneResponse,
 ): Promise<ParsedTestResult> {
   // if iced#util#has_status(a:resp, 'namespace-not-found')
   //   return iced#message#error('not_found')
   // endif
 
-  const { errors, passes } = collectErrorsAndPasses(resp);
+  const { errors, passes } = await collectErrorsAndPasses(diced, resp);
   return {
     errors: errors,
     passes: passes,

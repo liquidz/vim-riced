@@ -116,7 +116,7 @@ async function runTestVars(diced: Diced, nsName: string, vars: Array<string>) {
   };
   //await msg.info(diced, 'TestingVar')
   const resp = await opsCider.testVarQueryOp(diced, query);
-  const parsed = await nreplTestCider.parseResponse(resp);
+  const parsed = await nreplTestCider.parseResponse(diced, resp);
   await doneTest(diced, parsed);
 }
 
