@@ -1,6 +1,6 @@
 import { Diced, ParsedTestResult } from "../types.ts";
 import { nrepl, unknownutil } from "../deps.ts";
-import * as paredit from "../paredit/core.ts";
+import * as bufForm from "../buffer/form.ts";
 import * as nreplEval from "./eval.ts";
 import * as nreplNs from "./namespace.ts";
 import * as opsCider from "./operation/cider.ts";
@@ -32,7 +32,7 @@ async function testVarsByNsName(
 }
 
 export async function runTestUnderCursor(diced: Diced): Promise<boolean> {
-  const code = await paredit.getCurrentTopForm(diced.denops);
+  const code = await bufForm.getCurrentTopForm(diced.denops);
   const res = await nreplEval.evalCode(diced, code, {
     context: { verbose: "false" },
   });

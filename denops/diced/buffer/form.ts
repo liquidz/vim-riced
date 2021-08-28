@@ -1,6 +1,6 @@
 import { Denops, fns, unknownutil, vars } from "../deps.ts";
 import { Cursor } from "../types.ts";
-import * as nav from "./navigator.ts";
+import * as strParedit from "../string/paredit.ts";
 import * as vimView from "../vim/view.ts";
 
 async function currentCursor(denops: Denops): Promise<Cursor> {
@@ -39,7 +39,7 @@ export async function getCurrentTopForm(denops: Denops): Promise<string> {
   const c = await currentCursor(denops);
   const [src, idx] = await getAroundSrcAndIdx(denops, c, 100);
 
-  const range = nav.rangeForDefun(src, idx);
+  const range = strParedit.rangeForDefun(src, idx);
   if (range == null) {
     return Promise.reject(new Deno.errors.NotFound());
   }

@@ -9,7 +9,7 @@ import {
 } from "./types.ts";
 import * as nreplConnect from "./nrepl/connect/core.ts";
 import * as interceptor from "./interceptor/core.ts";
-import * as paredit from "./paredit/core.ts";
+import * as bufForm from "./buffer/form.ts";
 import {
   BufferInitializationInterceptor,
   ConnectedInterceptor,
@@ -126,7 +126,7 @@ export async function main(denops: Denops) {
     },
     async evalOuterList(): Promise<void> {
       try {
-        const code = await paredit.getCurrentForm(denops);
+        const code = await bufForm.getCurrentForm(denops);
         await nreplEval.evalCode(diced, code);
       } catch (_err) {
         await msg.warning(diced, "NotFound");
@@ -134,7 +134,7 @@ export async function main(denops: Denops) {
     },
     async evalOuterTopList(): Promise<void> {
       try {
-        const code = await paredit.getCurrentTopForm(denops);
+        const code = await bufForm.getCurrentTopForm(denops);
         await nreplEval.evalCode(diced, code);
       } catch (_err) {
         await msg.warning(diced, "NotFound");

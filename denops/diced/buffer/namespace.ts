@@ -1,7 +1,7 @@
 import { fns, unknownutil } from "../deps.ts";
 import { Diced } from "../types.ts";
 import * as vimView from "../vim/view.ts";
-import * as paredit from "../paredit/core.ts";
+import * as bufForm from "./form.ts";
 import * as strNs from "../string/namespace.ts";
 
 async function searchNsForm(diced: Diced): Promise<boolean> {
@@ -41,7 +41,7 @@ export async function extractName(diced: Diced): Promise<string> {
       return Promise.reject(new Deno.errors.NotFound("ns form is not found"));
     }
 
-    const form = await paredit.getCurrentTopForm(diced.denops);
+    const form = await bufForm.getCurrentTopForm(diced.denops);
     return strNs.extractName(form);
   } catch (err) {
     return Promise.reject(err);

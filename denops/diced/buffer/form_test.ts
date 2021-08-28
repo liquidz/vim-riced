@@ -1,5 +1,5 @@
 import { asserts } from "../test_deps.ts";
-import * as sut from "./core.ts";
+import * as sut from "./form.ts";
 
 Deno.test("paredit.core.cursorToIndex", () => {
   const lines = ["aa", "bbb", "cccc"];
