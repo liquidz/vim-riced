@@ -1,6 +1,6 @@
 .PHONY: test-deno
 test-deno:
-	cd denops/diced && deno test --unstable
+	cd denops/diced && deno test --unstable --allow-all
 
 .PHONY: test
 test: test-deno
