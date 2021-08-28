@@ -65,3 +65,17 @@ export function testVarQueryOp(
   };
   return request(diced, "test-var-query", req, _option.context ?? {});
 }
+
+export function nsPathOp(
+  diced: Diced,
+  nsName: string,
+  option?: { context?: nrepl.Context; session?: string },
+): Promise<nrepl.NreplDoneResponse> {
+  const _option = option || {};
+  const req: nrepl.NreplRequest = {
+    session: _option.session ??
+      diced.connectionManager.currentConnection.session,
+    "ns": nsName,
+  };
+  return request(diced, "ns-path", req, _option.context ?? {});
+}
