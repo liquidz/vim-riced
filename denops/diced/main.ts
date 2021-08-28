@@ -7,7 +7,7 @@ import {
   InterceptorType,
   Params,
 } from "./types.ts";
-import * as connect from "./connect/core.ts";
+import * as nreplConnect from "./nrepl/connect/core.ts";
 import * as interceptor from "./interceptor/core.ts";
 import * as paredit from "./paredit/core.ts";
 import {
@@ -40,7 +40,7 @@ export class DicedImpl implements Diced {
   constructor(denops: Denops) {
     this.denops = denops;
     this.interceptors = {};
-    this.connectionManager = new connect.ConnectionManagerImpl();
+    this.connectionManager = new nreplConnect.ConnectionManagerImpl();
 
     for (const i of initialInterceptors) {
       interceptor.addInterceptor(this, i);
@@ -106,7 +106,7 @@ export async function main(denops: Denops) {
         "port": port,
       };
       await interceptor.execute(diced, "connect", params, async (ctx) => {
-        const result = await connect.connect(
+        const result = await nreplConnect.connect(
           ctx.diced,
           ctx.params["host"] || "127.0.0.1",
           ctx.params["port"] || port,
@@ -117,7 +117,7 @@ export async function main(denops: Denops) {
     },
 
     disconnect(): Promise<void> {
-      return Promise.resolve(connect.disconnect(diced));
+      return Promise.resolve(nreplConnect.disconnect(diced));
     },
 
     async evalCode(code: unknown): Promise<void> {

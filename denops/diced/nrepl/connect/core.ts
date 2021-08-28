@@ -1,6 +1,6 @@
-import { nrepl } from "../deps.ts";
-import { Diced } from "../types.ts";
-import * as msg from "../message/core.ts";
+import { nrepl } from "../../deps.ts";
+import { Diced } from "../../types.ts";
+import * as msg from "../../message/core.ts";
 
 // Re export
 export * from "./manager.ts";

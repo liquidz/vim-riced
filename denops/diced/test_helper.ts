@@ -1,6 +1,6 @@
 import { Context, Denops, Dispatcher, Meta, nrepl } from "./deps.ts";
 import { bufio } from "./test_deps.ts";
-import * as connect from "./connect/core.ts";
+import * as nreplConnect from "./nrepl/connect/core.ts";
 import {
   BaseInterceptor,
   ConnectionManager,
@@ -106,7 +106,7 @@ class DummyDiced implements Diced {
   constructor(dispacher: DummyNreplDispacher) {
     this.denops = new DummyDenops({});
     this.interceptors = {};
-    this.connectionManager = new connect.ConnectionManagerImpl();
+    this.connectionManager = new nreplConnect.ConnectionManagerImpl();
 
     this.connectionManager.add({
       port: 9999,

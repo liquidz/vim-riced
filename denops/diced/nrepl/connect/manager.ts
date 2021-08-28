@@ -1,5 +1,5 @@
-import { nrepl } from "../deps.ts";
-import { Connection, ConnectionManager } from "../types.ts";
+import { nrepl } from "../../deps.ts";
+import { Connection, ConnectionManager } from "../../types.ts";
 
 export class ConnectionManagerImpl implements ConnectionManager {
   private currentPort: number;
