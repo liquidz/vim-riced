@@ -3,12 +3,11 @@ import {
   InterceptorContext,
   InterceptorType,
 } from "../types.ts";
-import { findFileUpwards } from "../util/fs.ts";
+import * as denoFs from "../deno/fs.ts";
 import * as msg from "../message/core.ts";
 import * as nreplNs from "../nrepl/namespace.ts";
 import * as nreplEval from "../nrepl/eval.ts";
 import * as bufNs from "../buffer/namespace.ts";
-
 import * as vimBufInfo from "../vim/buffer/info.ts";
 
 export class ConnectedInterceptor extends BaseInterceptor {
@@ -59,7 +58,7 @@ export class PortDetectionInterceptor extends BaseInterceptor {
     if (!isNaN(port)) return ctx;
 
     try {
-      const filePath = await findFileUpwards(".nrepl-port");
+      const filePath = await denoFs.findFileUpwards(".nrepl-port");
       port = parseInt(await Deno.readTextFile(filePath));
     } catch (err) {
       return Promise.reject(err);
