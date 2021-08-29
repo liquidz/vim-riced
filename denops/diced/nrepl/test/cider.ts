@@ -23,7 +23,7 @@ function extractErrorMessage(testRes: TestResult): string {
 }
 
 function extractActualValues(testRes: TestResult): ParsedTestActualValue {
-  const actual = testRes.actual ?? "";
+  const actual = testRes.error ?? testRes.actual ?? "";
 
   if (testRes.diffs == null) return { actual: actual };
   const firstDiff = testRes.diffs[0];
@@ -121,27 +121,17 @@ async function collectErrorsAndPasses(
             }
 
             const fileName = await getFileNameByTestObj(diced, nsName, testRes);
-            const error: nrepl.bencode.BencodeObject = {
+            const { actual, diffs } = extractActualValues(testRes);
+            errors.push({
               filename: fileName,
               text: extractErrorMessage(testRes),
               expected: testRes.expected ?? "",
+              actual: actual,
               type: "E",
               var: testRes.var,
-            };
-            if (testRes.line != null) {
-              error["lnum"] = testRes.line;
-            }
-
-            if (testRes.type === "fail") {
-              const actual = extractActualValues(testRes);
-              error["actual"] = actual.actual;
-              if (actual.diffs != null) {
-                error["diffs"] = actual.diffs;
-              }
-            } else {
-              error["actual"] = testRes.error ?? testRes.actual ?? "";
-            }
-            errors.push(error);
+              lnum: testRes.line,
+              diffs: diffs,
+            });
           }
         }
       }

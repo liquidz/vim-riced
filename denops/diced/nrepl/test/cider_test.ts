@@ -100,6 +100,7 @@ Deno.test("parseResponse failed without diffs", async () => {
     "actual": "actual-result",
     "text": "err-test-var: dummy-context",
     "var": "err-test-var",
+    "diffs": undefined,
   }]);
   asserts.assertEquals(result.passes, []);
 });
@@ -179,6 +180,7 @@ Deno.test("parseResponse error", async () => {
     "actual": "error-message",
     "text": "err-test-var",
     "var": "err-test-var",
+    "diffs": undefined,
   }]);
   asserts.assertEquals(result.passes, []);
 });

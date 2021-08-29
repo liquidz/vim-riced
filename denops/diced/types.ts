@@ -104,8 +104,17 @@ export type ParsedTestSummary = {
   summary: string;
 };
 
-// TODO clarify value type
-export type ParsedTestError = { [key: string]: nrepl.bencode.Bencode };
+export type ParsedTestError = {
+  filename: string;
+  text: string;
+  expected: string;
+  actual: string;
+  type: string;
+  var: string;
+  lnum?: number;
+  diffs?: string;
+};
+
 // TODO clarify value type
 export type ParsedTestPass = { [key: string]: nrepl.bencode.Bencode };
 
