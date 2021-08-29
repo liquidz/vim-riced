@@ -115,8 +115,9 @@ export type ParsedTestError = {
   diffs?: string;
 };
 
-// TODO clarify value type
-export type ParsedTestPass = { [key: string]: nrepl.bencode.Bencode };
+export type ParsedTestPass = {
+  var: string;
+};
 
 export type ParsedTestActualValue = {
   actual: string;
