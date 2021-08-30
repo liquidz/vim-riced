@@ -2,6 +2,7 @@ if exists('g:loaded_vim_diced')
   finish
 endif
 let g:loaded_vim_diced = 1
+let g:vim_diced_home = expand('<sfile>:p:h:h')
 
 let s:save_cpo = &cpoptions
 set cpoptions&vim
