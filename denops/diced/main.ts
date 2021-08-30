@@ -16,13 +16,13 @@ import {
   PortDetectionInterceptor,
 } from "./interceptor/connect.ts";
 import { NormalizeCodeInterceptor } from "./interceptor/eval/normalize.ts";
-import { DebuggingEvaluationInterceptor } from "./interceptor/eval/debug.ts";
 import { NormalizeNsPathInterceptor } from "./interceptor/ns_path.ts";
 import * as msg from "./message/core.ts";
 import * as nreplEval from "./nrepl/eval.ts";
 import * as nreplComplete from "./nrepl/complete.ts";
 import * as nreplTest from "./nrepl/test.ts";
 import * as vimBufInfo from "./vim/buffer/info.ts";
+import * as cmd from "./command/core.ts";
 
 const initialInterceptors: BaseInterceptor[] = [
   new PortDetectionInterceptor(),
@@ -71,6 +71,7 @@ export async function main(denops: Denops) {
 
   denops.dispatcher = {
     async setup(): Promise<void> {
+      await cmd.registerInitialCommands(diced);
       await execute(
         denops,
         `
@@ -83,7 +84,6 @@ export async function main(denops: Denops) {
 
         command! -range   DicedTest call denops#notify("${denops.name}", "test", [])
 
-        command!          DicedToggleDebug call denops#notify("${denops.name}", "toggleDebug", [])
         command!          DicedOpenInfoBuffer call denops#notify("${denops.name}", "openInfoBuffer", [])
         `,
       );
@@ -116,6 +116,18 @@ export async function main(denops: Denops) {
       });
     },
 
+    async diced(fn: unknown): Promise<void> {
+      if (!unknownutil.isFunction(fn)) return Promise.resolve();
+      fn(diced);
+    },
+
+    async command(commandName: unknown, ...args: unknown[]): Promise<void> {
+      if (!unknownutil.isString(commandName)) return;
+      const c = cmd.commandMap[commandName];
+      if (c == null) return;
+      await c.run(diced, args);
+    },
+
     disconnect(): Promise<void> {
       return Promise.resolve(nreplConnect.disconnect(diced));
     },
@@ -139,19 +151,6 @@ export async function main(denops: Denops) {
       } catch (_err) {
         await msg.warning(diced, "NotFound");
       }
-    },
-
-    toggleDebug(): Promise<void> {
-      const debug = new DebuggingEvaluationInterceptor();
-      if (interceptor.hasInterceptor(diced, debug)) {
-        interceptor.removeInterceptor(diced, debug);
-        msg.info(diced, "Disabled", { name: "debug" });
-      } else {
-        interceptor.addInterceptor(diced, debug);
-        msg.info(diced, "Enabled", { name: "debug" });
-      }
-
-      return Promise.resolve();
     },
 
     async complete(keyword: unknown): Promise<Array<CompleteCandidate>> {
