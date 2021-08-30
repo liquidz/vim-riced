@@ -82,6 +82,16 @@ export abstract class BaseInterceptor
   }
 }
 
+export type Command = {
+  name: string;
+  nargs?: string;
+  range?: boolean;
+  complete?: string;
+  args?: string;
+  plug?: string;
+  run: (diced: Diced, args: unknown[]) => Promise<void>;
+};
+
 export type NreplEvalOption = {
   context?: nrepl.Context;
   session?: string;
