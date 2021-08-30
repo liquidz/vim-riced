@@ -119,14 +119,15 @@ async function collectErrorsAndPasses(
               passes.push({ var: testRes.var });
               continue;
             }
+            testRes.expected;
 
             const fileName = await getFileNameByTestObj(diced, nsName, testRes);
             const { actual, diffs } = extractActualValues(testRes);
             errors.push({
               filename: fileName,
               text: extractErrorMessage(testRes),
-              expected: testRes.expected ?? "",
-              actual: actual,
+              expected: (testRes.expected ?? "").trim(),
+              actual: actual.trim(),
               type: "E",
               var: testRes.var,
               lnum: testRes.line,

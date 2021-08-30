@@ -1,13 +1,18 @@
 import { Diced, ParsedTestResult } from "../types.ts";
 import { nrepl, unknownutil } from "../deps.ts";
+
 import * as bufForm from "../buffer/form.ts";
+import * as msg from "../message/core.ts";
 import * as nreplEval from "./eval.ts";
 import * as nreplNs from "./namespace.ts";
-import * as opsCider from "./operation/cider.ts";
-import * as msg from "../message/core.ts";
 import * as nreplTestCider from "./test/cider.ts";
+import * as opsCider from "./operation/cider.ts";
+import * as strCommon from "../string/common.ts";
 import * as vimBufInfo from "../vim/buffer/info.ts";
 
+/**
+ * Fetch test vars by namespace name
+ */
 async function testVarsByNsName(
   diced: Diced,
   nsName: string,
@@ -31,6 +36,9 @@ async function testVarsByNsName(
   }, [] as Array<string>);
 }
 
+/**
+ * FIXME
+ */
 export async function runTestUnderCursor(diced: Diced): Promise<boolean> {
   const code = await bufForm.getCurrentTopForm(diced.denops);
   const res = await nreplEval.evalCode(diced, code, {
@@ -127,16 +135,17 @@ async function doneTest(diced: Diced, result: ParsedTestResult): Promise<void> {
   for (const err of result.errors) {
     const lnum = err.lnum == null ? "" : ` (Line: ${err.lnum})`;
 
-    if (err.actual != null && err.diffs != null) {
-      errLines.push(`;; ${err.text}${lnum}`);
+    errLines.push(`;; ${err.text}${lnum}`);
+    if (err.diffs != null) {
+      errLines.push(`Expected: ${err.expected}`);
+      errLines.push(`  Actual: ${err.actual}`);
 
-      if (err.expected != null) {
-        errLines.push(`Expected: ${err.expected}`);
-        errLines.push(`  Actual: ${err.actual}`);
-        errLines.push(`   Diffs: ${err.diffs}`);
-      } else {
-        errLines.push(`Actual: ${err.expected}`);
+      const diffs = strCommon.addIndent(10, `   Diffs: ${err.diffs}`);
+      for (const d of diffs.split(/\r?\n/)) {
+        errLines.push(d);
       }
+    } else {
+      errLines.push(`Actual: ${err.expected}`);
     }
   }
 
@@ -150,35 +159,3 @@ async function doneTest(diced: Diced, result: ParsedTestResult): Promise<void> {
     await msg.errorStr(diced, result.summary.summary);
   }
 }
-
-//   for err in errors
-//     let lnum = ''
-//
-//     if has_key(err, 'lnum')
-//       call sign.place(s:sign_name, err['lnum'], err['filename'], err['var'])
-//       let lnum = printf(' (Line: %s)', err['lnum'])
-//     endif
-//
-//     if has_key(err, 'actual') && !empty(err['actual'])
-//       if has_key(err, 'expected') && !empty(err['expected'])
-//         let expected_and_actuals = expected_and_actuals + [
-//               \ printf(';; %s%s', err['text'], lnum),
-//               \ s:__dict_to_str(err, ['expected', 'actual', 'diffs']),
-//               \ '']
-//       else
-//         let expected_and_actuals = expected_and_actuals + [
-//               \ printf(';; %s%s', err['text'], lnum),
-//               \ err['actual'],
-//               \ '']
-//       endif
-//     endif
-//   endfor
-//
-//   call iced#buffer#error#show(join(expected_and_actuals, "\n"))
-//   call iced#qf#set(errors)
-//
-//
-//   call iced#hook#run('test_finished', {
-//         \ 'result': summary['is_success'] ? 'succeeded' : 'failed',
-//         \ 'summary': summary['summary']})
-// endfunction
