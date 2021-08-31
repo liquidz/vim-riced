@@ -3,12 +3,14 @@ import { execute } from "../deps.ts";
 
 import * as _eval from "./eval.ts";
 import * as _setting from "./setting.ts";
+import * as _test from "./test.ts";
 
 const allCommands: Array<Command> = [
   _eval.EvalCode,
   _eval.EvalOuterList,
   _eval.EvalOuterTopList,
   _setting.ToggleDebug,
+  _test.TestUnderCursor,
 ];
 
 export const commandMap = allCommands.reduce((accm, cmd) => {

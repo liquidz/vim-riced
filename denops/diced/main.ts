@@ -9,7 +9,6 @@ import {
 } from "./types.ts";
 import * as nreplConnect from "./nrepl/connect/core.ts";
 import * as interceptor from "./interceptor/core.ts";
-import * as bufForm from "./buffer/form.ts";
 import {
   BufferInitializationInterceptor,
   ConnectedInterceptor,
@@ -17,10 +16,7 @@ import {
 } from "./interceptor/connect.ts";
 import { NormalizeCodeInterceptor } from "./interceptor/eval/normalize.ts";
 import { NormalizeNsPathInterceptor } from "./interceptor/ns_path.ts";
-import * as msg from "./message/core.ts";
-import * as nreplEval from "./nrepl/eval.ts";
 import * as nreplComplete from "./nrepl/complete.ts";
-import * as nreplTest from "./nrepl/test.ts";
 import * as vimBufInfo from "./vim/buffer/info.ts";
 import * as cmd from "./command/core.ts";
 
@@ -77,7 +73,6 @@ export async function main(denops: Denops) {
         `
         command! -nargs=? DicedConnect    call denops#notify("${denops.name}", "connect", [<q-args>])
         command!          DicedDisconnect call denops#notify("${denops.name}", "disconnect", [])
-        command! -range   DicedTestUnderCursor call denops#notify("${denops.name}", "testUnderCursor", [])
 
         command! -range   DicedTest call denops#notify("${denops.name}", "test", [])
 
@@ -136,21 +131,6 @@ export async function main(denops: Denops) {
 
     async openInfoBuffer(): Promise<void> {
       await vimBufInfo.open(denops);
-    },
-
-    async testUnderCursor(): Promise<void> {
-      try {
-        await nreplTest.runTestUnderCursor(diced);
-      } catch (err) {
-        if (
-          err instanceof Deno.errors.InvalidData ||
-          err instanceof Deno.errors.NotFound
-        ) {
-          await msg.warning(diced, "NotFound");
-        } else {
-          throw err;
-        }
-      }
     },
   };
 
