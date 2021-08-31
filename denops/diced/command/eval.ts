@@ -1,9 +1,9 @@
 import { Command } from "../types.ts";
 import { unknownutil } from "../deps.ts";
 
-import * as nreplEval from "../nrepl/eval.ts";
 import * as bufForm from "../buffer/form.ts";
 import * as msg from "../message/core.ts";
+import * as nreplEval from "../nrepl/eval.ts";
 
 export const EvalCode: Command = {
   name: "Eval",

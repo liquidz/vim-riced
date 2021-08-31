@@ -11,8 +11,8 @@ export class NormalizeNsPathInterceptor extends BaseInterceptor {
   readonly type: InterceptorType = "ns-path";
   readonly name: string = "ns-path normalize";
 
-  async leave(ctx: InterceptorContext): Promise<InterceptorContext> {
-    if (ctx.response == null) return ctx;
+  leave(ctx: InterceptorContext): Promise<InterceptorContext> {
+    if (ctx.response == null) return Promise.resolve(ctx);
 
     const done = ctx.response.params["response"] as nrepl.NreplDoneResponse;
 
@@ -25,6 +25,6 @@ export class NormalizeNsPathInterceptor extends BaseInterceptor {
       },
     );
 
-    return ctx;
+    return Promise.resolve(ctx);
   }
 }

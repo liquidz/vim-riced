@@ -83,10 +83,10 @@ export async function main(denops: Denops) {
       await Promise.resolve(true);
     },
 
-    async diced(fn: unknown): Promise<void> {
-      if (!unknownutil.isFunction(fn)) return Promise.resolve();
-      fn(diced);
-    },
+    // async diced(fn: unknown): Promise<void> {
+    //   if (!unknownutil.isFunction(fn)) return Promise.resolve();
+    //   fn(diced);
+    // },
 
     async command(commandName: unknown, ...args: unknown[]): Promise<void> {
       if (!unknownutil.isString(commandName)) return;

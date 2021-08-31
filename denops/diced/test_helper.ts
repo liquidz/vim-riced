@@ -24,23 +24,23 @@ class DummyDenops implements Denops {
     this.dispatcher = {};
   }
 
-  call(fn: string, ...args: unknown[]): Promise<unknown> {
+  call(_fn: string, ..._args: unknown[]): Promise<unknown> {
     return Promise.resolve(true);
   }
 
-  batch(...calls: [string, ...unknown[]][]): Promise<unknown[]> {
+  batch(..._calls: [string, ...unknown[]][]): Promise<unknown[]> {
     return Promise.resolve([]);
   }
 
-  cmd(cmd: string, ctx?: Context): Promise<void> {
+  cmd(_cmd: string, _ctx?: Context): Promise<void> {
     return Promise.resolve();
   }
 
-  eval(expr: string, ctx?: Context): Promise<unknown> {
+  eval(_expr: string, _ctx?: Context): Promise<unknown> {
     return Promise.resolve(true);
   }
 
-  dispatch(name: string, fn: string, ...args: unknown[]): Promise<unknown> {
+  dispatch(_name: string, _fn: string, ..._args: unknown[]): Promise<unknown> {
     return Promise.resolve(true);
   }
 }
