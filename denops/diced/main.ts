@@ -5,7 +5,6 @@ import {
   ConnectionManager,
   Diced,
   InterceptorType,
-  Params,
 } from "./types.ts";
 import * as nreplConnect from "./nrepl/connect/core.ts";
 import * as interceptor from "./interceptor/core.ts";
@@ -71,8 +70,6 @@ export async function main(denops: Denops) {
       await execute(
         denops,
         `
-        command! -nargs=? DicedConnect    call denops#notify("${denops.name}", "connect", [<q-args>])
-        command!          DicedDisconnect call denops#notify("${denops.name}", "disconnect", [])
 
         command! -range   DicedTest call denops#notify("${denops.name}", "test", [])
 
@@ -90,24 +87,6 @@ export async function main(denops: Denops) {
       await Promise.resolve(true);
     },
 
-    async connect(portStr: unknown): Promise<void> {
-      unknownutil.ensureString(portStr);
-      const port: number = (portStr === "") ? NaN : parseInt(portStr);
-      const params: Params = {
-        "host": "127.0.0.1",
-        "port": port,
-      };
-      await interceptor.execute(diced, "connect", params, async (ctx) => {
-        const result = await nreplConnect.connect(
-          ctx.diced,
-          ctx.params["host"] || "127.0.0.1",
-          ctx.params["port"] || port,
-        );
-        ctx.params["result"] = result;
-        return ctx;
-      });
-    },
-
     async diced(fn: unknown): Promise<void> {
       if (!unknownutil.isFunction(fn)) return Promise.resolve();
       fn(diced);
@@ -118,10 +97,6 @@ export async function main(denops: Denops) {
       const c = cmd.commandMap[commandName];
       if (c == null) return;
       await c.run(diced, args);
-    },
-
-    disconnect(): Promise<void> {
-      return Promise.resolve(nreplConnect.disconnect(diced));
     },
 
     async complete(keyword: unknown): Promise<Array<CompleteCandidate>> {
