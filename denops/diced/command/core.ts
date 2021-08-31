@@ -1,12 +1,14 @@
 import { Command, Diced } from "../types.ts";
 import { execute } from "../deps.ts";
 
+import * as _buffer from "./buffer.ts";
 import * as _connect from "./connect.ts";
 import * as _eval from "./eval.ts";
 import * as _setting from "./setting.ts";
 import * as _test from "./test.ts";
 
 const allCommands: Array<Command> = [
+  _buffer.OpenInfoBuffer,
   _connect.Connect,
   _connect.Disconnect,
   _eval.EvalCode,

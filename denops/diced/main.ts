@@ -16,7 +16,6 @@ import {
 import { NormalizeCodeInterceptor } from "./interceptor/eval/normalize.ts";
 import { NormalizeNsPathInterceptor } from "./interceptor/ns_path.ts";
 import * as nreplComplete from "./nrepl/complete.ts";
-import * as vimBufInfo from "./vim/buffer/info.ts";
 import * as cmd from "./command/core.ts";
 
 const initialInterceptors: BaseInterceptor[] = [
@@ -70,10 +69,7 @@ export async function main(denops: Denops) {
       await execute(
         denops,
         `
-
         command! -range   DicedTest call denops#notify("${denops.name}", "test", [])
-
-        command!          DicedOpenInfoBuffer call denops#notify("${denops.name}", "openInfoBuffer", [])
         `,
       );
 
@@ -102,10 +98,6 @@ export async function main(denops: Denops) {
     async complete(keyword: unknown): Promise<Array<CompleteCandidate>> {
       unknownutil.ensureString(keyword);
       return await nreplComplete.candidates(diced, keyword);
-    },
-
-    async openInfoBuffer(): Promise<void> {
-      await vimBufInfo.open(denops);
     },
   };
 
