@@ -1,10 +1,14 @@
 import { Command, Diced } from "../types.ts";
 import { execute } from "../deps.ts";
 
-import * as setting from "./setting.ts";
+import * as _eval from "./eval.ts";
+import * as _setting from "./setting.ts";
 
 const allCommands: Array<Command> = [
-  setting.ToggleDebug,
+  _eval.EvalCode,
+  _eval.EvalOuterList,
+  _eval.EvalOuterTopList,
+  _setting.ToggleDebug,
 ];
 
 export const commandMap = allCommands.reduce((accm, cmd) => {

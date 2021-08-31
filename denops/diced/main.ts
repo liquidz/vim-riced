@@ -77,9 +77,6 @@ export async function main(denops: Denops) {
         `
         command! -nargs=? DicedConnect    call denops#notify("${denops.name}", "connect", [<q-args>])
         command!          DicedDisconnect call denops#notify("${denops.name}", "disconnect", [])
-        command! -nargs=1 DicedEval       call denops#notify("${denops.name}", "evalCode", [<q-args>])
-        command!          DicedEvalOuterList      call denops#notify("${denops.name}", "evalOuterList", [])
-        command!          DicedEvalOuterTopList      call denops#notify("${denops.name}", "evalOuterTopList", [])
         command! -range   DicedTestUnderCursor call denops#notify("${denops.name}", "testUnderCursor", [])
 
         command! -range   DicedTest call denops#notify("${denops.name}", "test", [])
@@ -130,27 +127,6 @@ export async function main(denops: Denops) {
 
     disconnect(): Promise<void> {
       return Promise.resolve(nreplConnect.disconnect(diced));
-    },
-
-    async evalCode(code: unknown): Promise<void> {
-      unknownutil.ensureString(code);
-      await nreplEval.evalCode(diced, code);
-    },
-    async evalOuterList(): Promise<void> {
-      try {
-        const code = await bufForm.getCurrentForm(denops);
-        await nreplEval.evalCode(diced, code);
-      } catch (_err) {
-        await msg.warning(diced, "NotFound");
-      }
-    },
-    async evalOuterTopList(): Promise<void> {
-      try {
-        const code = await bufForm.getCurrentTopForm(denops);
-        await nreplEval.evalCode(diced, code);
-      } catch (_err) {
-        await msg.warning(diced, "NotFound");
-      }
     },
 
     async complete(keyword: unknown): Promise<Array<CompleteCandidate>> {
