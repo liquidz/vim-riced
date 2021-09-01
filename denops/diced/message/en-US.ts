@@ -107,7 +107,7 @@ export const Translation = {
   TestSummary:
     "<%= nsName %>: Ran <%= testCount %> assertions, in <%= varCount %> test functions. <%= failCount %> failures, <%= errorCount %> errors.",
   Testing: "Testing...",
-  TestingVar: "Testing: %s",
+  TestingVar: "Testing: <%= varName %>",
   Timeout: "Timed out.",
   ToggleWarnOnReflection: "Toggled *warn-on-reflection* to %s.",
   TooDeepToSlurp: "Too deep to slurp.",

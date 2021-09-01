@@ -12,7 +12,7 @@ export async function getMessage(
   return await dejs.renderToString(msg, params ?? {});
 }
 
-export async function echom(
+async function echomWithHighlight(
   diced: Diced,
   highlight: string,
   message: string,
@@ -27,16 +27,30 @@ export async function echom(
   }
 }
 
+export async function echoStr(diced: Diced, message: string): Promise<void> {
+  for (const m of message.split("\n")) {
+    await diced.denops.cmd(`echom '${m}'`);
+  }
+}
+
 export function infoStr(diced: Diced, message: string): Promise<void> {
-  return echom(diced, "MoreMsg", message);
+  return echomWithHighlight(diced, "MoreMsg", message);
 }
 
 export function warningStr(diced: Diced, message: string): Promise<void> {
-  return echom(diced, "WarningMsg", message);
+  return echomWithHighlight(diced, "WarningMsg", message);
 }
 
 export function errorStr(diced: Diced, message: string): Promise<void> {
-  return echom(diced, "ErrorMsg", message);
+  return echomWithHighlight(diced, "ErrorMsg", message);
+}
+
+export async function echo(
+  diced: Diced,
+  key: TranslationKey,
+  params?: dejs.Params,
+): Promise<void> {
+  return echoStr(diced, await getMessage(key, params));
 }
 
 export async function info(

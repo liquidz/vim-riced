@@ -15,6 +15,7 @@ const allCommands: Array<Command> = [
   _eval.EvalOuterList,
   _eval.EvalOuterTopList,
   _setting.ToggleDebug,
+  _test.TestNs,
   _test.TestUnderCursor,
 ];
 

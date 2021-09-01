@@ -5,10 +5,32 @@ import * as bufForm from "../buffer/form.ts";
 import * as msg from "../message/core.ts";
 import * as nreplEval from "./eval.ts";
 import * as nreplNs from "./namespace.ts";
+import * as nreplDesc from "./describe.ts";
 import * as nreplTestCider from "./test/cider.ts";
 import * as opsCider from "./operation/cider.ts";
 import * as strCommon from "../string/common.ts";
+import * as strNs from "../string/namespace.ts";
 import * as vimBufInfo from "../vim/buffer/info.ts";
+
+async function echoTestingMessage(
+  diced: Diced,
+  query: nrepl.bencode.BencodeObject,
+): Promise<void> {
+  if (unknownutil.isArray<string>(query["exactly"])) {
+    await msg.echo(diced, "TestingVar", {
+      varName: query["exactly"].join(", "),
+    });
+  } else if (
+    unknownutil.isObject(query["ns-query"]) &&
+    unknownutil.isArray<string>(query["ns-query"]["exactly"])
+  ) {
+    await msg.echo(diced, "TestingVar", {
+      varName: query["ns-query"]["exactly"].join(", "),
+    });
+  } else {
+    await msg.echo(diced, "Testing");
+  }
+}
 
 /**
  * Fetch test vars by namespace name
@@ -58,71 +80,61 @@ export async function runTestUnderCursor(diced: Diced): Promise<boolean> {
   }
 
   const testVars = await testVarsByNsName(diced, nsName);
-
   if (testVars.indexOf(varName) !== -1) {
     // Form under the cursor is a test
     await runTestVars(diced, nsName, [qualifiedVarName]);
   } else if (nsName.endsWith("-test")) {
     // Form under the cursor is not a test, and current ns is ns for test
+    await msg.error(diced, "NotFound");
   } else {
     // Form under the cursor is not a test, and current ns is NOT ns for test
+    // TODO
   }
 
   return true;
 }
 
-// function! s:__under_cursor(var_info, test_vars) abort
-//   let qualified_var = a:var_info['qualified_var']
-//   let ns = a:var_info['ns']
-//   let var_name = a:var_info['name']
-//
-//   if index(a:test_vars, var_name) != -1
-//     " Form under the cursor is a test
-//     return s:__run_test_vars(ns, [qualified_var])
-//   elseif s:S.ends_with(ns, '-test')
-//     " Form under the cursor is not a test, and current ns is ns for test
-//     return iced#message#error('not_found')
-//   else
-//     " Form under the cursor is not a test, and current ns is NOT ns for test
-//     let kondo = iced#system#get('clj_kondo')
-//
-//     " clj-kondo side
-//     if kondo.is_analyzed()
-//       let references = kondo.references(ns, var_name)
-//       let test_refs = filter(references, {_, v -> match(get(v, 'from-var', ''), '-test$') != -1})
-//
-//       let promises = []
-//       let ns_test_dict = iced#util#group_by(test_refs, {v -> v.from})
-//
-//       " NOTE If not found, fall back to the nREPL side.
-//       if ! empty(ns_test_dict)
-//         for test_ns in keys(ns_test_dict)
-//           let test_vars = map(get(ns_test_dict, test_ns, []),
-//                 \ {_, v -> printf('%s/%s', get(v, 'from'), get(v, 'from-var'))})
-//
-//           let p = iced#promise#call('iced#nrepl#ns#require', [test_ns])
-//                 \.then({_ -> s:__run_test_vars(test_ns, test_vars)})
-//           let promises += [p]
-//         endfor
-//         return iced#promise#all(promises)
-//       endif
-//     endif
-//
-//     " nREPL side
-//     let ns = iced#nrepl#navigate#cycle_ns(ns)
-//     return iced#promise#call('iced#nrepl#ns#require', [ns])
-//           \.then({_ -> iced#promise#call('iced#nrepl#test#test_vars_by_ns_name', [ns])})
-//           \.then({test_vars -> s:__test_cycled_ns(ns, var_name, test_vars)})
-//   endif
-// endfunction
-//
+export async function runTestNs(diced: Diced): Promise<boolean> {
+  const nsName = await nreplNs.name(diced);
+  // NOTE: Reload ns to match iced#nrepl#test#under_cursor's behavior
+  await nreplEval.loadFile(diced);
+
+  // FIXME
+  // Use simple test integration when there is no `test-var-query` op.
+  //     return iced#nrepl#test#plain#ns(ns)
+  //           \.catch({msg -> iced#message#error_str(msg)})
+  if (!await nreplDesc.isSupportedOperation(diced, "test-var-query")) {
+    return false;
+  }
+
+  const testVars = await testVarsByNsName(diced, nsName);
+  const query = {
+    "ns-query": {
+      "exactly": [
+        (testVars.length === 0 && !nsName.endsWith("-test"))
+          ? strNs.cycleName(nsName)
+          : nsName,
+      ],
+    },
+  };
+  echoTestingMessage(diced, query);
+
+  // TODO sign
+
+  const resp = await opsCider.testVarQueryOp(diced, query);
+  const parsed = await nreplTestCider.parseResponse(diced, resp);
+  await doneTest(diced, parsed);
+
+  return true;
+}
 
 async function runTestVars(diced: Diced, nsName: string, vars: Array<string>) {
   const query = {
     "ns-query": { "exactly": [nsName] },
     "exactly": vars,
   };
-  //await msg.info(diced, 'TestingVar')
+  echoTestingMessage(diced, query);
+
   const resp = await opsCider.testVarQueryOp(diced, query);
   const parsed = await nreplTestCider.parseResponse(diced, resp);
   await doneTest(diced, parsed);
