@@ -29,3 +29,8 @@ Deno.test("string.namespace.extractName", () => {
 
   asserts.assertThrows(() => sut.extractName(""));
 });
+
+Deno.test("cycleName", () => {
+  asserts.assertEquals(sut.cycleName("foo"), "foo-test");
+  asserts.assertEquals(sut.cycleName("foo-test"), "foo");
+});

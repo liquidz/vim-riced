@@ -15,3 +15,10 @@ export function extractName(nsForm: string): string {
   const endIdx = strParedit.forwardSexp(nsForm, idx);
   return nsForm.substring(idx, endIdx).replaceAll(")", "").trim();
 }
+
+export function cycleName(nsName: string): string {
+  if (nsName.endsWith("-test")) {
+    return nsName.replace(/-test$/, "");
+  }
+  return nsName + "-test";
+}
