@@ -6,24 +6,17 @@ import {
   Diced,
   InterceptorType,
 } from "./types.ts";
-import * as nreplConnect from "./nrepl/connect/core.ts";
-import * as interceptor from "./interceptor/core.ts";
-import {
-  BufferInitializationInterceptor,
-  ConnectedInterceptor,
-  PortDetectionInterceptor,
-} from "./interceptor/connect.ts";
-import { NormalizeCodeInterceptor } from "./interceptor/eval/normalize.ts";
-import { NormalizeNsPathInterceptor } from "./interceptor/ns_path.ts";
+import * as nreplConnect from "./nrepl/connect/mod.ts";
+import * as interceptor from "./interceptor/mod.ts";
 import * as nreplComplete from "./nrepl/complete.ts";
 import * as cmd from "./command/core.ts";
 
 const initialInterceptors: BaseInterceptor[] = [
-  new PortDetectionInterceptor(),
-  new ConnectedInterceptor(),
-  new NormalizeCodeInterceptor(),
-  new BufferInitializationInterceptor(),
-  new NormalizeNsPathInterceptor(),
+  new interceptor.PortDetectionInterceptor(),
+  new interceptor.ConnectedInterceptor(),
+  new interceptor.NormalizeCodeInterceptor(),
+  new interceptor.BufferInitializationInterceptor(),
+  new interceptor.NormalizeNsPathInterceptor(),
 ];
 
 export class DicedImpl implements Diced {

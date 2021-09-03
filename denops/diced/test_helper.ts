@@ -1,6 +1,6 @@
 import { Context, Denops, Dispatcher, Meta, nrepl } from "./deps.ts";
 import { bufio } from "./test_deps.ts";
-import * as nreplConnect from "./nrepl/connect/core.ts";
+import * as nreplConnect from "./nrepl/connect/mod.ts";
 import {
   BaseInterceptor,
   ConnectionManager,
