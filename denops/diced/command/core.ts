@@ -1,5 +1,5 @@
 import { Command, Diced } from "../types.ts";
-import { execute } from "../deps.ts";
+import { execute, snakeCase } from "../deps.ts";
 
 import * as _buffer from "./buffer.ts";
 import * as _connect from "./connect.ts";
@@ -30,15 +30,10 @@ export function generateRegisterCommand(diced: Diced, cmd: Command): string {
   const range = (cmd.range == null || !cmd.range) ? "" : "-range";
   const complete = (cmd.complete == null) ? "" : `-complete=${cmd.complete}`;
   const args = `"${cmd.name}"` + ((cmd.args == null) ? "" : `, ${cmd.args}`);
-  const plugMap = (cmd.plug == null)
-    ? ""
-    : (range === "")
-    ? `nnoremap`
-    : `vnoremap`;
-
-  const plug = (plugMap === "")
-    ? ""
-    : `${plugMap} <silent> <Plug>(diced_${cmd.plug}) :<C-u>Diced${cmd.name}<CR>`;
+  const plugMap = (range === "") ? `nnoremap` : `vnoremap`;
+  const plugName = (cmd.plug == null) ? snakeCase.default(cmd.name) : cmd.plug;
+  const plug =
+    `${plugMap} <silent> <Plug>(diced_${plugName}) :<C-u>Diced${cmd.name}<CR>`;
 
   return `
    command! ${range} ${nargs} ${complete} Diced${cmd.name} call denops#notify("${denops.name}", "command", [${args}])
