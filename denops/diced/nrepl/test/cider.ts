@@ -11,6 +11,7 @@ import * as msg from "../../message/core.ts";
 import { isTestResult, isTestSummary, TestResult } from "../../types/cider.ts";
 import * as opsCider from "../operation/cider.ts";
 import * as nreplDesc from "../describe.ts";
+import * as strCommon from "../../string/common.ts";
 
 function extractErrorMessage(testRes: TestResult): string {
   if (typeof testRes.context === "string") {
@@ -41,7 +42,9 @@ function extractActualValues(testRes: TestResult): ParsedTestActualValue {
 
   return {
     actual: diffActual,
-    diffs: `- ${diffBefore.trim()}\n+ ${diffAfter.trim()}`,
+    diffs: strCommon.deleteColorCode(
+      `- ${diffBefore.trim()}\n+ ${diffAfter.trim()}`,
+    ),
   };
 }
 
@@ -77,7 +80,7 @@ async function getFileNameByTestObj(
   nsName: string,
   testRes: TestResult,
 ): Promise<string> {
-  const file = testRes.file ?? "";
+  const file = unknownutil.isString(testRes.file) ? testRes.file : "";
   if (
     !await fs.exists(file) && nreplDesc.isSupportedOperation(diced, "ns-path")
   ) {
@@ -88,7 +91,7 @@ async function getFileNameByTestObj(
     }
   }
 
-  return testRes.file ?? "";
+  return file;
 }
 
 async function collectErrorsAndPasses(
@@ -119,18 +122,19 @@ async function collectErrorsAndPasses(
               passes.push({ var: testRes.var });
               continue;
             }
-            testRes.expected;
 
             const fileName = await getFileNameByTestObj(diced, nsName, testRes);
             const { actual, diffs } = extractActualValues(testRes);
             errors.push({
               filename: fileName,
               text: extractErrorMessage(testRes),
-              expected: (testRes.expected ?? "").trim(),
-              actual: actual.trim(),
+              expected: strCommon.deleteColorCode(
+                (testRes.expected ?? "").trim(),
+              ),
+              actual: strCommon.deleteColorCode(actual.trim()),
               type: "E",
               var: testRes.var,
-              lnum: testRes.line,
+              lnum: Array.isArray(testRes.line) ? undefined : testRes.line,
               diffs: diffs,
             });
           }

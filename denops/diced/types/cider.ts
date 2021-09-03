@@ -31,8 +31,8 @@ export type TestResult = {
   diffs?: Array<unknown>;
   error?: string;
   expected?: string;
-  file?: string;
-  line?: number;
+  file?: string | string[];
+  line?: number | number[];
 };
 
 export function isTestResult(x: unknown): x is TestResult {
@@ -40,8 +40,7 @@ export function isTestResult(x: unknown): x is TestResult {
 
   const r = x as TestResult;
   return unknownutil.isObject(x) &&
-    (typeof r.context === "string" ||
-      unknownutil.isArray<string>(r.context)) &&
+    (typeof r.context === "string" || Array.isArray(r.context)) &&
     typeof r.index === "number" &&
     typeof r.message === "string" &&
     typeof r.ns === "string" &&
@@ -51,6 +50,6 @@ export function isTestResult(x: unknown): x is TestResult {
     (r.diffs == null || unknownutil.isArray(r.diffs)) &&
     (r.error == null || typeof r.error === "string") &&
     (r.expected == null || typeof r.expected === "string") &&
-    (r.file == null || typeof r.file === "string") &&
-    (r.line == null || typeof r.line === "number");
+    (r.file == null || typeof r.file === "string" || Array.isArray(r.file)) &&
+    (r.line == null || typeof r.line === "number" || Array.isArray(r.line));
 }
