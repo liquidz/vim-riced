@@ -148,16 +148,13 @@ async function doneTest(diced: Diced, result: ParsedTestResult): Promise<void> {
     const lnum = err.lnum == null ? "" : ` (Line: ${err.lnum})`;
 
     errLines.push(`;; ${err.text}${lnum}`);
+    errLines.push(`Expected: ${err.expected}`);
+    errLines.push(`  Actual: ${err.actual}`);
     if (err.diffs != null) {
-      errLines.push(`Expected: ${err.expected}`);
-      errLines.push(`  Actual: ${err.actual}`);
-
       const diffs = strCommon.addIndent(10, `   Diffs: ${err.diffs}`);
       for (const d of diffs.split(/\r?\n/)) {
         errLines.push(d);
       }
-    } else {
-      errLines.push(`Actual: ${err.expected}`);
     }
   }
 
