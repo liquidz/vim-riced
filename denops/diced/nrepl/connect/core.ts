@@ -1,17 +1,17 @@
 import { nrepl } from "../../deps.ts";
 import { Diced } from "../../types.ts";
+
+import * as interceptor from "../../interceptor/core.ts";
 import * as msg from "../../message/core.ts";
 
-async function handler(conn: nrepl.NreplClient) {
+async function handler(diced: Diced, conn: nrepl.NreplClient) {
   try {
     while (!conn.isClosed) {
-      const res = await conn.read();
-      const isVerbose = (res.context["verbose"] !== "false");
-      const out = res.getFirst("out");
-
-      if (typeof out === "string" && isVerbose) {
-        console.log(out);
-      }
+      const params = { connection: conn };
+      await interceptor.execute(diced, "read", params, async (ctx) => {
+        ctx.params["response"] = await ctx.params["connection"].read();
+        return ctx;
+      });
     }
   } catch (_err) {
     if (!conn.isClosed) {
@@ -32,7 +32,7 @@ export async function connect(
     }
 
     const conn = await nrepl.connect({ hostname: hostname, port: port });
-    handler(conn);
+    handler(diced, conn);
 
     const cloneRes = await conn.write({ op: "clone" });
     const session = cloneRes.getFirst("new-session");

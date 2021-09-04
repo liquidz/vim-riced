@@ -12,6 +12,7 @@ import * as nreplComplete from "./nrepl/complete.ts";
 import * as cmd from "./command/core.ts";
 
 const initialInterceptors: BaseInterceptor[] = [
+  new interceptor.ReadInterceptor(),
   new interceptor.PortDetectionInterceptor(),
   new interceptor.ConnectedInterceptor(),
   new interceptor.NormalizeCodeInterceptor(),

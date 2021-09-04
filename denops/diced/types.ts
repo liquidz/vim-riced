@@ -58,6 +58,7 @@ export type InterceptorParams = {
 export type InterceptorType =
   | "connect"
   | "disconnect"
+  | "read"
   | "none"
   | NreplOp;
 
