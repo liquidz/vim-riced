@@ -3,26 +3,19 @@ import * as vimBuf from "./core.ts";
 
 const bufName = "diced_info";
 
-export async function open(denops: Denops): Promise<void> {
-  if (await vimBuf.isVisible(denops, bufName)) return;
-
-  await vimBuf.open(denops, bufName);
-
-  // initialize
-  await denops.batch(
-    ["setbufvar", bufName, "&bufhidden", "hide"],
-    ["setbufvar", bufName, "&buflisted", 0],
-    ["setbufvar", bufName, "&buftype", "nofile"],
-    ["setbufvar", bufName, "&filetype", "clojure"],
-    ["setbufvar", bufName, "&swapfile", 0],
-    ["setbufvar", bufName, "&wrap", 0],
-  );
+export async function open(denops: Denops): Promise<boolean> {
+  const currentWin = await fns.winnr(denops);
+  if (await vimBuf.isVisible(denops, bufName)) return false;
+  if (!await vimBuf.open(denops, bufName)) return false;
+  await vimBuf.focusByWinNr(denops, currentWin);
+  return true;
 }
 
 export async function ready(denops: Denops): Promise<void> {
   if (await fns.bufnr(denops, bufName) !== -1) return;
-  await open(denops);
-  await denops.cmd("q");
+  // NOTE: Call vim's function to avoid flickering of the screen
+  denops.call("diced#buffer#info#ready", bufName);
+  return;
 }
 
 export async function appendLines(
