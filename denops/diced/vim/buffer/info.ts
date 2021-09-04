@@ -1,4 +1,4 @@
-import { Denops, dpsFns } from "../../deps.ts";
+import { Denops, dpsFns, dpsHelper } from "../../deps.ts";
 import * as vimBuf from "./core.ts";
 
 const bufName = "diced_info";
@@ -13,8 +13,21 @@ export async function open(denops: Denops): Promise<boolean> {
 
 export async function ready(denops: Denops): Promise<void> {
   if (await dpsFns.bufnr(denops, bufName) !== -1) return;
-  // NOTE: Call vim's function to avoid flickering of the screen
-  denops.call("diced#buffer#info#ready", bufName);
+
+  dpsHelper.execute(
+    denops,
+    `
+    silent execute ':split ${bufName}'
+    silent execute ':q'
+
+    call setbufvar('${bufName}', '&bufhidden', 'hide')
+    call setbufvar('${bufName}', '&buflisted', 0)
+    call setbufvar('${bufName}', '&buftype', 'nofile')
+    call setbufvar('${bufName}', '&filetype', 'clojure')
+    call setbufvar('${bufName}', '&swapfile', 0)
+    call setbufvar('${bufName}', '&wrap', 0)
+    `,
+  );
 
   return;
 }
