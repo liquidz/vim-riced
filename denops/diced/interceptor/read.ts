@@ -6,10 +6,7 @@ import {
 import { Denops, nrepl } from "../deps.ts";
 import * as vimBufInfo from "../vim/buffer/info.ts";
 
-async function appendToBuf(
-  denops: Denops,
-  x: nrepl.bencode.Bencode,
-): Promise<void> {
+function appendToBuf(denops: Denops, x: nrepl.bencode.Bencode) {
   if (typeof x === "string") {
     vimBufInfo.appendLines(denops, x.split(/\r?\n/));
   }
@@ -19,8 +16,8 @@ export class ReadInterceptor extends BaseInterceptor {
   readonly type: InterceptorType = "read";
   readonly name: string = "diced nrepl reade";
 
-  async leave(ctx: InterceptorContext): Promise<InterceptorContext> {
-    if (ctx.response == null) return ctx;
+  leave(ctx: InterceptorContext): Promise<InterceptorContext> {
+    if (ctx.response == null) return Promise.resolve(ctx);
 
     const res = ctx.response.params["response"] as nrepl.NreplResponse;
     const isVerbose = (res.context["verbose"] !== "false");
@@ -32,6 +29,6 @@ export class ReadInterceptor extends BaseInterceptor {
       appendToBuf(denops, res.getFirst("pprint-out"));
     }
 
-    return ctx;
+    return Promise.resolve(ctx);
   }
 }

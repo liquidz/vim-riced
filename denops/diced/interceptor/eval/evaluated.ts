@@ -11,12 +11,12 @@ export class EvaluatedInterceptor extends BaseInterceptor {
   readonly type: InterceptorType = "eval";
   readonly name: string = "diced evaluated result";
 
-  async leave(ctx: InterceptorContext): Promise<InterceptorContext> {
-    if (ctx.response == null) return ctx;
+  leave(ctx: InterceptorContext): Promise<InterceptorContext> {
+    if (ctx.response == null) return Promise.resolve(ctx);
 
     const done = ctx.response.params["response"] as nrepl.NreplDoneResponse;
     const verbose = (done.context["verbose"] ?? "true") === "true";
-    if (!verbose) return ctx;
+    if (!verbose) return Promise.resolve(ctx);
 
     const diced = ctx.response.diced;
     const values = done.getAll("value");
@@ -24,6 +24,6 @@ export class EvaluatedInterceptor extends BaseInterceptor {
       if (typeof v !== "string") continue;
       msg.echoStr(diced, v);
     }
-    return ctx;
+    return Promise.resolve(ctx);
   }
 }
