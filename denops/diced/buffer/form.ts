@@ -1,10 +1,10 @@
-import { Denops, fns, unknownutil, vars } from "../deps.ts";
+import { Denops, dpsFns, dpsVars, unknownutil } from "../deps.ts";
 import { Cursor } from "../types.ts";
 import * as strParedit from "../string/paredit.ts";
 import * as vimView from "../vim/view.ts";
 
 async function currentCursor(denops: Denops): Promise<Cursor> {
-  const pos = await fns.getpos(denops, ".");
+  const pos = await dpsFns.getpos(denops, ".");
   const [, lnum, col] = pos;
   // lnum and cnum is 1-based index, so convert to 0-based index
   return { line: lnum - 1, column: col - 1 };
@@ -31,7 +31,7 @@ async function getAroundSrcAndIdx(
   const startLnum = Math.max(0, cursor.line - offset);
   const endLnum = cursor.line + offset;
 
-  const lines = await fns.getline(denops, startLnum, endLnum);
+  const lines = await dpsFns.getline(denops, startLnum, endLnum);
   return [lines.join("\n"), cursorToIndex(lines, startLnum, cursor)];
 }
 
@@ -51,7 +51,7 @@ export async function getCurrentForm(denops: Denops): Promise<string> {
   const view = await vimView.saveView(denops);
   try {
     await denops.cmd("normal! yab");
-    const code = await vars.register.get(denops, "@");
+    const code = await dpsVars.register.get(denops, "@");
     unknownutil.ensureString(code);
     return code;
   } finally {

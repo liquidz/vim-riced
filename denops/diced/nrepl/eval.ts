@@ -1,5 +1,5 @@
 import { Diced, NreplEvalOption } from "../types.ts";
-import { fns, unknownutil } from "../deps.ts";
+import { dpsFns, unknownutil } from "../deps.ts";
 import * as ops from "./operation/core.ts";
 
 export async function evalCode(
@@ -37,7 +37,7 @@ export async function evalCode(
 
 export async function loadFile(diced: Diced): Promise<boolean> {
   const denops = diced.denops;
-  const content = (await fns.getline(denops, 1, "$")).join("\n");
+  const content = (await dpsFns.getline(denops, 1, "$")).join("\n");
   const [fileName, filePath] = await denops.batch(
     ["expand", "%"],
     ["expand", "%:p"],

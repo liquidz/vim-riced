@@ -4,10 +4,10 @@ export type {
   Dispatcher,
   Meta,
 } from "https://deno.land/x/denops_std@v1.8.1/mod.ts";
-export { execute } from "https://deno.land/x/denops_std@v1.8.1/helper/mod.ts";
-export * as autocmd from "https://deno.land/x/denops_std@v1.8.1/autocmd/mod.ts";
-export * as fns from "https://deno.land/x/denops_std@v1.8.1/function/mod.ts";
-export * as vars from "https://deno.land/x/denops_std@v1.8.1/variable/mod.ts";
+export * as dpsHelper from "https://deno.land/x/denops_std@v1.8.1/helper/mod.ts";
+export * as dpsAutocmd from "https://deno.land/x/denops_std@v1.8.1/autocmd/mod.ts";
+export * as dpsFns from "https://deno.land/x/denops_std@v1.8.1/function/mod.ts";
+export * as dpsVars from "https://deno.land/x/denops_std@v1.8.1/variable/mod.ts";
 
 export * as snakeCase from "https://deno.land/x/case@v2.1.0/snakeCase.ts";
 export * as dejs from "https://deno.land/x/dejs@0.10.1/mod.ts";

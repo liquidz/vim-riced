@@ -1,5 +1,5 @@
 import { Command, Diced } from "../types.ts";
-import { execute, snakeCase } from "../deps.ts";
+import { dpsHelper, snakeCase } from "../deps.ts";
 
 import * as _buffer from "./buffer.ts";
 import * as _connect from "./connect.ts";
@@ -42,7 +42,7 @@ export function generateRegisterCommand(diced: Diced, cmd: Command): string {
 }
 
 export async function registerInitialCommands(diced: Diced): Promise<void> {
-  await execute(
+  await dpsHelper.execute(
     diced.denops,
     allCommands.map((c) => generateRegisterCommand(diced, c)).join("\n"),
   );

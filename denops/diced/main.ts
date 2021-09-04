@@ -1,4 +1,4 @@
-import { Denops, execute, unknownutil, vars } from "./deps.ts";
+import { Denops, dpsHelper, dpsVars, unknownutil } from "./deps.ts";
 import {
   BaseInterceptor,
   CompleteCandidate,
@@ -40,8 +40,8 @@ async function initializeGlobalVariable(
   name: string,
   defaultValue: unknown,
 ) {
-  const value = await vars.g.get(denops, name, defaultValue);
-  await vars.g.set(denops, name, value);
+  const value = await dpsVars.g.get(denops, name, defaultValue);
+  await dpsVars.g.set(denops, name, value);
 }
 
 async function initializeGlobalVariables(
@@ -59,7 +59,7 @@ export async function main(denops: Denops) {
   denops.dispatcher = {
     async setup(): Promise<void> {
       await cmd.registerInitialCommands(diced);
-      await execute(
+      await dpsHelper.execute(
         denops,
         `
         command! -range   DicedTest call denops#notify("${denops.name}", "test", [])
@@ -95,6 +95,6 @@ export async function main(denops: Denops) {
   };
 
   console.log(`${denops.name}: Ready`);
-  await vars.g.set(denops, "diced#initialized", true);
+  await dpsVars.g.set(denops, "diced#initialized", true);
   await denops.cmd("doautocmd <nomodeline> User DicedReady");
 }

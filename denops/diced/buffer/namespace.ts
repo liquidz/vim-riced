@@ -1,4 +1,4 @@
-import { fns, unknownutil } from "../deps.ts";
+import { dpsFns, unknownutil } from "../deps.ts";
 import { Diced } from "../types.ts";
 import * as vimView from "../vim/view.ts";
 import * as bufForm from "./form.ts";
@@ -7,7 +7,7 @@ import * as strNs from "../string/namespace.ts";
 async function searchNsForm(diced: Diced): Promise<boolean> {
   const denops = diced.denops;
 
-  await fns.cursor(denops, 1, 1);
+  await dpsFns.cursor(denops, 1, 1);
   const [nsPos, inNsPos] = await denops.batch(
     ["searchpos", "(ns[ \r\n]", "n"],
     ["searchpos", "(in-ns[ \r\n]", "n"],
@@ -22,13 +22,13 @@ async function searchNsForm(diced: Diced): Promise<boolean> {
   if (l1 === 0 && l2 === 0) {
     return false;
   } else if (l1 !== 0 && l2 === 0) {
-    await fns.cursor(denops, l1, c1);
+    await dpsFns.cursor(denops, l1, c1);
   } else if (l1 === 0 && l2 !== 0) {
-    await fns.cursor(denops, l2, c2);
+    await dpsFns.cursor(denops, l2, c2);
   } else if (l1 < l2) {
-    await fns.cursor(denops, l1, c1);
+    await dpsFns.cursor(denops, l1, c1);
   } else {
-    await fns.cursor(denops, l2, c2);
+    await dpsFns.cursor(denops, l2, c2);
   }
   return true;
 }

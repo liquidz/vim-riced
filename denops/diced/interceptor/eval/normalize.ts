@@ -3,7 +3,7 @@ import {
   InterceptorContext,
   InterceptorType,
 } from "../../types.ts";
-import { vars } from "../../deps.ts";
+import { dpsVars } from "../../deps.ts";
 
 export class NormalizeCodeInterceptor extends BaseInterceptor {
   readonly type: InterceptorType = "eval";
@@ -14,7 +14,7 @@ export class NormalizeCodeInterceptor extends BaseInterceptor {
     const code = msg["code"] ?? "";
     if (code === "") return ctx;
 
-    const flag = await vars.g.get(
+    const flag = await dpsVars.g.get(
       ctx.request.diced.denops,
       "diced_does_eval_inside_comment",
     );

@@ -1,4 +1,4 @@
-import { Denops, fns } from "../../deps.ts";
+import { Denops, dpsFns } from "../../deps.ts";
 
 export async function focusByWinNr(
   denops: Denops,
@@ -22,7 +22,7 @@ export async function isVisible(
   denops: Denops,
   bufName: string,
 ): Promise<boolean> {
-  return (await fns.bufwinnr(denops, bufName) !== -1);
+  return (await dpsFns.bufwinnr(denops, bufName) !== -1);
 }
 
 export async function open(
@@ -71,7 +71,7 @@ export async function appendLine(
   if (denops.meta.host === "vim") {
     await denops.call("appendbufline", bufName, "$", oneLine);
   } else {
-    const bufNr = await fns.bufnr(denops, bufName);
+    const bufNr = await dpsFns.bufnr(denops, bufName);
     await denops.call("nvim_buf_set_lines", bufNr, -1, -1, 0, [
       oneLine,
     ]);
