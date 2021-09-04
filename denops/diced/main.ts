@@ -18,6 +18,7 @@ const initialInterceptors: BaseInterceptor[] = [
   new interceptor.NormalizeCodeInterceptor(),
   new interceptor.BufferInitializationInterceptor(),
   new interceptor.NormalizeNsPathInterceptor(),
+  new interceptor.EvaluatedInterceptor(),
 ];
 
 export class DicedImpl implements Diced {

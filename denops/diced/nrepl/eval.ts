@@ -23,16 +23,9 @@ export async function evalCode(
   }
 
   const res = await ops.evalOp(diced, code, _option);
-  const values = res.getAll("value");
-
-  const verbose = (res.context["verbose"] ?? "true") === "true";
-  if (verbose) {
-    for (const v of values) {
-      console.log(v);
-    }
-  }
-
-  return values as string[];
+  return res.getAll("value").filter((v) => {
+    return (typeof v === "string");
+  }) as string[];
 }
 
 export async function loadFile(diced: Diced): Promise<boolean> {
