@@ -1,6 +1,7 @@
 import { nrepl } from "../../deps.ts";
 import { Diced } from "../../types.ts";
 import { request } from "../common.ts";
+import * as nreplNs from "../namespace.ts";
 
 export function completeOp(
   diced: Diced,
@@ -78,4 +79,19 @@ export function nsPathOp(
     "ns": nsName,
   };
   return request(diced, "ns-path", req, _option.context ?? {});
+}
+
+export async function info(
+  diced: Diced,
+  symbol: string,
+  option?: { nsName?: string; context?: nrepl.Context; session?: string },
+): Promise<nrepl.NreplDoneResponse> {
+  const _option = option || {};
+  const req: nrepl.NreplRequest = {
+    session: _option.session ??
+      diced.connectionManager.currentConnection.session,
+    "ns": _option.nsName ?? await nreplNs.name(diced),
+    "sym": symbol,
+  };
+  return await request(diced, "info", req, _option.context ?? {});
 }

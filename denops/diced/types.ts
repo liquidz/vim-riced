@@ -9,6 +9,7 @@ export type NreplOp =
   | "load-file"
   // cider-nrepl
   | "complete"
+  | "info"
   | "ns-path"
   | "ns-vars-with-meta"
   | "test-var-query";
