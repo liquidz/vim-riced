@@ -3,6 +3,7 @@ import { dpsHelper, snakeCase } from "../deps.ts";
 
 import * as _buffer from "./buffer.ts";
 import * as _connect from "./connect.ts";
+import * as _document from "./document.ts";
 import * as _eval from "./eval.ts";
 import * as _setting from "./setting.ts";
 import * as _test from "./test.ts";
@@ -11,6 +12,7 @@ const allCommands: Array<Command> = [
   _buffer.OpenInfoBuffer,
   _connect.Connect,
   _connect.Disconnect,
+  _document.ShowDocument,
   _eval.EvalCode,
   _eval.EvalOuterList,
   _eval.EvalOuterTopList,
