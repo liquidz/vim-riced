@@ -3,6 +3,11 @@ import { Cursor } from "../types.ts";
 import * as strParedit from "../string/paredit.ts";
 import * as vimView from "../vim/view.ts";
 
+export async function cword(denops: Denops): Promise<string> {
+  const res = await denops.call("diced#buffer#cword");
+  return (typeof res === "string") ? res : "";
+}
+
 async function currentCursor(denops: Denops): Promise<Cursor> {
   const pos = await dpsFns.getpos(denops, ".");
   const [, lnum, col] = pos;
