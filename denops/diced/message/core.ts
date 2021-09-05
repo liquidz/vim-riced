@@ -4,6 +4,10 @@ import * as en from "./en-US.ts";
 
 type TranslationKey = keyof typeof en.Translation;
 
+function escape(s: string): string {
+  return s.replaceAll(/'/g, "''");
+}
+
 export async function getMessage(
   key: TranslationKey,
   params?: dejs.Params,
@@ -20,7 +24,7 @@ async function echomWithHighlight(
   await diced.denops.cmd(`echohl ${highlight}`);
   try {
     for (const m of message.split("\n")) {
-      await diced.denops.cmd(`echom '${m}'`);
+      await diced.denops.cmd(`echom '${escape(m)}'`);
     }
   } finally {
     await diced.denops.cmd("echohl None");
@@ -29,7 +33,7 @@ async function echomWithHighlight(
 
 export async function echoStr(diced: Diced, message: string): Promise<void> {
   for (const m of message.split("\n")) {
-    await diced.denops.cmd(`echom '${m}'`);
+    await diced.denops.cmd(`echo '${escape(m)}'`);
   }
 }
 
