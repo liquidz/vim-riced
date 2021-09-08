@@ -2,14 +2,16 @@ import { Denops, dpsHelper, dpsVars, unknownutil } from "./deps.ts";
 import {
   BaseInterceptor,
   CompleteCandidate,
-  ConnectionManager,
-  Diced,
-  InterceptorType,
+  //ConnectionManager,
+  //Diced,
+  //InterceptorType,
 } from "./types.ts";
-import * as nreplConnect from "./nrepl/connect/mod.ts";
+//import * as nreplConnect from "./nrepl/connect/mod.ts";
 import * as interceptor from "./interceptor/mod.ts";
 import * as nreplComplete from "./nrepl/complete.ts";
 import * as cmd from "./command/core.ts";
+
+import * as core from "./@core/mod.ts";
 
 const initialInterceptors: BaseInterceptor[] = [
   new interceptor.ReadInterceptor(),
@@ -21,21 +23,21 @@ const initialInterceptors: BaseInterceptor[] = [
   new interceptor.EvaluatedInterceptor(),
 ];
 
-export class DicedImpl implements Diced {
-  readonly denops: Denops;
-  readonly interceptors: { [key in InterceptorType]+?: BaseInterceptor[] };
-  readonly connectionManager: ConnectionManager;
-
-  constructor(denops: Denops) {
-    this.denops = denops;
-    this.interceptors = {};
-    this.connectionManager = new nreplConnect.ConnectionManagerImpl();
-
-    for (const i of initialInterceptors) {
-      interceptor.addInterceptor(this, i);
-    }
-  }
-}
+// export class DicedImpl implements Diced {
+//   readonly denops: Denops;
+//   readonly interceptors: { [key in InterceptorType]+?: BaseInterceptor[] };
+//   readonly connectionManager: ConnectionManager;
+//
+//   constructor(denops: Denops) {
+//     this.denops = denops;
+//     this.interceptors = {};
+//     this.connectionManager = new nreplConnect.ConnectionManagerImpl();
+//
+//     for (const i of initialInterceptors) {
+//       interceptor.addInterceptor(this, i);
+//     }
+//   }
+// }
 
 async function initializeGlobalVariable(
   denops: Denops,
@@ -56,11 +58,18 @@ async function initializeGlobalVariables(
 }
 
 export async function main(denops: Denops) {
-  const diced = new DicedImpl(denops);
+  //const diced = new DicedImpl(denops);
+  const diced = new core.DicedImpl(denops);
 
   denops.dispatcher = {
     async setup(): Promise<void> {
       await cmd.registerInitialCommands(diced);
+
+      // add interceptors
+      for (const i of initialInterceptors) {
+        core.addInterceptor(diced, i);
+      }
+
       await dpsHelper.execute(
         denops,
         `

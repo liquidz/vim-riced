@@ -1,14 +1,10 @@
-import {
-  BaseInterceptor,
-  InterceptorContext,
-  InterceptorType,
-} from "../types.ts";
+import { BaseInterceptor, InterceptorContext } from "../types.ts";
 import { nrepl, unknownutil } from "../deps.ts";
 import * as strPath from "../string/path.ts";
 import * as interceptorUtil from "./util.ts";
 
 export class NormalizeNsPathInterceptor extends BaseInterceptor {
-  readonly type: InterceptorType = "ns-path";
+  readonly type: string = "ns-path";
   readonly name: string = "ns-path normalize";
 
   leave(ctx: InterceptorContext): Promise<InterceptorContext> {

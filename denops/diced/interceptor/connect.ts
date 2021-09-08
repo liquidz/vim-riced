@@ -1,8 +1,4 @@
-import {
-  BaseInterceptor,
-  InterceptorContext,
-  InterceptorType,
-} from "../types.ts";
+import { BaseInterceptor, InterceptorContext } from "../types.ts";
 import * as denoFs from "../deno/fs.ts";
 import * as msg from "../message/core.ts";
 import * as nreplNs from "../nrepl/namespace.ts";
@@ -11,7 +7,7 @@ import * as bufNs from "../buffer/namespace.ts";
 import * as vimBufInfo from "../vim/buffer/info.ts";
 
 export class ConnectedInterceptor extends BaseInterceptor {
-  readonly type: InterceptorType = "connect";
+  readonly type: string = "connect";
   readonly name: string = "diced connection";
 
   async leave(
@@ -23,16 +19,15 @@ export class ConnectedInterceptor extends BaseInterceptor {
       return ctx;
     }
 
-    const result = ctx.response.params["result"] ?? false;
-    if (!result) {
+    if (ctx.response.params["connection"] == null) {
       await msg.error(diced, "ConnectError");
       return ctx;
     }
 
-    // set initial namespace
+    // // set initial namespace
     const initialNamespace = await nreplNs.name(diced);
-    diced.connectionManager.currentConnection.initialNamespace =
-      initialNamespace;
+    // diced.connectionManager.currentConnection.initialNamespace =
+    //   initialNamespace;
 
     // switch namespace
     const currentBufferNamespace = await bufNs.extractName(diced);
@@ -50,7 +45,7 @@ export class ConnectedInterceptor extends BaseInterceptor {
 }
 
 export class PortDetectionInterceptor extends BaseInterceptor {
-  readonly type: InterceptorType = "connect";
+  readonly type: string = "connect";
   readonly name: string = "diced port detection";
 
   async enter(ctx: InterceptorContext): Promise<InterceptorContext> {
@@ -74,7 +69,7 @@ export class PortDetectionInterceptor extends BaseInterceptor {
 }
 
 export class BufferInitializationInterceptor extends BaseInterceptor {
-  readonly type: InterceptorType = "connect";
+  readonly type: string = "connect";
   readonly name: string = "diced buffer initialization";
 
   async leave(

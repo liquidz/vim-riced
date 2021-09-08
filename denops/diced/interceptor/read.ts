@@ -1,8 +1,4 @@
-import {
-  BaseInterceptor,
-  InterceptorContext,
-  InterceptorType,
-} from "../types.ts";
+import { BaseInterceptor, InterceptorContext } from "../types.ts";
 import { Denops, nrepl } from "../deps.ts";
 import * as vimBufInfo from "../vim/buffer/info.ts";
 
@@ -13,7 +9,7 @@ function appendToBuf(denops: Denops, x: nrepl.bencode.Bencode) {
 }
 
 export class ReadInterceptor extends BaseInterceptor {
-  readonly type: InterceptorType = "read";
+  readonly type: string = "read";
   readonly name: string = "diced nrepl reade";
 
   leave(ctx: InterceptorContext): Promise<InterceptorContext> {

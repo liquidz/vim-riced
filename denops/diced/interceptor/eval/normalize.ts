@@ -1,12 +1,8 @@
-import {
-  BaseInterceptor,
-  InterceptorContext,
-  InterceptorType,
-} from "../../types.ts";
+import { BaseInterceptor, InterceptorContext } from "../../types.ts";
 import { dpsVars } from "../../deps.ts";
 
 export class NormalizeCodeInterceptor extends BaseInterceptor {
-  readonly type: InterceptorType = "eval";
+  readonly type: string = "eval";
   readonly name: string = "normalize code";
 
   async enter(ctx: InterceptorContext): Promise<InterceptorContext> {

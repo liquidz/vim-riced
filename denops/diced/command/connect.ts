@@ -1,8 +1,11 @@
-import { Command, Params } from "../types.ts";
+import { Command } from "../types.ts";
 import { unknownutil } from "../deps.ts";
 
-import * as interceptor from "../interceptor/core.ts";
-import * as nreplConnect from "../nrepl/connect/core.ts";
+import * as core from "../@core/mod.ts";
+import * as msg from "../message/core.ts";
+
+//import * as interceptor from "../interceptor/core.ts";
+//import * as nreplConnect from "../nrepl/connect/core.ts";
 
 export const Connect: Command = {
   name: "Connect",
@@ -12,25 +15,26 @@ export const Connect: Command = {
     if (args.length === 0 || !unknownutil.isString(args[0])) return;
     const portStr = args[0];
     const port: number = (portStr === "") ? NaN : parseInt(portStr);
-    const params: Params = {
-      "host": "127.0.0.1",
-      "port": port,
-    };
-    await interceptor.execute(diced, "connect", params, async (ctx) => {
-      const result = await nreplConnect.connect(
-        ctx.diced,
-        ctx.params["host"] || "127.0.0.1",
-        ctx.params["port"] || port,
-      );
-      ctx.params["result"] = result;
-      return ctx;
-    });
+
+    try {
+      await core.connect(diced, "127.0.0.1", port);
+    } catch (err) {
+      if (err instanceof Deno.errors.ConnectionAborted) {
+        // Skip to connect
+      } else if (err instanceof Deno.errors.AlreadyExists) {
+        await msg.info(diced, "AlreadyConnected");
+      } else if (err instanceof Deno.errors.InvalidData) {
+        await msg.error(diced, "UnexpectedError");
+      } else if (err instanceof Deno.errors.ConnectionRefused) {
+        await msg.error(diced, "UnexpectedError");
+      }
+    }
   },
 };
 
 export const Disconnect: Command = {
   name: "Disconnect",
-  run: (diced, _) => {
-    return Promise.resolve(nreplConnect.disconnect(diced));
+  run: async (diced, _) => {
+    await core.disconnect(diced);
   },
 };

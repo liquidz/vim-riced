@@ -1,6 +1,7 @@
 import { nrepl } from "../../deps.ts";
 import { Diced } from "../../types.ts";
-import { request } from "../common.ts";
+
+import * as core from "../../@core/mod.ts";
 import * as nreplNs from "../namespace.ts";
 
 export function completeOp(
@@ -15,8 +16,8 @@ export function completeOp(
 ): Promise<nrepl.NreplDoneResponse> {
   const _option = option || {};
   const req: nrepl.NreplRequest = {
-    session: _option.session ??
-      diced.connectionManager.currentConnection.session,
+    op: "complete",
+    session: _option.session ?? core.session(diced),
     ns: args.ns,
     prefix: args.prefix,
     "extra-metadata": ["arglists", "doc"],
@@ -28,7 +29,7 @@ export function completeOp(
   if (_option.enableEnhancedCljsCompletion) {
     req["enhanced-cljs-completion?"] = "t";
   }
-  return request(diced, "complete", req, _option.context ?? {});
+  return core.request(diced, req, _option.context ?? {});
 }
 
 export function nsVarsWithMetaOp(
@@ -38,12 +39,12 @@ export function nsVarsWithMetaOp(
 ): Promise<nrepl.NreplDoneResponse> {
   const _option = option || {};
   const req: nrepl.NreplRequest = {
-    session: _option.session ??
-      diced.connectionManager.currentConnection.session,
+    op: "ns-vars-with-meta",
+    session: _option.session ?? core.session(diced),
     ns: nsName,
   };
 
-  return request(diced, "ns-vars-with-meta", req, _option.context ?? {});
+  return core.request(diced, req, _option.context ?? {});
 }
 
 // var_query examples)
@@ -60,11 +61,11 @@ export function testVarQueryOp(
 ): Promise<nrepl.NreplDoneResponse> {
   const _option = option || {};
   const req: nrepl.NreplRequest = {
-    session: _option.session ??
-      diced.connectionManager.currentConnection.session,
+    op: "test-var-query",
+    session: _option.session ?? core.session(diced),
     "var-query": varQuery,
   };
-  return request(diced, "test-var-query", req, _option.context ?? {});
+  return core.request(diced, req, _option.context ?? {});
 }
 
 export function nsPathOp(
@@ -74,11 +75,11 @@ export function nsPathOp(
 ): Promise<nrepl.NreplDoneResponse> {
   const _option = option || {};
   const req: nrepl.NreplRequest = {
-    session: _option.session ??
-      diced.connectionManager.currentConnection.session,
+    op: "ns-path",
+    session: _option.session ?? core.session(diced),
     "ns": nsName,
   };
-  return request(diced, "ns-path", req, _option.context ?? {});
+  return core.request(diced, req, _option.context ?? {});
 }
 
 export async function info(
@@ -88,10 +89,10 @@ export async function info(
 ): Promise<nrepl.NreplDoneResponse> {
   const _option = option || {};
   const req: nrepl.NreplRequest = {
-    session: _option.session ??
-      diced.connectionManager.currentConnection.session,
+    op: "info",
+    session: _option.session ?? core.session(diced),
     "ns": _option.nsName ?? await nreplNs.name(diced),
     "sym": symbol,
   };
-  return await request(diced, "info", req, _option.context ?? {});
+  return await core.request(diced, req, _option.context ?? {});
 }

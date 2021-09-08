@@ -1,12 +1,8 @@
-import {
-  BaseInterceptor,
-  InterceptorContext,
-  InterceptorType,
-} from "../../types.ts";
+import { BaseInterceptor, InterceptorContext } from "../../types.ts";
 import { nrepl } from "../../deps.ts";
 
 export class DebuggingEvaluationInterceptor extends BaseInterceptor {
-  readonly type: InterceptorType = "eval";
+  readonly type: string = "eval";
   readonly name: string = "debugging evaluation";
 
   enter(ctx: InterceptorContext): Promise<InterceptorContext> {
