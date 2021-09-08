@@ -1,5 +1,5 @@
 import { nrepl } from "../deps.ts";
-import { Diced } from "./types.ts";
+import { Diced } from "../types.ts";
 import * as coreInterceptor from "./interceptor.ts";
 
 export function isConnected(diced: Diced): boolean {

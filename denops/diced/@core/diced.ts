@@ -1,5 +1,5 @@
 import { Denops } from "../deps.ts";
-import { BaseInterceptor, Connection, Diced } from "./types.ts";
+import { BaseInterceptor, Connection, Diced } from "../types.ts";
 
 export class DicedImpl implements Diced {
   readonly denops: Denops;

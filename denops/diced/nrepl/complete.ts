@@ -2,6 +2,7 @@ import { CompleteCandidate, Diced } from "../types.ts";
 import { nrepl, unknownutil } from "../deps.ts";
 import * as opsCider from "./operation/cider.ts";
 import * as nreplNs from "./namespace.ts";
+import * as core from "../@core/mod.ts";
 
 const typeToKind: Record<string, string> = {
   "class": "c",
@@ -60,7 +61,7 @@ export async function candidates(
   base: string,
   option?: { ns?: string },
 ): Promise<Array<CompleteCandidate>> {
-  if (!diced.connectionManager.isConnected) {
+  if (!core.isConnected(diced)) {
     return [];
   }
   const _option = option || {};

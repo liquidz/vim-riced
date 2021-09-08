@@ -1,16 +1,46 @@
-//import { Denops, interceptor, nrepl } from "./deps.ts";
-import { nrepl } from "./deps.ts";
-import { Diced } from "./@core/types.ts";
+import { Denops, interceptor, nrepl } from "./deps.ts";
 
-// Re export
-export { BaseInterceptor } from "./@core/types.ts";
-export type {
-  AnyParams,
-  Connection,
-  Diced,
-  InterceptorContext,
-  InterceptorParams,
-} from "./@core/types.ts";
+// core {{{
+export type Connection = {
+  client: nrepl.NreplClient;
+  port: number;
+  session: string;
+};
+
+export interface Diced {
+  readonly denops: Denops;
+  connection: Connection | undefined;
+  interceptors: Record<string, Array<BaseInterceptor>>;
+}
+
+//deno-lint-ignore no-explicit-any
+export type AnyParams = Record<string, any>;
+export type InterceptorParams = {
+  diced: Diced;
+  params: AnyParams;
+};
+
+export type InterceptorContext = interceptor.Context<InterceptorParams>;
+
+export abstract class BaseInterceptor
+  implements interceptor.Interceptor<InterceptorParams> {
+  readonly type: string = "none";
+  readonly name: string = "none";
+  readonly requires?: string[];
+
+  enter(
+    ctx: InterceptorContext,
+  ): Promise<InterceptorContext> {
+    return Promise.resolve(ctx);
+  }
+
+  leave(
+    ctx: InterceptorContext,
+  ): Promise<InterceptorContext> {
+    return Promise.resolve(ctx);
+  }
+}
+// }}}
 
 export type NreplOp =
   // nrepl built-in
@@ -53,47 +83,6 @@ export type Cursor = {
 //   switch(port: number): void;
 //   remove(port: number): void;
 //   clear(): void;
-// }
-//
-// export interface Diced {
-//   readonly denops: Denops;
-//   readonly interceptors: { [key in InterceptorType]+?: BaseInterceptor[] };
-//   readonly connectionManager: ConnectionManager;
-// }
-//
-// //deno-lint-ignore no-explicit-any
-// export type Params = Record<string, any>;
-// export type InterceptorParams = {
-//   diced: Diced;
-//   params: Params;
-// };
-//
-// export type InterceptorType =
-//   | "connect"
-//   | "disconnect"
-//   | "read"
-//   | "none"
-//   | NreplOp;
-//
-// export type InterceptorContext = interceptor.Context<InterceptorParams>;
-//
-// export abstract class BaseInterceptor
-//   implements interceptor.Interceptor<InterceptorParams> {
-//   readonly type: InterceptorType = "none";
-//   readonly name: string = "none";
-//   readonly requires?: string[];
-//
-//   enter(
-//     ctx: InterceptorContext,
-//   ): Promise<InterceptorContext> {
-//     return Promise.resolve(ctx);
-//   }
-//
-//   leave(
-//     ctx: InterceptorContext,
-//   ): Promise<InterceptorContext> {
-//     return Promise.resolve(ctx);
-//   }
 // }
 
 export type Command = {

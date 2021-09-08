@@ -1,5 +1,5 @@
 import { nrepl } from "../deps.ts";
-import { Diced } from "./types.ts";
+import { Diced } from "../types.ts";
 import { isConnected } from "./connection.ts";
 import { intercept } from "./interceptor.ts";
 

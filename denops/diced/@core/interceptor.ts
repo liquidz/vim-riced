@@ -4,7 +4,7 @@ import {
   BaseInterceptor,
   Diced,
   InterceptorParams,
-} from "./types.ts";
+} from "../types.ts";
 
 /// Execute registered interceptors for specified interceptor type
 export async function intercept(
