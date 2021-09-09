@@ -1,11 +1,11 @@
 import { Denops, interceptor, nrepl } from "./deps.ts";
 
 // core {{{
-export type Connection = {
+export interface Connection {
   client: nrepl.NreplClient;
   port: number;
   session: string;
-};
+}
 
 export interface Diced {
   readonly denops: Denops;
@@ -15,10 +15,10 @@ export interface Diced {
 
 //deno-lint-ignore no-explicit-any
 export type AnyParams = Record<string, any>;
-export type InterceptorParams = {
+export interface InterceptorParams {
   diced: Diced;
   params: AnyParams;
-};
+}
 
 export type InterceptorContext = interceptor.Context<InterceptorParams>;
 
@@ -57,10 +57,10 @@ export type NreplOp =
   | "test-var-query";
 
 // 0-based
-export type Cursor = {
+export interface Cursor {
   line: number;
   column: number;
-};
+}
 
 // export type Connection = {
 //   client: nrepl.NreplClient;
@@ -85,7 +85,7 @@ export type Cursor = {
 //   clear(): void;
 // }
 
-export type Command = {
+export interface Command {
   name: string;
   nargs?: string;
   range?: boolean;
@@ -93,31 +93,31 @@ export type Command = {
   args?: string;
   plug?: string;
   run: (diced: Diced, args: unknown[]) => Promise<void>;
-};
+}
 
-export type NreplEvalOption = {
+export interface NreplEvalOption {
   context?: nrepl.Context;
   session?: string;
   column?: number;
   filePath?: string;
   line?: number;
   namespace?: string;
-};
+}
 
-export type CompleteCandidate = {
+export interface CompleteCandidate {
   word: string;
   kind?: string;
   menu?: string;
   info?: string;
   icase?: number;
-};
+}
 
-export type ParsedTestSummary = {
+export interface ParsedTestSummary {
   isSuccess: boolean;
   summary: string;
-};
+}
 
-export type ParsedTestError = {
+export interface ParsedTestError {
   filename: string;
   text: string;
   expected: string;
@@ -126,19 +126,19 @@ export type ParsedTestError = {
   var: string;
   lnum?: number;
   diffs?: string;
-};
+}
 
-export type ParsedTestPass = {
+export interface ParsedTestPass {
   var: string;
-};
+}
 
-export type ParsedTestActualValue = {
+export interface ParsedTestActualValue {
   actual: string;
   diffs?: string;
-};
+}
 
-export type ParsedTestResult = {
+export interface ParsedTestResult {
   errors: Array<ParsedTestError>;
   passes: Array<ParsedTestPass>;
   summary: ParsedTestSummary;
-};
+}
