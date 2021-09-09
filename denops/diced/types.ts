@@ -1,6 +1,6 @@
 import { Denops, interceptor, nrepl } from "./deps.ts";
 
-// core {{{
+// =core {{{
 export interface Connection {
   client: nrepl.NreplClient;
   port: number;
@@ -42,6 +42,7 @@ export abstract class BaseInterceptor
 }
 // }}}
 
+// =nREPL {{{
 export type NreplOp =
   // nrepl built-in
   | "close"
@@ -56,45 +57,6 @@ export type NreplOp =
   | "ns-vars-with-meta"
   | "test-var-query";
 
-// 0-based
-export interface Cursor {
-  line: number;
-  column: number;
-}
-
-// export type Connection = {
-//   client: nrepl.NreplClient;
-//   session: string;
-//   initialNamespace?: string;
-// };
-//
-// export interface ConnectionManager {
-//   isConnected: boolean;
-//   currentConnection: Connection;
-//   ports: number[];
-//   connections: Connection[];
-//   add(
-//     { port, conn, session }: {
-//       port: number;
-//       conn: nrepl.NreplClient;
-//       session: string;
-//     },
-//   ): void;
-//   switch(port: number): void;
-//   remove(port: number): void;
-//   clear(): void;
-// }
-
-export interface Command {
-  name: string;
-  nargs?: string;
-  range?: boolean;
-  complete?: string;
-  args?: string;
-  plug?: string;
-  run: (diced: Diced, args: unknown[]) => Promise<void>;
-}
-
 export interface NreplEvalOption {
   context?: nrepl.Context;
   session?: string;
@@ -103,15 +65,9 @@ export interface NreplEvalOption {
   line?: number;
   namespace?: string;
 }
+// }}}
 
-export interface CompleteCandidate {
-  word: string;
-  kind?: string;
-  menu?: string;
-  info?: string;
-  icase?: number;
-}
-
+// =test {{{
 export interface ParsedTestSummary {
   isSuccess: boolean;
   summary: string;
@@ -142,3 +98,47 @@ export interface ParsedTestResult {
   passes: Array<ParsedTestPass>;
   summary: ParsedTestSummary;
 }
+// }}}
+
+// 0-based
+export interface Cursor {
+  line: number;
+  column: number;
+}
+
+// export interface ConnectionManager {
+//   isConnected: boolean;
+//   currentConnection: Connection;
+//   ports: number[];
+//   connections: Connection[];
+//   add(
+//     { port, conn, session }: {
+//       port: number;
+//       conn: nrepl.NreplClient;
+//       session: string;
+//     },
+//   ): void;
+//   switch(port: number): void;
+//   remove(port: number): void;
+//   clear(): void;
+// }
+
+export interface Command {
+  name: string;
+  nargs?: string;
+  range?: boolean;
+  complete?: string;
+  args?: string;
+  plug?: string;
+  run: (diced: Diced, args: unknown[]) => Promise<void>;
+}
+
+export interface CompleteCandidate {
+  word: string;
+  kind?: string;
+  menu?: string;
+  info?: string;
+  icase?: number;
+}
+
+// vim: fdm=marker fdl=0
