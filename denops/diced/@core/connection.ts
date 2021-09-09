@@ -70,6 +70,7 @@ export async function connect(
       }
 
       diced.connection = {
+        type: "clj",
         client: conn,
         port: _port,
         session: session,

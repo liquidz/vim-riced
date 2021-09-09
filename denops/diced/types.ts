@@ -2,9 +2,17 @@ import { Denops, interceptor, nrepl } from "./deps.ts";
 
 // =core {{{
 export interface Connection {
+  type: "clj" | "cljs";
   client: nrepl.NreplClient;
   port: number;
   session: string;
+}
+
+export interface ConnectionManager {
+  // Connection Name=> Connection
+  connectionMap: Record<string, Connection>;
+  currentName: string;
+  current: Connection | undefined;
 }
 
 export interface Diced {
@@ -105,23 +113,6 @@ export interface Cursor {
   line: number;
   column: number;
 }
-
-// export interface ConnectionManager {
-//   isConnected: boolean;
-//   currentConnection: Connection;
-//   ports: number[];
-//   connections: Connection[];
-//   add(
-//     { port, conn, session }: {
-//       port: number;
-//       conn: nrepl.NreplClient;
-//       session: string;
-//     },
-//   ): void;
-//   switch(port: number): void;
-//   remove(port: number): void;
-//   clear(): void;
-// }
 
 export interface Command {
   name: string;
