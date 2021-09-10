@@ -1,12 +1,5 @@
 import { Denops, dpsHelper, dpsVars, unknownutil } from "./deps.ts";
-import {
-  BaseInterceptor,
-  CompleteCandidate,
-  //ConnectionManager,
-  //Diced,
-  //InterceptorType,
-} from "./types.ts";
-//import * as nreplConnect from "./nrepl/connect/mod.ts";
+import { BaseInterceptor, CompleteCandidate } from "./types.ts";
 import * as interceptor from "./interceptor/mod.ts";
 import * as nreplComplete from "./nrepl/complete.ts";
 import * as cmd from "./command/core.ts";
@@ -22,22 +15,6 @@ const initialInterceptors: BaseInterceptor[] = [
   new interceptor.NormalizeNsPathInterceptor(),
   new interceptor.EvaluatedInterceptor(),
 ];
-
-// export class DicedImpl implements Diced {
-//   readonly denops: Denops;
-//   readonly interceptors: { [key in InterceptorType]+?: BaseInterceptor[] };
-//   readonly connectionManager: ConnectionManager;
-//
-//   constructor(denops: Denops) {
-//     this.denops = denops;
-//     this.interceptors = {};
-//     this.connectionManager = new nreplConnect.ConnectionManagerImpl();
-//
-//     for (const i of initialInterceptors) {
-//       interceptor.addInterceptor(this, i);
-//     }
-//   }
-// }
 
 async function initializeGlobalVariable(
   denops: Denops,

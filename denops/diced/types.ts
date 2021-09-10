@@ -17,7 +17,7 @@ export interface ConnectionManager {
 
 export interface Diced {
   readonly denops: Denops;
-  connection: Connection | undefined;
+  connection: ConnectionManager;
   interceptors: Record<string, Array<BaseInterceptor>>;
 }
 

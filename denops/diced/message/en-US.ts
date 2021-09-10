@@ -115,7 +115,7 @@ export const Translation = {
   TryConnect: "Not connected. Try `:IcedConnect <port>`",
   Unaliased: 'Unaliased "%s".',
   Undefined: "Undefined %s.",
-  UnexpectedError: "Unexpected error: %s",
+  UnexpectedError: "Unexpected error: <%= message %>",
   Unknown: '"%s" is unknown.',
   UnknownHookType: 'Hook type "%s" is unknown or not supported.',
   Untraced: "Untraced.",

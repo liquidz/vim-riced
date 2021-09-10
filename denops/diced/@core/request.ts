@@ -8,7 +8,7 @@ export async function request(
   message: nrepl.NreplRequest,
   context?: nrepl.Context,
 ): Promise<nrepl.NreplDoneResponse> {
-  const conn = diced.connection;
+  const conn = diced.connection.current;
   if (conn == null || !isConnected(diced)) {
     return Promise.reject(new Deno.errors.NotConnected());
   }

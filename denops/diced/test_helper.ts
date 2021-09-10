@@ -1,12 +1,7 @@
 import { Context, Denops, Dispatcher, Meta, nrepl } from "./deps.ts";
 import { bufio } from "./test_deps.ts";
-import * as nreplConnect from "./nrepl/connect/mod.ts";
-import {
-  BaseInterceptor,
-  ConnectionManager,
-  Diced,
-  InterceptorType,
-} from "./types.ts";
+import { BaseInterceptor, ConnectionManager, Diced } from "./types.ts";
+import * as connManager from "./@core/connection/manager.ts";
 
 class DummyDenops implements Denops {
   name: string;
@@ -100,20 +95,27 @@ class DummyNreplClient implements nrepl.NreplClient {
 
 class DummyDiced implements Diced {
   readonly denops: Denops;
-  readonly interceptors: { [key in InterceptorType]+?: BaseInterceptor[] };
-  readonly connectionManager: ConnectionManager;
+  readonly interceptors: Record<string, Array<BaseInterceptor>>;
+  readonly connection: ConnectionManager;
 
   constructor(dispacher: DummyNreplDispacher) {
     this.denops = new DummyDenops({});
     this.interceptors = {};
-    this.connectionManager = new nreplConnect.ConnectionManagerImpl();
+    this.connection = new connManager.ConnectionManagerImpl();
 
-    this.connectionManager.add({
+    connManager.addConnection(this.connection, "dummy", {
+      type: "clj",
+      client: new DummyNreplClient(dispacher),
       port: 9999,
       session: "dummy",
-      conn: new DummyNreplClient(dispacher),
     });
-    this.connectionManager.switch(9999);
+    connManager.switchConnection(this.connection, "dummy");
+    // this.connectionManager.add({
+    //   port: 9999,
+    //   session: "dummy",
+    //   conn: new DummyNreplClient(dispacher),
+    // });
+    //this.connectionManager.switch(9999);
   }
 }
 

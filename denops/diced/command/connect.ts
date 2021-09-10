@@ -4,9 +4,6 @@ import { unknownutil } from "../deps.ts";
 import * as core from "../@core/mod.ts";
 import * as msg from "../message/core.ts";
 
-//import * as interceptor from "../interceptor/core.ts";
-//import * as nreplConnect from "../nrepl/connect/core.ts";
-
 export const Connect: Command = {
   name: "Connect",
   nargs: "?",
@@ -24,9 +21,9 @@ export const Connect: Command = {
       } else if (err instanceof Deno.errors.AlreadyExists) {
         await msg.info(diced, "AlreadyConnected");
       } else if (err instanceof Deno.errors.InvalidData) {
-        await msg.error(diced, "UnexpectedError");
+        await msg.error(diced, "UnexpectedError", { message: err.message });
       } else if (err instanceof Deno.errors.ConnectionRefused) {
-        await msg.error(diced, "UnexpectedError");
+        await msg.error(diced, "UnexpectedError", { message: err.message });
       }
     }
   },
