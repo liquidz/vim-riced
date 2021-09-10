@@ -1,7 +1,7 @@
 import { Command } from "../types.ts";
 import { unknownutil } from "../deps.ts";
 
-import * as core from "../@core/mod.ts";
+import * as core from "../core/mod.ts";
 import * as msg from "../message/core.ts";
 
 export const Connect: Command = {

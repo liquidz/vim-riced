@@ -1,7 +1,7 @@
 import { Command, Diced } from "../types.ts";
 
 //import * as interceptor from "../interceptor/core.ts";
-import * as core from "../@core/mod.ts";
+import * as core from "../core/mod.ts";
 import * as msg from "../message/core.ts";
 import * as iEvalDebug from "../interceptor/eval/debug.ts";
 

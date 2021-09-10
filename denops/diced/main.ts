@@ -10,7 +10,7 @@ import * as interceptor from "./interceptor/mod.ts";
 import * as nreplComplete from "./nrepl/complete.ts";
 import * as cmd from "./command/core.ts";
 
-import * as core from "./@core/mod.ts";
+import * as core from "./core/mod.ts";
 
 const initialInterceptors: BaseInterceptor[] = [
   new interceptor.ReadInterceptor(),
@@ -84,7 +84,7 @@ async function registerBuiltInPlugins(
       home,
       "denops",
       "diced",
-      "@builtin",
+      "builtin",
       name,
       "mod.ts",
     );

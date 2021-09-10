@@ -2,7 +2,7 @@
 import { nrepl } from "../../deps.ts";
 import { Diced, NreplEvalOption } from "../../types.ts";
 
-import * as core from "../../@core/mod.ts";
+import * as core from "../../core/mod.ts";
 
 export function closeOp(
   diced: Diced,

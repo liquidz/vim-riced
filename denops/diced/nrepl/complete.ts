@@ -2,7 +2,7 @@ import { CompleteCandidate, Diced } from "../types.ts";
 import { nrepl, unknownutil } from "../deps.ts";
 import * as opsCider from "./operation/cider.ts";
 import * as nreplNs from "./namespace.ts";
-import * as core from "../@core/mod.ts";
+import * as core from "../core/mod.ts";
 
 const typeToKind: Record<string, string> = {
   "class": "c",

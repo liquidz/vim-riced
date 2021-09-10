@@ -1,7 +1,7 @@
 import { Context, Denops, Dispatcher, Meta, nrepl } from "./deps.ts";
 import { bufio } from "./test_deps.ts";
 import { BaseInterceptor, ConnectionManager, Diced } from "./types.ts";
-import * as connManager from "./@core/connection/manager.ts";
+import * as connManager from "./core/connection/manager.ts";
 
 class DummyDenops implements Denops {
   name: string;

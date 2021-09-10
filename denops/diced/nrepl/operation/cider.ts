@@ -1,7 +1,7 @@
 import { nrepl } from "../../deps.ts";
 import { Diced } from "../../types.ts";
 
-import * as core from "../../@core/mod.ts";
+import * as core from "../../core/mod.ts";
 import * as nreplNs from "../namespace.ts";
 
 export function completeOp(
