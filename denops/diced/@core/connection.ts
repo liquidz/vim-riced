@@ -1,4 +1,4 @@
-import { nrepl } from "../deps.ts";
+import { interceptor, nrepl } from "../deps.ts";
 import { Diced } from "../types.ts";
 import * as coreInterceptor from "./interceptor.ts";
 import * as connManager from "./connection/manager.ts";
@@ -86,8 +86,11 @@ export async function connect(
 
     return true;
   } catch (err) {
-    console.log(err);
-    return Promise.reject(new Deno.errors.ConnectionRefused(err.message));
+    if (err instanceof interceptor.ExecutionError) {
+      return Promise.reject(err);
+    } else {
+      return Promise.reject(new Deno.errors.ConnectionRefused(err.message));
+    }
   }
 }
 
