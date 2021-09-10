@@ -14,6 +14,10 @@ export class ConnectionManagerImpl implements ConnectionManager {
   }
 }
 
+export function hasConnection(cm: ConnectionManager, port: number): boolean {
+  return (Object.values(cm.connectionMap).some((c) => c.port === port));
+}
+
 export function addConnection(
   cm: ConnectionManager,
   name: string,
@@ -23,7 +27,7 @@ export function addConnection(
     return false;
   }
 
-  if (Object.values(cm.connectionMap).some((c) => c.port === conn.port)) {
+  if (hasConnection(cm, conn.port)) {
     return false;
   }
 

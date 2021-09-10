@@ -1,14 +1,15 @@
 import { nrepl } from "../deps.ts";
 import { Diced } from "../types.ts";
 import * as coreInterceptor from "./interceptor.ts";
+import * as connManager from "./connection/manager.ts";
 
 export function isConnected(diced: Diced): boolean {
-  if (diced.connection == null) return false;
-  return !diced.connection.client.isClosed;
+  if (diced.connection.current == null) return false;
+  return !diced.connection.current.client.isClosed;
 }
 
 export function session(diced: Diced): string {
-  return isConnected(diced) ? diced.connection!.session : "";
+  return isConnected(diced) ? diced.connection.current!.session : "";
 }
 
 async function nReplClientHandler(diced: Diced, conn: nrepl.NreplClient) {
@@ -49,7 +50,7 @@ export async function connect(
         );
       }
 
-      if (diced.connection != null && diced.connection.port === _port) {
+      if (connManager.hasConnection(diced.connection, _port)) {
         return Promise.reject(
           new Deno.errors.AlreadyExists("Already connected"),
         );
@@ -69,32 +70,37 @@ export async function connect(
         );
       }
 
-      diced.connection = {
+      const addResult = connManager.addConnection(diced.connection, "dummy", {
         type: "clj",
         client: conn,
         port: _port,
         session: session,
-      };
+      });
+      if (addResult) {
+        connManager.switchConnection(diced.connection, "dummy");
+      }
 
       ctx.params["connection"] = conn;
       return ctx;
     });
 
     return true;
-  } catch (_err) {
-    return Promise.reject(new Deno.errors.ConnectionRefused());
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(new Deno.errors.ConnectionRefused(err.message));
   }
 }
 
 export async function disconnect(diced: Diced) {
   if (!isConnected(diced)) return;
 
-  await coreInterceptor.intercept(diced, "disconnect", {}, async (ctx) => {
-    const conn = ctx.diced.connection;
+  await coreInterceptor.intercept(diced, "disconnect", {}, (ctx) => {
+    const conn = ctx.diced.connection.current;
     if (conn != null) {
       conn.client.close();
-      ctx.diced.connection = undefined;
+      ctx.diced.connection.currentName = "";
+      //ctx.diced.connection = undefined;
     }
-    return ctx;
+    return Promise.resolve(ctx);
   });
 }
