@@ -50,21 +50,16 @@ export abstract class BaseInterceptor
 }
 // }}}
 
-// =nREPL {{{
-export type NreplOp =
-  // nrepl built-in
-  | "close"
-  | "describe"
-  | "eval"
-  | "interrupt"
-  | "load-file"
-  // cider-nrepl
-  | "complete"
-  | "info"
-  | "ns-path"
-  | "ns-vars-with-meta"
-  | "test-var-query";
+export abstract class BasePlugin {
+  readonly commands: Array<Command> = [];
+  readonly interceptors: Array<BaseInterceptor> = [];
 
+  onInit(_diced: Diced): Promise<void> {
+    return Promise.resolve();
+  }
+}
+
+// =nREPL {{{
 export interface NreplEvalOption {
   context?: nrepl.Context;
   session?: string;

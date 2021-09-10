@@ -1,5 +1,11 @@
-import { Denops, dpsHelper, dpsVars, unknownutil } from "./deps.ts";
-import { BaseInterceptor, CompleteCandidate } from "./types.ts";
+import { Denops, dpsHelper, dpsVars, path, unknownutil } from "./deps.ts";
+import {
+  BaseInterceptor,
+  BasePlugin,
+  Command,
+  CompleteCandidate,
+  Diced,
+} from "./types.ts";
 import * as interceptor from "./interceptor/mod.ts";
 import * as nreplComplete from "./nrepl/complete.ts";
 import * as cmd from "./command/core.ts";
@@ -15,6 +21,9 @@ const initialInterceptors: BaseInterceptor[] = [
   new interceptor.NormalizeNsPathInterceptor(),
   new interceptor.EvaluatedInterceptor(),
 ];
+
+const commandMap: Record<string, Command> = {};
+const registeredPluginPaths: Record<string, boolean> = {};
 
 async function initializeGlobalVariable(
   denops: Denops,
@@ -32,6 +41,55 @@ async function initializeGlobalVariables(
   for (const name in m) {
     await initializeGlobalVariable(denops, name, m[name]);
   }
+}
+
+async function registerPlugin(diced: Diced, filePath: string): Promise<void> {
+  // Avoid multiple loading
+  if (filePath in registeredPluginPaths) return;
+  registeredPluginPaths[filePath] = true;
+
+  const mod = await import(path.toFileUrl(filePath).href);
+  const plugin: BasePlugin = new mod.Plugin();
+
+  // Register interceptors
+  for (const interceptor of plugin.interceptors) {
+    core.addInterceptor(diced, interceptor);
+  }
+
+  // Register commands
+  for (const command of plugin.commands) {
+    if (commandMap[command.name] != null) continue;
+    commandMap[command.name] = command;
+  }
+  await dpsHelper.execute(
+    diced.denops,
+    plugin.commands.map((c) => cmd.generateRegisterCommand(diced, c)).join(
+      "\n",
+    ),
+  );
+
+  // Initialize
+  await plugin.onInit(diced);
+}
+
+async function registerBuiltInPlugins(
+  diced: Diced,
+  builtInNames: Array<string>,
+): Promise<void> {
+  const home = await dpsVars.g.get(diced.denops, "vim_diced_home");
+  if (!unknownutil.isString(home)) return;
+
+  builtInNames.forEach((name) => {
+    const filePath = path.join(
+      home,
+      "denops",
+      "diced",
+      "@builtin",
+      name,
+      "mod.ts",
+    );
+    registerPlugin(diced, filePath);
+  });
 }
 
 export async function main(denops: Denops) {
@@ -60,20 +118,23 @@ export async function main(denops: Denops) {
       );
     },
 
+    async registerPlugin(filePath: unknown): Promise<void> {
+      if (!unknownutil.isString(filePath)) return;
+      await registerPlugin(diced, filePath);
+    },
+
     async test(): Promise<void> {
       await Promise.resolve(true);
     },
 
-    // async diced(fn: unknown): Promise<void> {
-    //   if (!unknownutil.isFunction(fn)) return Promise.resolve();
-    //   fn(diced);
-    // },
-
     async command(commandName: unknown, ...args: unknown[]): Promise<void> {
       if (!unknownutil.isString(commandName)) return;
-      const c = cmd.commandMap[commandName];
-      if (c == null) return;
-      await c.run(diced, args);
+      const c = commandMap[commandName];
+      if (c != null) return await c.run(diced, args);
+
+      // FIXME
+      const oldC = cmd.commandMap[commandName];
+      if (oldC != null) return await oldC.run(diced, args);
     },
 
     async complete(keyword: unknown): Promise<Array<CompleteCandidate>> {
