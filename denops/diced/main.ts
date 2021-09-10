@@ -14,8 +14,8 @@ import * as core from "./@core/mod.ts";
 
 const initialInterceptors: BaseInterceptor[] = [
   new interceptor.ReadInterceptor(),
-  new interceptor.PortDetectionInterceptor(),
-  new interceptor.ConnectedInterceptor(),
+  //new interceptor.PortDetectionInterceptor(),
+  //new interceptor.ConnectedInterceptor(),
   new interceptor.NormalizeCodeInterceptor(),
   new interceptor.BufferInitializationInterceptor(),
   new interceptor.NormalizeNsPathInterceptor(),
@@ -98,6 +98,9 @@ export async function main(denops: Denops) {
 
   denops.dispatcher = {
     async setup(): Promise<void> {
+      // Register built-ins
+      registerBuiltInPlugins(diced, ["connection"]);
+
       await cmd.registerInitialCommands(diced);
 
       // add interceptors

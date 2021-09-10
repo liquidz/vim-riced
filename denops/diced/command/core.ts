@@ -10,8 +10,8 @@ import * as _test from "./test.ts";
 
 const allCommands: Array<Command> = [
   _buffer.OpenInfoBuffer,
-  _connect.Connect,
-  _connect.Disconnect,
+  // _connect.Connect,
+  // _connect.Disconnect,
   _document.ShowDocument,
   _eval.EvalCode,
   _eval.EvalOuterList,
