@@ -10,8 +10,7 @@ import * as nreplDesc from "../../std/nrepl/describe.ts";
 import * as opsCider from "../../std/nrepl/operation/cider.ts";
 import * as strCommon from "../../std/string/common.ts";
 import * as strNs from "../../std/string/namespace.ts";
-
-//import * as vimBufInfo from "../vim/buffer/info.ts";
+import * as dicedApi from "../../std/diced/api.ts";
 
 import { ParsedTestResult } from "./types.ts";
 import * as nreplTestCider from "./nrepl/cider.ts";
@@ -162,9 +161,9 @@ async function doneTest(diced: Diced, result: ParsedTestResult): Promise<void> {
     }
   }
 
-  // if (errLines.length !== 0) {
-  //   await vimBufInfo.appendLines(diced.denops, errLines);
-  // }
+  if (errLines.length !== 0) {
+    await dicedApi.call(diced, "info_buffer_append_lines", errLines);
+  }
 
   if (result.summary.isSuccess) {
     await msg.infoStr(diced, result.summary.summary);

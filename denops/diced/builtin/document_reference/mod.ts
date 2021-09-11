@@ -3,6 +3,7 @@ import { unknownutil } from "../../deps.ts";
 
 import * as bufForm from "../../std/buffer/form.ts";
 import * as opsCider from "../../std/nrepl/operation/cider.ts";
+import * as dicedApi from "../../std/diced/api.ts";
 
 import * as cider from "./cider.ts";
 
@@ -18,9 +19,8 @@ const ShowDocument: Command = {
 
     const res = await opsCider.info(diced, symbol);
     const doc = await cider.generateClojureDocument(res);
-    // FIXME
-    //vimBufInfo.appendLines(diced.denops, doc);
-    console.log(doc);
+
+    dicedApi.call(diced, "info_buffer_append_lines", doc);
   },
 };
 
