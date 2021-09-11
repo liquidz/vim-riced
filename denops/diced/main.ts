@@ -67,6 +67,7 @@ export async function main(denops: Denops) {
         "complete",
         "clojure_test",
         "diced_debug",
+        "document_reference",
         "info_buffer",
       ]);
 
