@@ -1,4 +1,4 @@
-import { asserts } from "../test_deps.ts";
+import { asserts } from "../../test_deps.ts";
 import * as sut from "./path.ts";
 
 Deno.test("normalize", () => {

@@ -1,6 +1,6 @@
 // Namespace functions
 // Functions related to namespace to be processed through nREPL
-import { Diced } from "../types.ts";
+import { Diced } from "../../types.ts";
 import * as nreplEval from "./eval.ts";
 
 export async function name(diced: Diced): Promise<string> {

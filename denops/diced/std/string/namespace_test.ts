@@ -1,4 +1,4 @@
-import { asserts } from "../test_deps.ts";
+import { asserts } from "../../test_deps.ts";
 import * as sut from "./namespace.ts";
 
 Deno.test("string.namespace.extractName", () => {

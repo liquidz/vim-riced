@@ -1,8 +1,8 @@
 // https://nrepl.org/nrepl/0.8/ops.html
-import { nrepl } from "../../deps.ts";
-import { Diced, NreplEvalOption } from "../../types.ts";
+import { nrepl } from "../../../deps.ts";
+import { Diced, NreplEvalOption } from "../../../types.ts";
 
-import * as core from "../../core/mod.ts";
+import * as core from "../../../core/mod.ts";
 
 export function closeOp(
   diced: Diced,

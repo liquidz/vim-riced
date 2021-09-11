@@ -1,5 +1,5 @@
-import { dpsFns, unknownutil } from "../deps.ts";
-import { Diced } from "../types.ts";
+import { dpsFns, unknownutil } from "../../deps.ts";
+import { Diced } from "../../types.ts";
 import * as vimView from "../vim/view.ts";
 import * as bufForm from "./form.ts";
 import * as strNs from "../string/namespace.ts";
@@ -34,18 +34,18 @@ async function searchNsForm(diced: Diced): Promise<boolean> {
 }
 
 export async function extractName(diced: Diced): Promise<string> {
-  const view = await vimView.saveView(diced.denops);
+  const view = await vimView.saveView(diced);
   try {
     const doesExists = await searchNsForm(diced);
     if (!doesExists) {
       return Promise.reject(new Deno.errors.NotFound("ns form is not found"));
     }
 
-    const form = await bufForm.getCurrentTopForm(diced.denops);
+    const form = await bufForm.getCurrentTopForm(diced);
     return strNs.extractName(form);
   } catch (err) {
     return Promise.reject(err);
   } finally {
-    await vimView.restView(diced.denops, view);
+    await vimView.restView(diced, view);
   }
 }

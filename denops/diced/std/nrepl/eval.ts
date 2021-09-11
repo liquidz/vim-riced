@@ -1,6 +1,6 @@
-import { Diced, NreplEvalOption } from "../types.ts";
-import { dpsFns, unknownutil } from "../deps.ts";
-import * as ops from "./operation/core.ts";
+import { Diced, NreplEvalOption } from "../../types.ts";
+import { dpsFns, unknownutil } from "../../deps.ts";
+import * as ops from "./operation/nrepl.ts";
 
 export async function evalCode(
   diced: Diced,

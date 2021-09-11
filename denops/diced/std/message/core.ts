@@ -1,5 +1,5 @@
-import { dejs } from "../deps.ts";
-import { Diced } from "../types.ts";
+import { dejs } from "../../deps.ts";
+import { Diced } from "../../types.ts";
 import * as en from "./en-US.ts";
 
 type TranslationKey = keyof typeof en.Translation;

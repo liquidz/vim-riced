@@ -1,9 +1,9 @@
 import { BaseInterceptor, InterceptorContext } from "../../types.ts";
 
-import * as bufNs from "../../buffer/namespace.ts";
-import * as msg from "../../message/core.ts";
-import * as nreplEval from "../../nrepl/eval.ts";
-import * as nreplNs from "../../nrepl/namespace.ts";
+import * as bufNs from "../../std/buffer/namespace.ts";
+import * as msg from "../../std/message/core.ts";
+import * as nreplEval from "../../std/nrepl/eval.ts";
+import * as nreplNs from "../../std/nrepl/namespace.ts";
 
 export class ConnectedInterceptor extends BaseInterceptor {
   readonly type: string = "connect";
