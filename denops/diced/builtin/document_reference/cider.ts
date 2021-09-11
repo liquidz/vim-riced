@@ -1,13 +1,8 @@
-import { Command } from "../types.ts";
-import { nrepl, unknownutil } from "../deps.ts";
+import { NreplDoneResponse } from "../../types.ts";
+import * as msg from "../../std/message/core.ts";
 
-import * as bufForm from "../buffer/form.ts";
-import * as opsCider from "../nrepl/operation/cider.ts";
-import * as msg from "../message/core.ts";
-import * as vimBufInfo from "../vim/buffer/info.ts";
-
-async function generateClojureDocument(
-  resp: nrepl.NreplDoneResponse,
+export async function generateClojureDocument(
+  resp: NreplDoneResponse,
 ): Promise<Array<string>> {
   const doc: Array<string> = [];
   const name = resp.getFirst("name");
@@ -89,19 +84,3 @@ async function generateClojureDocument(
 //
 //   return doc
 // endfunction " }}}
-
-export const ShowDocument: Command = {
-  name: "ShowDocument",
-  nargs: "?",
-  args: "<q-args>",
-  run: async (diced, args) => {
-    const symbol = (args.length === 0 || !unknownutil.isString(args[0]) ||
-        args[0].trim() === "")
-      ? await bufForm.cword(diced.denops)
-      : args[0];
-
-    const res = await opsCider.info(diced, symbol);
-    const doc = await generateClojureDocument(res);
-    vimBufInfo.appendLines(diced.denops, doc);
-  },
-};
