@@ -5,7 +5,7 @@ import { CompleteCandidate } from "./types.ts";
 import { candidates } from "./nrepl.ts";
 
 const complete: API = {
-  name: "diced_builtin_completion",
+  name: "completion",
   run: (diced, args): Promise<Array<CompleteCandidate>> => {
     if (args.length === 0 || !unknownutil.isString(args[0])) {
       return Promise.resolve([]);

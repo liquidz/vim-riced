@@ -13,7 +13,7 @@ const OpenInfoBuffer: Command = {
 };
 
 const appendLine: API = {
-  name: "diced_info_buffer_append_lines",
+  name: "info_buffer_append_lines",
   run: async (diced, args): Promise<void> => {
     if (!unknownutil.isArray<string>(args)) return;
 
