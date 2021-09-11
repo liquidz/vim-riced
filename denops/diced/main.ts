@@ -102,6 +102,7 @@ export async function main(denops: Denops) {
       registerBuiltInPlugins(diced, [
         "connected",
         "auto_port_detection",
+        "form_evaluation",
       ]);
 
       await cmd.registerInitialCommands(diced);

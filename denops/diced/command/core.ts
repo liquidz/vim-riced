@@ -3,16 +3,16 @@ import { dpsHelper, snakeCase } from "../deps.ts";
 
 import * as _buffer from "./buffer.ts";
 import * as _document from "./document.ts";
-import * as _eval from "./eval.ts";
+//import * as _eval from "./eval.ts";
 import * as _setting from "./setting.ts";
 import * as _test from "./test.ts";
 
 const allCommands: Array<Command> = [
   _buffer.OpenInfoBuffer,
   _document.ShowDocument,
-  _eval.EvalCode,
-  _eval.EvalOuterList,
-  _eval.EvalOuterTopList,
+  // _eval.EvalCode,
+  // _eval.EvalOuterList,
+  // _eval.EvalOuterTopList,
   _setting.ToggleDebug,
   _test.TestNs,
   _test.TestUnderCursor,
