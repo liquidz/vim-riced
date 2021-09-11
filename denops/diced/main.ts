@@ -104,6 +104,7 @@ export async function main(denops: Denops) {
         "auto_port_detection",
         "form_evaluation",
         "complete",
+        "clojure_test",
       ]);
 
       await cmd.registerInitialCommands(diced);

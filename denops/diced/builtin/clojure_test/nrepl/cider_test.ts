@@ -1,7 +1,7 @@
-import { asserts } from "../../test_deps.ts";
-import { nrepl } from "../../deps.ts";
+import { asserts } from "../../../test_deps.ts";
+import { nrepl } from "../../../deps.ts";
 import * as sut from "./cider.ts";
-import * as helper from "../../test_helper.ts";
+import * as helper from "../../../test_helper.ts";
 
 const dummyDiced = helper.dummyDiced((msg, ctx) => {
   if (msg["op"] === "ns-path") {

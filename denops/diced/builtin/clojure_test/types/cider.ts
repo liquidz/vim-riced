@@ -1,4 +1,4 @@
-import { unknownutil } from "../deps.ts";
+import { unknownutil } from "../../../deps.ts";
 
 export type TestSummary = {
   error: number;

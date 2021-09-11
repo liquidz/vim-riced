@@ -1,17 +1,18 @@
-import { fs, nrepl, unknownutil } from "../../deps.ts";
+import { fs, nrepl, unknownutil } from "../../../deps.ts";
+import { Diced } from "../../../types.ts";
 import {
-  Diced,
   ParsedTestActualValue,
   ParsedTestError,
   ParsedTestPass,
   ParsedTestResult,
   ParsedTestSummary,
-} from "../../types.ts";
-import * as msg from "../../message/core.ts";
-import { isTestResult, isTestSummary, TestResult } from "../../types/cider.ts";
-import * as opsCider from "../operation/cider.ts";
-import * as nreplDesc from "../describe.ts";
-import * as strCommon from "../../string/common.ts";
+} from "../types.ts";
+import { isTestResult, isTestSummary, TestResult } from "../types/cider.ts";
+
+import * as msg from "../../../std/message/core.ts";
+import * as opsCider from "../../../std/nrepl/operation/cider.ts";
+import * as nreplDesc from "../../../std/nrepl/describe.ts";
+import * as strCommon from "../../../std/string/common.ts";
 
 function extractErrorMessage(testRes: TestResult): string {
   if (typeof testRes.context === "string") {

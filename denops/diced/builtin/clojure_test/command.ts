@@ -1,7 +1,8 @@
-import { Command } from "../types.ts";
+import { Command } from "../../types.ts";
 
-import * as msg from "../message/core.ts";
-import * as nreplTest from "../nrepl/test.ts";
+import * as msg from "../../std/message/core.ts";
+
+import * as nreplTest from "./nrepl.ts";
 
 export const TestUnderCursor: Command = {
   name: "TestUnderCursor",

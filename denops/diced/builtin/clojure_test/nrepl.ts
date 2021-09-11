@@ -1,16 +1,20 @@
-import { Diced, ParsedTestResult } from "../types.ts";
-import { nrepl, unknownutil } from "../deps.ts";
+import { Diced } from "../../types.ts";
+import { nrepl, unknownutil } from "../../deps.ts";
 
-import * as bufForm from "../buffer/form.ts";
-import * as msg from "../message/core.ts";
-import * as nreplEval from "./eval.ts";
-import * as nreplNs from "./namespace.ts";
-import * as nreplDesc from "./describe.ts";
-import * as nreplTestCider from "./test/cider.ts";
-import * as opsCider from "./operation/cider.ts";
-import * as strCommon from "../string/common.ts";
-import * as strNs from "../string/namespace.ts";
-import * as vimBufInfo from "../vim/buffer/info.ts";
+// std
+import * as bufForm from "../../std/buffer/form.ts";
+import * as msg from "../../std/message/core.ts";
+import * as nreplEval from "../../std/nrepl/eval.ts";
+import * as nreplNs from "../../std/nrepl/namespace.ts";
+import * as nreplDesc from "../../std/nrepl/describe.ts";
+import * as opsCider from "../../std/nrepl/operation/cider.ts";
+import * as strCommon from "../../std/string/common.ts";
+import * as strNs from "../../std/string/namespace.ts";
+
+//import * as vimBufInfo from "../vim/buffer/info.ts";
+
+import { ParsedTestResult } from "./types.ts";
+import * as nreplTestCider from "./nrepl/cider.ts";
 
 async function echoTestingMessage(
   diced: Diced,
@@ -62,7 +66,7 @@ async function testVarsByNsName(
  * FIXME
  */
 export async function runTestUnderCursor(diced: Diced): Promise<boolean> {
-  const code = await bufForm.getCurrentTopForm(diced.denops);
+  const code = await bufForm.getCurrentTopForm(diced);
   const res = await nreplEval.evalCode(diced, code, {
     context: { verbose: "false" },
   });
@@ -158,9 +162,9 @@ async function doneTest(diced: Diced, result: ParsedTestResult): Promise<void> {
     }
   }
 
-  if (errLines.length !== 0) {
-    await vimBufInfo.appendLines(diced.denops, errLines);
-  }
+  // if (errLines.length !== 0) {
+  //   await vimBufInfo.appendLines(diced.denops, errLines);
+  // }
 
   if (result.summary.isSuccess) {
     await msg.infoStr(diced, result.summary.summary);
