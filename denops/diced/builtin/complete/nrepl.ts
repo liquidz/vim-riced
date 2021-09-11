@@ -1,8 +1,11 @@
-import { CompleteCandidate, Diced } from "../types.ts";
-import { nrepl, unknownutil } from "../deps.ts";
-import * as opsCider from "./operation/cider.ts";
-import * as nreplNs from "./namespace.ts";
-import * as core from "../core/mod.ts";
+import { unknownutil } from "../../deps.ts";
+import { Bencode, Diced } from "../../types.ts";
+
+import { CompleteCandidate } from "./types.ts";
+
+import * as opsCider from "../../std/nrepl/operation/cider.ts";
+import * as nreplNs from "../../std/nrepl/namespace.ts";
+import * as core from "../../core/mod.ts";
 
 const typeToKind: Record<string, string> = {
   "class": "c",
@@ -20,7 +23,7 @@ const typeToKind: Record<string, string> = {
   "var": "v",
 } as const;
 
-function getArgList(arglist: nrepl.bencode.Bencode): Array<string> {
+function getArgList(arglist: Bencode): Array<string> {
   const args = arglist ?? [];
   unknownutil.ensureArray<string>(args);
 
@@ -32,10 +35,8 @@ function getArgList(arglist: nrepl.bencode.Bencode): Array<string> {
   });
 }
 
-function candidate(c: nrepl.bencode.Bencode): CompleteCandidate | null {
-  if (!nrepl.bencode.isObject(c)) {
-    return null;
-  }
+function candidate(c: Bencode): CompleteCandidate | null {
+  if (!unknownutil.isObject(c)) return null;
 
   const word = c["candidate"];
   if (word == null) return null;

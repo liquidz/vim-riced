@@ -103,6 +103,7 @@ export async function main(denops: Denops) {
         "connected",
         "auto_port_detection",
         "form_evaluation",
+        "complete",
       ]);
 
       await cmd.registerInitialCommands(diced);

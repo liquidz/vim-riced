@@ -1,5 +1,9 @@
 import { Denops, interceptor, nrepl } from "./deps.ts";
 
+// Re-export
+export type Bencode = nrepl.bencode.Bencode;
+export type BencodeObject = nrepl.bencode.BencodeObject;
+
 // =core {{{
 export interface Connection {
   type: "clj" | "cljs";
