@@ -51,6 +51,7 @@ export abstract class BaseInterceptor
 // }}}
 
 export abstract class BasePlugin {
+  readonly apis: Array<API> = [];
   readonly commands: Array<Command> = [];
   readonly interceptors: Array<BaseInterceptor> = [];
 
@@ -119,12 +120,9 @@ export interface Command {
   run: (diced: Diced, args: unknown[]) => Promise<void>;
 }
 
-export interface CompleteCandidate {
-  word: string;
-  kind?: string;
-  menu?: string;
-  info?: string;
-  icase?: number;
+export interface API {
+  name: string;
+  run: (diced: Diced, args: unknown[]) => Promise<unknown>;
 }
 
 // vim: fdm=marker fdl=0
