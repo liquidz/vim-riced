@@ -2,14 +2,9 @@ import { Command, Diced } from "../types.ts";
 import { dpsHelper, snakeCase } from "../deps.ts";
 
 import * as _buffer from "./buffer.ts";
-import * as _setting from "./setting.ts";
 
 const allCommands: Array<Command> = [
   _buffer.OpenInfoBuffer,
-  // _eval.EvalCode,
-  // _eval.EvalOuterList,
-  // _eval.EvalOuterTopList,
-  _setting.ToggleDebug,
 ];
 
 export const commandMap = allCommands.reduce((accm, cmd) => {

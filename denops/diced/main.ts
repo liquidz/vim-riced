@@ -1,18 +1,16 @@
 import { Denops, dpsHelper, dpsVars, path, unknownutil } from "./deps.ts";
 import { API, BaseInterceptor, BasePlugin, Command, Diced } from "./types.ts";
-import * as interceptor from "./interceptor/mod.ts";
+//import * as interceptor from "./interceptor/mod.ts";
 import * as cmd from "./command/core.ts";
 
 import * as core from "./core/mod.ts";
 
 const initialInterceptors: BaseInterceptor[] = [
-  new interceptor.ReadInterceptor(),
-  //new interceptor.PortDetectionInterceptor(),
-  //new interceptor.ConnectedInterceptor(),
-  new interceptor.NormalizeCodeInterceptor(),
-  new interceptor.BufferInitializationInterceptor(),
-  new interceptor.NormalizeNsPathInterceptor(),
-  new interceptor.EvaluatedInterceptor(),
+  // new interceptor.ReadInterceptor(),
+  // new interceptor.NormalizeCodeInterceptor(),
+  // new interceptor.BufferInitializationInterceptor(),
+  // new interceptor.NormalizeNsPathInterceptor(),
+  // new interceptor.EvaluatedInterceptor(),
 ];
 
 const apiMap: Record<string, API> = {};
@@ -105,6 +103,7 @@ export async function main(denops: Denops) {
         "form_evaluation",
         "complete",
         "clojure_test",
+        "diced_debug",
       ]);
 
       await cmd.registerInitialCommands(diced);
