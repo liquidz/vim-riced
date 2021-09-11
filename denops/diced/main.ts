@@ -99,7 +99,10 @@ export async function main(denops: Denops) {
   denops.dispatcher = {
     async setup(): Promise<void> {
       // Register built-ins
-      registerBuiltInPlugins(diced, ["connection"]);
+      registerBuiltInPlugins(diced, [
+        "connected",
+        "auto_port_detection",
+      ]);
 
       await cmd.registerInitialCommands(diced);
 

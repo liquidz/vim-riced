@@ -11,6 +11,5 @@ export class Plugin extends BasePlugin {
 
   readonly interceptors = [
     new interceptor.ConnectedInterceptor(),
-    new interceptor.PortDetectionInterceptor(),
   ];
 }
