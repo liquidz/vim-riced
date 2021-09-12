@@ -71,6 +71,7 @@ export async function main(denops: Denops) {
         "info_buffer",
         "normalize_ns_path",
         "standard_output",
+        "code_evaluated",
       ]);
 
       await cmd.registerInitialCommands(diced);
