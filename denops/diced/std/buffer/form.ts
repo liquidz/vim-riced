@@ -1,4 +1,4 @@
-import { Denops, dpsFns, dpsVars, unknownutil } from "../../deps.ts";
+import { dpsFns, dpsVars, unknownutil } from "../../deps.ts";
 import { Cursor, Diced } from "../../types.ts";
 import * as strParedit from "../string/paredit.ts";
 import * as vimView from "../vim/view.ts";
