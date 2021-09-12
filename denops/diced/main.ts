@@ -1,18 +1,7 @@
 import { Denops, dpsHelper, dpsVars, path, unknownutil } from "./deps.ts";
-import { BaseInterceptor, Diced } from "./types.ts";
-//import * as interceptor from "./interceptor/mod.ts";
-import * as cmd from "./command/core.ts";
-
+import { Diced } from "./types.ts";
 import * as core from "./core/mod.ts";
 import * as mainContext from "./main/context.ts";
-
-const initialInterceptors: BaseInterceptor[] = [
-  // new interceptor.ReadInterceptor(),
-  // new interceptor.NormalizeCodeInterceptor(),
-  // new interceptor.BufferInitializationInterceptor(),
-  // new interceptor.NormalizeNsPathInterceptor(),
-  // new interceptor.EvaluatedInterceptor(),
-];
 
 async function initializeGlobalVariable(
   denops: Denops,
@@ -75,13 +64,6 @@ export async function main(denops: Denops) {
         "normalize_code",
       ]);
 
-      await cmd.registerInitialCommands(diced);
-
-      // add interceptors
-      for (const i of initialInterceptors) {
-        core.addInterceptor(diced, i);
-      }
-
       await dpsHelper.execute(
         denops,
         `
@@ -107,11 +89,8 @@ export async function main(denops: Denops) {
     async command(commandName: unknown, ...args: unknown[]): Promise<void> {
       if (!unknownutil.isString(commandName)) return;
       const c = ctx.commandMap[commandName];
-      if (c != null) return await c.run(diced, args);
-
-      // FIXME
-      const oldC = cmd.commandMap[commandName];
-      if (oldC != null) return await oldC.run(diced, args);
+      if (c == null) return;
+      return await c.run(diced, args);
     },
 
     api(apiName: unknown, ...args: unknown[]): Promise<unknown> {
