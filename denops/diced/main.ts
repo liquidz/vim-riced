@@ -69,6 +69,7 @@ export async function main(denops: Denops) {
         "diced_debug",
         "document_reference",
         "info_buffer",
+        "normalize_ns_path",
       ]);
 
       await cmd.registerInitialCommands(diced);
