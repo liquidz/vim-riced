@@ -3,6 +3,7 @@ import { Denops, interceptor, nrepl } from "./deps.ts";
 // Re-export
 export type Bencode = nrepl.bencode.Bencode;
 export type BencodeObject = nrepl.bencode.BencodeObject;
+export type NreplResponse = nrepl.NreplResponse;
 export type NreplDoneResponse = nrepl.NreplDoneResponse;
 
 // =core {{{
