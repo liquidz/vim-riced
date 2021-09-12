@@ -72,6 +72,7 @@ export async function main(denops: Denops) {
         "normalize_ns_path",
         "standard_output",
         "code_evaluated",
+        "normalize_code",
       ]);
 
       await cmd.registerInitialCommands(diced);
