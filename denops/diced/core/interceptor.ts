@@ -52,3 +52,16 @@ export function removeInterceptor(diced: Diced, interceptor: BaseInterceptor) {
     return i.name !== interceptor.name;
   });
 }
+
+export function sortInterceptors(diced: Diced, interceptorType: string) {
+  const q = diced.interceptors[interceptorType];
+  if (q == null) return;
+
+  diced.interceptors[interceptorType] = interceptor.reorder<BaseInterceptor>(q);
+}
+
+export function sortAllInterceptors(diced: Diced) {
+  for (const interceptorType of Object.keys(diced.interceptors)) {
+    sortInterceptors(diced, interceptorType);
+  }
+}

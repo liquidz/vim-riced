@@ -63,6 +63,7 @@ export async function main(denops: Denops) {
         "code_evaluated",
         "normalize_code",
       ]);
+      core.sortAllInterceptors(diced);
 
       await dpsHelper.execute(
         denops,
@@ -80,6 +81,7 @@ export async function main(denops: Denops) {
     async registerPlugin(filePath: unknown): Promise<void> {
       if (!unknownutil.isString(filePath)) return;
       await mainContext.registerPlugin(diced, ctx, filePath);
+      core.sortAllInterceptors(diced);
     },
 
     async test(): Promise<void> {
