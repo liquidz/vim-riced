@@ -26,18 +26,11 @@ function generateRegisterCommand(diced: Diced, cmd: Command): string {
    `;
 }
 
-export async function registerPlugin(
+export async function registerRawPlugin(
   diced: Diced,
   context: AppContext,
-  filePath: string,
+  plugin: BasePlugin,
 ): Promise<void> {
-  // Avoid multiple loading
-  if (filePath in context.registeredPluginPaths) return;
-  context.registeredPluginPaths[filePath] = true;
-
-  const mod = await import(path.toFileUrl(filePath).href);
-  const plugin: BasePlugin = new mod.Plugin();
-
   // Register interceptors
   for (const interceptor of plugin.interceptors) {
     core.addInterceptor(diced, interceptor);
@@ -63,4 +56,19 @@ export async function registerPlugin(
 
   // Initialize
   await plugin.onInit(diced);
+}
+
+export async function registerPlugin(
+  diced: Diced,
+  context: AppContext,
+  filePath: string,
+): Promise<void> {
+  // Avoid multiple loading
+  if (filePath in context.registeredPluginPaths) return;
+  context.registeredPluginPaths[filePath] = true;
+
+  const mod = await import(path.toFileUrl(filePath).href);
+  const plugin: BasePlugin = new mod.Plugin();
+
+  await registerRawPlugin(diced, context, plugin);
 }

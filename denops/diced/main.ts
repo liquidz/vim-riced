@@ -1,7 +1,7 @@
-import { Denops, dpsHelper, dpsVars, path, unknownutil } from "./deps.ts";
-import { Diced } from "./types.ts";
+import { Denops, dpsHelper, dpsVars, unknownutil } from "./deps.ts";
 import * as core from "./core/mod.ts";
 import * as mainContext from "./main/context.ts";
+import * as builtin from "./builtin/mod.ts";
 
 async function initializeGlobalVariable(
   denops: Denops,
@@ -21,27 +21,6 @@ async function initializeGlobalVariables(
   }
 }
 
-async function registerBuiltInPlugins(
-  diced: Diced,
-  ctx: mainContext.AppContext,
-  builtInNames: Array<string>,
-): Promise<void> {
-  const home = await dpsVars.g.get(diced.denops, "vim_diced_home");
-  if (!unknownutil.isString(home)) return;
-
-  builtInNames.forEach((name) => {
-    const filePath = path.join(
-      home,
-      "denops",
-      "diced",
-      "builtin",
-      name,
-      "mod.ts",
-    );
-    mainContext.registerPlugin(diced, ctx, filePath);
-  });
-}
-
 export async function main(denops: Denops) {
   const diced = new core.DicedImpl(denops);
   const ctx = new mainContext.AppContext();
@@ -49,20 +28,11 @@ export async function main(denops: Denops) {
   denops.dispatcher = {
     async setup(): Promise<void> {
       // Register built-ins
-      registerBuiltInPlugins(diced, ctx, [
-        "connected",
-        "auto_port_detection",
-        "form_evaluation",
-        "complete",
-        "clojure_test",
-        "diced_debug",
-        "document_reference",
-        "info_buffer",
-        "normalize_ns_path",
-        "standard_output",
-        "code_evaluated",
-        "normalize_code",
-      ]);
+      await Promise.all(
+        builtin.plugins.map((p) =>
+          mainContext.registerRawPlugin(diced, ctx, p)
+        ),
+      );
       core.sortAllInterceptors(diced);
 
       await dpsHelper.execute(
@@ -76,6 +46,8 @@ export async function main(denops: Denops) {
         denops,
         { diced_does_eval_inside_comment: true },
       );
+
+      console.log(`${denops.name}: Ready`);
     },
 
     async registerPlugin(filePath: unknown): Promise<void> {
@@ -103,7 +75,7 @@ export async function main(denops: Denops) {
     },
   };
 
-  console.log(`${denops.name}: Ready`);
+  console.log(`${denops.name}: Start to initialize`);
   await dpsVars.g.set(denops, "diced#initialized", true);
   await denops.cmd("doautocmd <nomodeline> User DicedReady");
 }
