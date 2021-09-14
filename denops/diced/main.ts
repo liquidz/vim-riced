@@ -3,6 +3,8 @@ import * as core from "./core/mod.ts";
 import * as mainContext from "./main/context.ts";
 import * as builtin from "./builtin/mod.ts";
 
+import * as extSelector from "./std/external/selector.ts";
+
 async function initializeGlobalVariable(
   denops: Denops,
   name: string,
@@ -57,6 +59,8 @@ export async function main(denops: Denops) {
     },
 
     async test(): Promise<void> {
+      const res = await extSelector.start(diced, ["foo", "bar", "baz"]);
+      console.log(res);
       await Promise.resolve(true);
     },
 
