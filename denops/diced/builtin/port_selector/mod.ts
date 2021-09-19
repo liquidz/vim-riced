@@ -18,7 +18,7 @@ class PortSelectionInterceptor extends BaseInterceptor {
   readonly requireOthers = true;
 
   async enter(ctx: InterceptorContext): Promise<InterceptorContext> {
-    let portCandidates = ctx.request.params["portCandidates"] || [];
+    const portCandidates = ctx.request.params["portCandidates"] || [];
 
     if (
       !unknownutil.isArray<PortCandidate>(portCandidates) ||

@@ -10,8 +10,8 @@ export class PortDetectionInterceptor extends BaseInterceptor {
   readonly requires = ["diced port detection"];
 
   async enter(ctx: InterceptorContext): Promise<InterceptorContext> {
-    let port: number = NaN;
-    let currentPort: number = ctx.request.params["port"] || NaN;
+    let port = NaN;
+    const currentPort: number = ctx.request.params["port"] || NaN;
 
     try {
       const dotShadowCljs = await denoFs.findFileUpwards(".shadow-cljs");
@@ -19,7 +19,7 @@ export class PortDetectionInterceptor extends BaseInterceptor {
       if (await fs.exists(filePath)) {
         port = parseInt(await Deno.readTextFile(filePath));
       }
-    } catch (err) {
+    } catch (_err) {
       // do nothing
     }
 
