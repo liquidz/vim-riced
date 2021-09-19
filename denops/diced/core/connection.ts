@@ -38,11 +38,13 @@ export async function connect(
     const params = {
       host: hostname,
       port: port,
+      type: "clj",
     };
 
     await coreInterceptor.intercept(diced, "connect", params, async (ctx) => {
       const _host = ctx.params["host"] ?? hostname;
       const _port = ctx.params["port"] ?? port;
+      const _type = ctx.params["type"] ?? "clj";
 
       if (_host === "" || _port <= 0) {
         return Promise.reject(
@@ -71,7 +73,7 @@ export async function connect(
       }
 
       const addResult = connManager.addConnection(diced.connection, "dummy", {
-        type: "clj",
+        type: _type,
         client: conn,
         port: _port,
         session: session,
