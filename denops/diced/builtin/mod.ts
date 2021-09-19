@@ -10,6 +10,8 @@ import * as normalizeNsPath from "./normalize_ns_path/mod.ts";
 import * as standardOutput from "./standard_output/mod.ts";
 import * as codeEvaluated from "./code_evaluated/mod.ts";
 import * as normalizeCode from "./normalize_code/mod.ts";
+import * as shadowCljs from "./shadow_cljs/mod.ts";
+import * as portSelector from "./port_selector/mod.ts";
 
 export const plugins = [
   new connected.Plugin(),
@@ -24,4 +26,6 @@ export const plugins = [
   new standardOutput.Plugin(),
   new codeEvaluated.Plugin(),
   new normalizeCode.Plugin(),
+  new shadowCljs.Plugin(),
+  new portSelector.Plugin(),
 ];

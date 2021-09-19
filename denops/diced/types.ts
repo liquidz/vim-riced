@@ -40,7 +40,8 @@ export abstract class BaseInterceptor
   implements interceptor.Interceptor<InterceptorParams> {
   readonly type: string = "none";
   readonly name: string = "none";
-  readonly requires?: string[];
+  readonly requires: string[] = [];
+  readonly requireOthers: boolean = false;
 
   enter(
     ctx: InterceptorContext,
