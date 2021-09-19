@@ -1,6 +1,8 @@
 import { Diced, NreplEvalOption } from "../../types.ts";
 import { dpsFns, unknownutil } from "../../deps.ts";
+
 import * as ops from "./operation/nrepl.ts";
+import * as nreplDesc from "./describe.ts";
 
 export async function evalCode(
   diced: Diced,
@@ -30,7 +32,6 @@ export async function evalCode(
 
 export async function loadFile(diced: Diced): Promise<boolean> {
   const denops = diced.denops;
-  const content = (await dpsFns.getline(denops, 1, "$")).join("\n");
   const [fileName, filePath] = await denops.batch(
     ["expand", "%"],
     ["expand", "%:p"],
@@ -38,12 +39,20 @@ export async function loadFile(diced: Diced): Promise<boolean> {
   unknownutil.ensureString(fileName);
   unknownutil.ensureString(filePath);
 
-  const resp = await ops.loadFileOp(diced, content, {
-    fileName: fileName,
-    filePath: filePath,
-  });
+  if (await nreplDesc.isSupportedOperation(diced, "load-file")) {
+    const content = (await dpsFns.getline(denops, 1, "$")).join("\n");
+    const resp = await ops.loadFileOp(diced, content, {
+      fileName: fileName,
+      filePath: filePath,
+    });
 
-  const errors = resp.getAll("error").concat(resp.getAll("err"));
-  // TODO: error handling
-  return (errors.length === 0);
+    const errors = resp.getAll("error").concat(resp.getAll("err"));
+    // TODO: error handling
+    return (errors.length === 0);
+  } else {
+    const resp = await ops.evalOp(diced, `(load-file "${filePath}")`);
+    const errors = resp.getAll("error").concat(resp.getAll("err"));
+    // TODO: error handling
+    return (errors.length === 0);
+  }
 }
