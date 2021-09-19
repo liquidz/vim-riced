@@ -1,6 +1,7 @@
 import { BaseInterceptor, InterceptorContext } from "../../types.ts";
 
 import * as bufNs from "../../std/buffer/namespace.ts";
+import * as bufConn from "../../std/buffer/connection.ts";
 import * as msg from "../../std/message/core.ts";
 import * as nreplEval from "../../std/nrepl/eval.ts";
 import * as nreplNs from "../../std/nrepl/namespace.ts";
@@ -23,18 +24,20 @@ export class ConnectedInterceptor extends BaseInterceptor {
       return ctx;
     }
 
-    // // set initial namespace
-    const initialNamespace = await nreplNs.name(diced);
-    // diced.connectionManager.currentConnection.initialNamespace =
-    //   initialNamespace;
+    if (await bufConn.isValid(diced)) {
+      // // set initial namespace
+      const initialNamespace = await nreplNs.name(diced);
+      // diced.connectionManager.currentConnection.initialNamespace =
+      //   initialNamespace;
 
-    // switch namespace
-    const currentBufferNamespace = await bufNs.extractName(diced);
-    if (currentBufferNamespace === initialNamespace) {
-      await nreplNs.inNs(diced, currentBufferNamespace);
-    } else {
-      if (await nreplEval.loadFile(diced)) {
+      // switch namespace
+      const currentBufferNamespace = await bufNs.extractName(diced);
+      if (currentBufferNamespace === initialNamespace) {
         await nreplNs.inNs(diced, currentBufferNamespace);
+      } else {
+        if (await nreplEval.loadFile(diced)) {
+          await nreplNs.inNs(diced, currentBufferNamespace);
+        }
       }
     }
 
