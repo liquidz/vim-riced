@@ -29,6 +29,7 @@ class StdOutInterceptor extends BaseInterceptor {
       const diced = ctx.request.diced;
       appendToBuf(diced, res.getFirst("out"));
       appendToBuf(diced, res.getFirst("err"));
+      appendToBuf(diced, res.getFirst("ex"));
       appendToBuf(diced, res.getFirst("pprint-out"));
     }
 
