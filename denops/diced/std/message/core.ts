@@ -23,7 +23,7 @@ async function echomWithHighlight(
 ): Promise<void> {
   await diced.denops.cmd(`echohl ${highlight}`);
   try {
-    for (const m of message.split("\n")) {
+    for (const m of message.trim().split("\n")) {
       await diced.denops.cmd(`echom '${escape(m)}'`);
     }
   } finally {
@@ -32,7 +32,7 @@ async function echomWithHighlight(
 }
 
 export async function echoStr(diced: Diced, message: string): Promise<void> {
-  for (const m of message.split("\n")) {
+  for (const m of message.trim().split("\n")) {
     await diced.denops.cmd(`echo '${escape(m)}'`);
   }
 }
