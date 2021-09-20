@@ -20,6 +20,13 @@ class EvaluatedInterceptor extends BaseInterceptor {
     if (!verbose) return Promise.resolve(ctx);
 
     const diced = ctx.response.diced;
+
+    const errors = done.getAll("err");
+    for (const e of errors) {
+      if (typeof e !== "string") continue;
+      msg.errorStr(diced, e);
+    }
+
     const values = done.getAll("value");
     for (const v of values) {
       if (typeof v !== "string") continue;
