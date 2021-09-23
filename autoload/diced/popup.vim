@@ -1,13 +1,14 @@
 let s:popup_manager = {}
+let s:default_popup_group = 'default'
 
 function! diced#popup#open(text_list, option) abort
   let opts = get(a:, 1, {})
 
-  " TODO: 同じグループのポップアップが表示中なら消す
-  let group = get(a:option, 'group', 'default')
+  " Close popups which has same group name
+  let group = get(a:option, 'group', s:default_popup_group)
   call s:close_popup_by_group(group)
 
-  " TODO: ポップアップを表示
+  " Show popup
   let winid = s:open_popup(a:text_list, a:option)
   if !empty(winid)
     let s:popup_manager[winid] = copy(a:option)
@@ -41,10 +42,13 @@ function! s:close_popup(winid) abort
 endfunction
 
 function! s:close_popup_by_group(group) abort
-  for option in keys(s:popup_manager)
-
+  for winid_str in keys(s:popup_manager)
+    let winid = str2nr(winid_str)
+    let group = get(s:popup_manager[winid], 'group', s:default_popup_group)
+    if group ==# a:group
+      call s:close_popup(winid)
+    endif
   endfor
-  return v:false
 endfunction
 
 function! s:text_width(text_list) abort
@@ -60,42 +64,46 @@ function! s:calc_popup_width(text_list, wininfo, max_width) abort
   return (width > a:max_width) ? a:max_width : width
 endfunction
 
-function s:calc_popup_row(text_list, wininfo, height, row) abort
+function s:calc_popup_row(text_list, wininfo, height, border, row) abort
   let t = type(a:row)
-  if empty(a:row)
-    return a:wininfo['winrow'] + winline()
-  elseif t == v:t_number
+  if t == v:t_number
     return a:wininfo['winrow'] + a:row - 1
   elseif t == v:t_string
-    if a:row ==# 'nearCursor'
+    if a:row ==# '.'
+      return a:wininfo['winrow'] + winline() - 1
+    elseif a:row ==# 'nearCursor'
       " NOTE: `+ 5` make the popup window not too low
       if winline() + a:height + 5 > &lines
-        return winline() - a:height - 1
+        return winline() - a:height + ((a:border) ? -1 : 1)
       else
         return winline() + a:wininfo['winrow']
       endif
     elseif a:row ==# 'top'
       return a:wininfo['winrow']
     elseif a:row ==# 'bottom'
-      return a:wininfo['winrow'] + wininfo['height'] - a:height
+      return a:wininfo['winrow'] + a:wininfo['height'] - a:height
     endif
+  else
+    throw 'vim-diced Unexpected value type'
   endif
 endfunction
 
 function! s:calc_popup_col(text_list, wininfo, width, col) abort
   let t = type(a:col)
-  if empty(a:col)
-    return a:wininfo['wincol'] + wincol() - 1
-  elseif t == v:t_number
+  if t == v:t_number
     return a:wininfo['wincol'] + a:col
   elseif t == v:t_string
-    if a:col ==# 'nearCursor'
+    if a:col ==# '.'
+      return a:wininfo['wincol'] + wincol() - 1
+    elseif a:col ==# 'nearCursor'
       return a:wininfo['wincol'] + wincol() - 1
     elseif a:col ==# 'tail'
-      return a:wininfo['wincol'] + len(getline('.')) + 2
+      return a:wininfo['wincol'] + len(getline('.')) + 3
     elseif a:col ==# 'right'
       return a:wininfo['wincol'] + a:wininfo['width'] - a:width
     endif
+  else
+    throw 'vim-diced Unexpected value type'
   endif
 endfunction
 
@@ -109,11 +117,12 @@ function! s:open_popup(text_list, option) abort
 endfunction
 
 function! s:open_popup_vim(text_list, wininfo, option) abort
+  let border = get(a:option, 'border', v:false)
   let max_width = s:calc_popup_max_width(a:wininfo)
   let width = s:calc_popup_width(a:text_list, a:wininfo, max_width)
   let height = len(a:text_list)
   let win_opts = {
-        \ 'line': s:calc_popup_row(a:text_list, a:wininfo, height, get(a:option, 'row')),
+        \ 'line': s:calc_popup_row(a:text_list, a:wininfo, height, border, get(a:option, 'row')),
         \ 'col': s:calc_popup_col(a:text_list, a:wininfo, width, get(a:option, 'col')),
         \ 'minwidth': width,
         \ 'maxwidth': max_width,
@@ -143,12 +152,13 @@ function! s:open_popup_nvim(text_list, wininfo, option) abort
   if bufnr < 0 | return | endif
   call nvim_buf_set_lines(bufnr, 0, len(a:text_list), 0, a:text_list)
 
+  let border = get(a:option, 'border', v:false)
   let max_width = s:calc_popup_max_width(a:wininfo)
   let width = s:calc_popup_width(a:text_list, a:wininfo, max_width)
   let height = len(a:text_list)
   let win_opts = {
         \ 'relative': 'editor',
-        \ 'row': s:calc_popup_row(a:text_list, a:wininfo, height, get(a:option, 'row')) - 1,
+        \ 'row': s:calc_popup_row(a:text_list, a:wininfo, height, border, get(a:option, 'row')) - 1,
         \ 'col': s:calc_popup_col(a:text_list, a:wininfo, width, get(a:option, 'col')) - 1,
         \ 'width': width,
         \ 'height': height,
@@ -158,10 +168,8 @@ function! s:open_popup_nvim(text_list, wininfo, option) abort
   return nvim_open_win(bufnr, v:false, win_opts)
 endfunction
 
-
-
-
 function! s:emulate_moved_for_nvim() abort
+  " TODO
   for winid_str in keys(s:popup_manager)
     let winid = str2nr(winid_str)
     call s:close_popup(winid)
@@ -188,17 +196,3 @@ if has('nvim') && exists('*nvim_open_win')
     au WinClosed * call s:on_close_nvim()
   aug END
 endif
-
-" if has('nvim')
-"   function! s:notify_closed() abort
-"     let l:winid = expand('<afile>')
-"     if has_key(s:win_close_listeners, l:winid)
-"       call remove(s:win_close_listeners, l:winid)()
-"     endif
-"   endfunction
-"   augroup denops_popup_win_close_listeners
-"      autocmd!
-"      autocmd WinClosed * call s:notify_closed()
-"   augroup END
-" endif
-

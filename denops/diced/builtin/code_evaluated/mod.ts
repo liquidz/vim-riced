@@ -6,6 +6,7 @@ import {
 
 import { nrepl } from "../../deps.ts";
 
+import * as vimPopup from "../../std/vim/popup.ts";
 import * as msg from "../../std/message/core.ts";
 
 class EvaluatedInterceptor extends BaseInterceptor {
@@ -27,11 +28,21 @@ class EvaluatedInterceptor extends BaseInterceptor {
       msg.errorStr(diced, e);
     }
 
+    let lastValue: string = "";
     const values = done.getAll("value");
     for (const v of values) {
       if (typeof v !== "string") continue;
       msg.echoStr(diced, v);
+      lastValue = v;
     }
+
+    // virtual text
+    vimPopup.open(diced, [`=> ${lastValue}`], {
+      row: ".",
+      col: "tail",
+      group: "EvaluatedInterceptor",
+    });
+
     return Promise.resolve(ctx);
   }
 }
