@@ -1,4 +1,4 @@
-function! diced#buffer#cword() abort
+function! DicedBufferCword() abort
   let isk = &iskeyword
   try
     let &iskeyword = '@,48-57,_,192-255,?,-,*,!,+,/,=,<,>,.,:,$,#,%,&,39'

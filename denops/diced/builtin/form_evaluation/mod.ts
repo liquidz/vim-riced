@@ -1,4 +1,4 @@
-import { BasePlugin, Command } from "../../types.ts";
+import { BasePlugin, Command, Diced } from "../../types.ts";
 import { unknownutil } from "../../deps.ts";
 
 import * as bufForm from "../../std/buffer/form.ts";

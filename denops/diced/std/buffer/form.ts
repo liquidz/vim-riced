@@ -1,10 +1,18 @@
-import { dpsFns, dpsVars, unknownutil } from "../../deps.ts";
+import { dpsFns, dpsHelper, dpsVars, unknownutil } from "../../deps.ts";
 import { Cursor, Diced } from "../../types.ts";
 import * as strParedit from "../string/paredit.ts";
 import * as vimView from "../vim/view.ts";
+import * as stdFn from "../fn/mod.ts";
+
+const cwordInitialize = stdFn.memoize(async (diced: Diced) => {
+  const path = new URL(".", import.meta.url);
+  path.pathname = path.pathname + "cword.vim";
+  await dpsHelper.load(diced.denops, path);
+}, (_) => "once");
 
 export async function cword(diced: Diced): Promise<string> {
-  const res = await diced.denops.call("diced#buffer#cword");
+  await cwordInitialize(diced);
+  const res = await diced.denops.call("DicedBufferCword");
   return (typeof res === "string") ? res : "";
 }
 
