@@ -52,10 +52,20 @@ const EvalOuterTopList: Command = {
   },
 };
 
+const EvalBuffer: Command = {
+  name: "EvalBuffer",
+  run: async (diced, _) => {
+    if (await nreplEval.loadCurrentFile(diced)) {
+      await msg.info(diced, "Required");
+    }
+  },
+};
+
 export class Plugin extends BasePlugin {
   readonly commands = [
     EvalCode,
     EvalOuterList,
     EvalOuterTopList,
+    EvalBuffer,
   ];
 }
