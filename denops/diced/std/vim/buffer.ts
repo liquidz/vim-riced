@@ -39,32 +39,6 @@ export async function open(
   return true;
 }
 
-// function! iced#buffer#open(bufname, ...) abort
-//   let nr = iced#buffer#nr(a:bufname)
-//   if nr < 0 | return | endif
-//   let current_window = winnr()
-//   let opt = get(a:, 1, {})
-//
-//   try
-//     let &eventignore = 'WinEnter,WinLeave,BufEnter,BufLeave'
-//     if !iced#buffer#is_visible(a:bufname)
-//       call s:B.open(nr, {
-//             \ 'opener': get(opt, 'opener', 'split'),
-//             \ 'mods': get(opt, 'mods', ''),
-//             \ })
-//
-//       if has_key(opt, 'height')
-//         silent exec printf(':resize %d', opt['height'])
-//       endif
-//
-//       call s:apply_option(opt)
-//       call s:focus_window(current_window)
-//     endif
-//   finally
-//     let &eventignore = ''
-//   endtry
-// endfunction
-
 export async function appendLine(
   diced: Diced,
   bufName: string,
@@ -81,9 +55,7 @@ export async function appendLine(
   }
 }
 
-// export async function clear(bufName: string): Promise<void> {}
-// export async function setContents(
-//   bufName: string,
-//   contents: string,
-// ): Promise<void> {}
-// export async function close(bufName: string): Promise<void> {}
+export async function clear(diced: Diced, bufName: string): Promise<void> {
+  const denops = diced.denops;
+  await dpsFns.deletebufline(denops, bufName, 1, "$");
+}
