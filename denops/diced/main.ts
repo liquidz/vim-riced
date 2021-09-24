@@ -1,9 +1,24 @@
-import { Denops, dpsHelper, dpsVars, unknownutil } from "./deps.ts";
+import { Denops, dpsAutocmd, dpsHelper, dpsVars, unknownutil } from "./deps.ts";
 import * as core from "./core/mod.ts";
 import * as mainContext from "./main/context.ts";
 import * as builtin from "./builtin/mod.ts";
 
 import * as extSelector from "./std/external/selector.ts";
+
+function defineAutocmdNotifications(
+  denops: Denops,
+  events: Array<dpsAutocmd.AutocmdEvent>,
+): Promise<void> {
+  return dpsAutocmd.group(denops, "diced autocmd notifications", (helper) => {
+    for (const event of events) {
+      helper.define(
+        event,
+        ["*.clj", "*.cljs", "*.cljc"],
+        `call denops#notify('${denops.name}', 'autocmd', ['${event}'])`,
+      );
+    }
+  });
+}
 
 async function initializeGlobalVariable(
   denops: Denops,
@@ -49,6 +64,14 @@ export async function main(denops: Denops) {
         { diced_does_eval_inside_comment: true },
       );
 
+      await defineAutocmdNotifications(denops, [
+        "BufEnter",
+        "BufNewFile",
+        "BufRead",
+        "BufWritePost",
+        "VimLeave",
+      ]);
+
       console.log(`${denops.name}: Ready`);
     },
 
@@ -69,6 +92,17 @@ export async function main(denops: Denops) {
       const c = ctx.commandMap[commandName];
       if (c == null) return;
       return await c.run(diced, args);
+    },
+
+    autocmd(autocmdName: unknown): Promise<void> {
+      if (!unknownutil.isString(autocmdName)) return Promise.resolve();
+      core.intercept(
+        diced,
+        `vim${autocmdName}`,
+        {},
+        (ctx) => Promise.resolve(ctx),
+      );
+      return Promise.resolve();
     },
 
     api(apiName: unknown, ...args: unknown[]): Promise<unknown> {
