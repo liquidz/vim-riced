@@ -6,7 +6,7 @@ import {
 
 import { nrepl } from "../../deps.ts";
 
-import * as vimPopup from "../../std/vim/popup.ts";
+import * as vimPopup from "../../std/vim/popup/mod.ts";
 import * as msg from "../../std/message/core.ts";
 
 class EvaluatedInterceptor extends BaseInterceptor {

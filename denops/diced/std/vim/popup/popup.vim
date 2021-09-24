@@ -1,7 +1,7 @@
 let s:popup_manager = {}
 let s:default_popup_group = 'default'
 
-function! diced#popup#open(text_list, option) abort
+function! DicedPopupOpen(text_list, option) abort
   let opts = get(a:, 1, {})
 
   " Close popups which has same group name
@@ -162,7 +162,7 @@ function! s:open_popup_nvim(text_list, wininfo, option) abort
         \ 'col': s:calc_popup_col(a:text_list, a:wininfo, width, get(a:option, 'col')) - 1,
         \ 'width': width,
         \ 'height': height,
-        \ 'style': g:iced#popup#neovim#style,
+        \ 'style': 'minimal',
         \ }
 
   return nvim_open_win(bufnr, v:false, win_opts)
