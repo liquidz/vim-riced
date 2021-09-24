@@ -28,7 +28,7 @@ class EvaluatedInterceptor extends BaseInterceptor {
       msg.errorStr(diced, e);
     }
 
-    let lastValue: string = "";
+    let lastValue = "";
     const values = done.getAll("value");
     for (const v of values) {
       if (typeof v !== "string") continue;
