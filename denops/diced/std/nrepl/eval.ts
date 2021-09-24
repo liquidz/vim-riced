@@ -30,7 +30,7 @@ export async function evalCode(
   }) as string[];
 }
 
-export async function loadFile(diced: Diced): Promise<boolean> {
+export async function loadCurrentFile(diced: Diced): Promise<boolean> {
   const denops = diced.denops;
   const [fileName, filePath] = await denops.batch(
     ["expand", "%"],

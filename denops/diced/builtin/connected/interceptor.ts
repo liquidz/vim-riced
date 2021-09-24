@@ -35,7 +35,7 @@ export class ConnectedInterceptor extends BaseInterceptor {
       if (currentBufferNamespace === initialNamespace) {
         await nreplNs.inNs(diced, currentBufferNamespace);
       } else {
-        if (await nreplEval.loadFile(diced)) {
+        if (await nreplEval.loadCurrentFile(diced)) {
           await nreplNs.inNs(diced, currentBufferNamespace);
         }
       }

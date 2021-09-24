@@ -100,7 +100,7 @@ export async function runTestUnderCursor(diced: Diced): Promise<boolean> {
 export async function runTestNs(diced: Diced): Promise<boolean> {
   const nsName = await nreplNs.name(diced);
   // NOTE: Reload ns to match iced#nrepl#test#under_cursor's behavior
-  await nreplEval.loadFile(diced);
+  await nreplEval.loadCurrentFile(diced);
 
   // FIXME
   // Use simple test integration when there is no `test-var-query` op.
