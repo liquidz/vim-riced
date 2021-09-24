@@ -5,6 +5,14 @@ import * as bufForm from "../../std/buffer/form.ts";
 import * as msg from "../../std/message/core.ts";
 import * as nreplEval from "../../std/nrepl/eval.ts";
 
+async function handleError(diced: Diced, err: unknown): Promise<void> {
+  if (err instanceof Deno.errors.NotFound) {
+    await msg.warning(diced, "NotFound");
+  } else if (err instanceof Error) {
+    await msg.errorStr(diced, err.message);
+  }
+}
+
 const EvalCode: Command = {
   name: "Eval",
   nargs: "?",
@@ -12,7 +20,11 @@ const EvalCode: Command = {
   run: async (diced, args) => {
     if (args.length === 0 || !unknownutil.isString(args[0])) return;
     const code = args[0];
-    await nreplEval.evalCode(diced, code);
+    try {
+      await nreplEval.evalCode(diced, code);
+    } catch (err) {
+      await handleError(diced, err);
+    }
   },
 };
 
@@ -22,8 +34,8 @@ const EvalOuterList: Command = {
     try {
       const code = await bufForm.getCurrentForm(diced);
       await nreplEval.evalCode(diced, code);
-    } catch (_err) {
-      await msg.warning(diced, "NotFound");
+    } catch (err) {
+      await handleError(diced, err);
     }
   },
 };
@@ -34,8 +46,8 @@ const EvalOuterTopList: Command = {
     try {
       const code = await bufForm.getCurrentTopForm(diced);
       await nreplEval.evalCode(diced, code);
-    } catch (_err) {
-      await msg.warning(diced, "NotFound");
+    } catch (err) {
+      await handleError(diced, err);
     }
   },
 };
