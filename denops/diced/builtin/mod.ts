@@ -12,6 +12,7 @@ import * as codeEvaluated from "./code_evaluated/mod.ts";
 import * as normalizeCode from "./normalize_code/mod.ts";
 import * as shadowCljs from "./shadow_cljs/mod.ts";
 import * as portSelector from "./port_selector/mod.ts";
+import * as autoRequiringNs from "./auto_requiring_ns/mod.ts";
 
 export const plugins = [
   new connected.Plugin(),
@@ -28,4 +29,5 @@ export const plugins = [
   new normalizeCode.Plugin(),
   new shadowCljs.Plugin(),
   new portSelector.Plugin(),
+  new autoRequiringNs.Plugin(),
 ];
