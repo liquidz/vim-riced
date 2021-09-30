@@ -36,15 +36,22 @@ export function cursorToIndex(
   return idx;
 }
 
-async function getAroundSrcAndIdx(
+export async function getAroundSrcAndIdx(
   diced: Diced,
   cursor: Cursor,
   offset: number,
+  expr?: string | number,
 ): Promise<[string, number]> {
   const startLnum = Math.max(0, cursor.line - offset);
   const endLnum = cursor.line + offset;
 
-  const lines = await dpsFns.getline(diced.denops, startLnum, endLnum);
+  const lines = await dpsFns.getbufline(
+    diced.denops,
+    expr ?? "%",
+    startLnum,
+    endLnum,
+  );
+
   return [lines.join("\n"), cursorToIndex(lines, startLnum, cursor)];
 }
 
