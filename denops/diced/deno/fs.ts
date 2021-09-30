@@ -12,5 +12,5 @@ export async function findFileUpwards(fileName: string): Promise<string> {
     dir = nextDir;
   }
 
-  return Promise.reject(new Deno.errors.NotFound(`${fileName} is not found`));
+  throw new Deno.errors.NotFound(`${fileName} is not found`);
 }

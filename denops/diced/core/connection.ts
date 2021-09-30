@@ -47,15 +47,11 @@ export async function connect(
       const _type = ctx.params["type"] ?? "clj";
 
       if (_host === "" || _port <= 0) {
-        return Promise.reject(
-          new Deno.errors.ConnectionAborted("hostname or port is invalid"),
-        );
+        throw new Deno.errors.ConnectionAborted("hostname or port is invalid");
       }
 
       if (connManager.hasConnection(diced.connection, _port)) {
-        return Promise.reject(
-          new Deno.errors.AlreadyExists("Already connected"),
-        );
+        throw new Deno.errors.AlreadyExists("Already connected");
       }
 
       const conn = await nrepl.connect({ hostname: _host, port: _port });
@@ -67,9 +63,7 @@ export async function connect(
       const cloneRes = await conn.write({ op: "clone" });
       const session = cloneRes.getFirst("new-session");
       if (typeof session !== "string") {
-        return Promise.reject(
-          new Deno.errors.InvalidData("new-session is not string"),
-        );
+        throw new Deno.errors.InvalidData("new-session is not string");
       }
 
       const addResult = connManager.addConnection(diced.connection, "dummy", {
@@ -89,9 +83,9 @@ export async function connect(
     return true;
   } catch (err) {
     if (err instanceof interceptor.ExecutionError) {
-      return Promise.reject(err);
+      throw err;
     } else {
-      return Promise.reject(new Deno.errors.ConnectionRefused(err.message));
+      throw new Deno.errors.ConnectionRefused(err.message);
     }
   }
 }

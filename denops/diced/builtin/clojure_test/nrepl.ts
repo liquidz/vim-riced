@@ -71,15 +71,15 @@ export async function runTestUnderCursor(diced: Diced): Promise<boolean> {
   });
 
   if (res.length < 1) {
-    return Promise.reject(new Deno.errors.InvalidData());
+    throw new Deno.errors.InvalidData();
   }
   if (res[0] == null) {
-    return Promise.reject(new Deno.errors.NotFound());
+    throw new Deno.errors.NotFound();
   }
   const qualifiedVarName = res[0].replace(/^#'/, "");
   const [nsName, varName] = qualifiedVarName.split("/", 2);
   if (nsName == null || varName == null) {
-    return Promise.reject(new Deno.errors.NotFound());
+    throw new Deno.errors.NotFound();
   }
 
   const testVars = await testVarsByNsName(diced, nsName);

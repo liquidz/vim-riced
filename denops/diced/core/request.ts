@@ -10,12 +10,12 @@ export async function request(
 ): Promise<nrepl.NreplDoneResponse> {
   const conn = diced.connection.current;
   if (conn == null || !isConnected(diced)) {
-    return Promise.reject(new Deno.errors.NotConnected());
+    throw new Deno.errors.NotConnected();
   }
 
   const op = message["op"];
   if (typeof op !== "string" || op === "") {
-    return Promise.reject(new Deno.errors.InvalidData());
+    throw new Deno.errors.InvalidData();
   }
 
   message["id"] ??= crypto.randomUUID();

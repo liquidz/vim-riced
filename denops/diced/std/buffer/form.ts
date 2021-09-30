@@ -54,7 +54,7 @@ export async function getCurrentTopForm(diced: Diced): Promise<string> {
 
   const range = strParedit.rangeForDefun(src, idx);
   if (range == null) {
-    return Promise.reject(new Deno.errors.NotFound());
+    throw new Deno.errors.NotFound();
   }
 
   return src.substring(range[0], range[1]);

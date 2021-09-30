@@ -14,15 +14,11 @@ class PortDetectionInterceptor extends BaseInterceptor {
     let port: number = ctx.request.params["port"] || NaN;
     if (!isNaN(port)) return ctx;
 
-    try {
-      const filePath = await denoFs.findFileUpwards(".nrepl-port");
-      port = parseInt(await Deno.readTextFile(filePath));
-    } catch (err) {
-      return Promise.reject(err);
-    }
+    const filePath = await denoFs.findFileUpwards(".nrepl-port");
+    port = parseInt(await Deno.readTextFile(filePath));
 
     if (isNaN(port)) {
-      return Promise.reject(new Deno.errors.InvalidData("port is nan"));
+      throw new Deno.errors.InvalidData("port is nan");
     }
 
     ctx.request.params["port"] = port;

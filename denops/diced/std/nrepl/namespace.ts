@@ -10,7 +10,7 @@ export async function name(diced: Diced): Promise<string> {
     { context: { verbose: "false" } },
   );
   if (res.length === 0) {
-    return Promise.reject(new Deno.errors.InvalidData("invalid response"));
+    throw new Deno.errors.InvalidData("invalid response");
   }
   return res[0];
 }
@@ -23,7 +23,7 @@ export async function inNs(diced: Diced, nsName?: string): Promise<string> {
     { context: { verbose: "false" } },
   );
   if (res.length === 0) {
-    return Promise.reject(new Deno.errors.InvalidData("invalid response"));
+    throw new Deno.errors.InvalidData("invalid response");
   }
   return res[0];
 }
@@ -36,7 +36,7 @@ export async function require(diced: Diced, nsName: string): Promise<string> {
   );
 
   if (res.length === 0) {
-    return Promise.reject(new Deno.errors.InvalidData("invalid response"));
+    throw new Deno.errors.InvalidData("invalid response");
   }
   return res[0];
 }

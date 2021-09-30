@@ -38,13 +38,11 @@ export async function extractName(diced: Diced): Promise<string> {
   try {
     const doesExists = await searchNsForm(diced);
     if (!doesExists) {
-      return Promise.reject(new Deno.errors.NotFound("ns form is not found"));
+      throw new Deno.errors.NotFound("ns form is not found");
     }
 
     const form = await bufForm.getCurrentTopForm(diced);
     return strNs.extractName(form);
-  } catch (err) {
-    return Promise.reject(err);
   } finally {
     await vimView.restView(diced, view);
   }
