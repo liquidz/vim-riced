@@ -19,9 +19,9 @@ export async function evalCode(
     unknownutil.ensureString(filePath);
     unknownutil.ensureArray<number>(currentPos);
 
-    _option.filePath = filePath;
-    _option.line = currentPos[1];
-    _option.column = currentPos[2];
+    _option.filePath ??= filePath;
+    _option.line ??= currentPos[1];
+    _option.column ??= currentPos[2];
   }
 
   const res = await ops.evalOp(diced, code, _option);
