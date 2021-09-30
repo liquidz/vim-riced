@@ -40,7 +40,9 @@ export function rangeForDefun(src: string, idx: number): [number, number] {
 }
 
 export function parentFormRange(src: string, idx: number): [number, number] {
-  const ast = paredit.parse(src);
-  const [lnum, cnum] = sexpRange(ast, idx);
-  return sexpRangeExpansion(ast, lnum, cnum);
+  let range = sexpRange(src, idx);
+  while (range != null && src[range[0]] !== "(") {
+    range = sexpRangeExpansion(src, range[0], range[1]);
+  }
+  return (range == null) ? [-1, -1] : range;
 }
