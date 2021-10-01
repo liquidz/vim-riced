@@ -6,7 +6,7 @@ import * as clojureTest from "./clojure_test/mod.ts";
 import * as dicedDebug from "./diced_debug/mod.ts";
 import * as documentReference from "./document_reference/mod.ts";
 import * as infoBuffer from "./info_buffer/mod.ts";
-import * as normalizeNsPath from "./normalize_ns_path/mod.ts";
+import * as normalizeRespPath from "./normalize_resp_path/mod.ts";
 import * as standardOutput from "./standard_output/mod.ts";
 import * as codeEvaluated from "./code_evaluated/mod.ts";
 import * as normalizeCode from "./normalize_code/mod.ts";
@@ -23,7 +23,7 @@ export const plugins = [
   new dicedDebug.Plugin(),
   new documentReference.Plugin(),
   new infoBuffer.Plugin(),
-  new normalizeNsPath.Plugin(),
+  new normalizeRespPath.Plugin(),
   new standardOutput.Plugin(),
   new codeEvaluated.Plugin(),
   new normalizeCode.Plugin(),

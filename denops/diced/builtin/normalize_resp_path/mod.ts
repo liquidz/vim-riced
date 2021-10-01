@@ -30,8 +30,31 @@ class NormalizeNsPathInterceptor extends BaseInterceptor {
   }
 }
 
+class NormalizeInfoPathInterceptor extends BaseInterceptor {
+  readonly type: string = "info";
+  readonly name: string = "NormalizeInfoPathInterceptor";
+
+  leave(ctx: InterceptorContext): Promise<InterceptorContext> {
+    if (ctx.response == null) return Promise.resolve(ctx);
+
+    const done = ctx.response.params["response"] as nrepl.NreplDoneResponse;
+
+    ctx.response.params["response"] = dicedInterceptor.updateDoneResponse(
+      done,
+      "file",
+      (path) => {
+        if (!unknownutil.isString(path)) return path;
+        return strPath.normalize(path);
+      },
+    );
+
+    return Promise.resolve(ctx);
+  }
+}
+
 export class Plugin extends BasePlugin {
   readonly interceptors = [
     new NormalizeNsPathInterceptor(),
+    new NormalizeInfoPathInterceptor(),
   ];
 }
