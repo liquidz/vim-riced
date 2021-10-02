@@ -68,8 +68,6 @@ const ShowSource: Command = {
       return;
     }
     const codes = src.substring(range[0], range[1]).split(/\r?\n/);
-    console.log(src);
-    console.log(codes);
 
     try {
       vimPopup.open(diced, codes, {
@@ -77,6 +75,7 @@ const ShowSource: Command = {
         col: "nearCursor",
         moved: "row",
         border: true,
+        fileType: "clojure",
       });
     } catch {
       await msg.warning(diced, "Fallback", { name: "InfoBuffer" });
