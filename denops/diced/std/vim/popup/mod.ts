@@ -9,6 +9,7 @@ export interface PopupOption {
   wrap?: boolean;
   group?: string;
   moved?: "any" | "row";
+  fileType?: string;
 }
 
 const initialize = stdFn.memoize(async (diced: Diced) => {

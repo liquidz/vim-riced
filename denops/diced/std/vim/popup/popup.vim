@@ -17,44 +17,44 @@ function! DicedPopupOpen(text_list, option) abort
   call s:close_popup_by_group(group)
 
   " Show popup
-  let winid = s:open_popup(a:text_list, a:option)
-  if !empty(winid)
-    let s:popup_manager[winid] = copy(a:option)
+  let winnr = s:open_popup(a:text_list, a:option)
+  if !empty(winnr)
+    let s:popup_manager[winnr] = copy(a:option)
   endif
 endfunction
 
-function! s:on_close(winid) abort
+function! s:on_close(winnr) abort
   try
-    let option = get(s:popup_manager, a:winid, {})
+    let option = get(s:popup_manager, a:winnr, {})
     let Callback = get(option, 'callback')
     if type(Callback) == v:t_func
       call Callback()
     endif
   finally
     try
-      call remove(s:popup_manager, a:winid)
+      call remove(s:popup_manager, a:winnr)
     catch
       " do nothing
     endtry
   endtry
 endfunction
 
-function! s:close_popup(winid) abort
+function! s:close_popup(winnr) abort
   if has('nvim')
-    call nvim_win_close(a:winid, v:true)
+    call nvim_win_close(a:winnr, v:true)
   else
-    call popup_close(a:winid)
+    call popup_close(a:winnr)
   endif
 
-  call s:on_close(a:winid)
+  call s:on_close(a:winnr)
 endfunction
 
 function! s:close_popup_by_group(group) abort
-  for winid_str in keys(s:popup_manager)
-    let winid = str2nr(winid_str)
-    let group = get(s:popup_manager[winid], 'group', s:default_popup_group)
+  for winnr_str in keys(s:popup_manager)
+    let winnr = str2nr(winnr_str)
+    let group = get(s:popup_manager[winnr], 'group', s:default_popup_group)
     if group ==# a:group
-      call s:close_popup(winid)
+      call s:close_popup(winnr)
     endif
   endfor
 endfunction
@@ -124,6 +124,15 @@ function! s:open_popup(text_list, option) abort
   endif
 endfunction
 
+function!  s:initialize_popup_window(winnr, opts) abort
+  call setwinvar(a:winnr, '&breakindent', 1)
+
+  let bufnr = winbufnr(a:winnr)
+  if has_key(a:opts, 'fileType')
+    call setbufvar(bufnr, '&filetype', a:opts['fileType'])
+  endif
+endfunction
+
 function! s:open_popup_vim(text_list, wininfo, option) abort
   let border = get(a:option, 'border', v:false)
   let max_width = s:calc_popup_max_width(a:wininfo)
@@ -152,7 +161,10 @@ function! s:open_popup_vim(text_list, wininfo, option) abort
     let win_opts['border'] = []
   endif
 
-  return popup_create(a:text_list, win_opts)
+  let winnr = popup_create(a:text_list, win_opts)
+  call s:initialize_popup_window(winnr, a:option)
+
+  return winnr
 endfunction
 
 function! s:open_popup_nvim(text_list, wininfo, option) abort
@@ -178,12 +190,12 @@ endfunction
 
 function! s:emulate_moved_for_nvim() abort
   " TODO
-  for winid_str in keys(s:popup_manager)
-    let winid = str2nr(winid_str)
-    call s:close_popup(winid)
+  for winnr_str in keys(s:popup_manager)
+    let winnr = str2nr(winnr_str)
+    call s:close_popup(winnr)
   endfor
-  " let winid = expand('<afile>')
-  " let option = get(s:popup_manager, winid)
+  " let winnr = expand('<afile>')
+  " let option = get(s:popup_manager, winnr)
   " if !empty(option)
   "   echom printf('FIXME %s', option)
   "
