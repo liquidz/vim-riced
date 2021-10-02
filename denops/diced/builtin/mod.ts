@@ -14,6 +14,7 @@ import * as shadowCljs from "./shadow_cljs/mod.ts";
 import * as portSelector from "./port_selector/mod.ts";
 import * as autoRequiringNs from "./auto_requiring_ns/mod.ts";
 import * as jumpToDefinition from "./jump_to_definition/mod.ts";
+import * as sourceReference from "./source_reference/mod.ts";
 
 export const plugins = [
   // should be top
@@ -34,4 +35,5 @@ export const plugins = [
   new shadowCljs.Plugin(),
   new autoRequiringNs.Plugin(),
   new jumpToDefinition.Plugin(),
+  new sourceReference.Plugin(),
 ];
