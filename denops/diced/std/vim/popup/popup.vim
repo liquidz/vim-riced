@@ -1,8 +1,16 @@
 let s:popup_manager = {}
 let s:default_popup_group = 'default'
 
+function! s:is_overflowed_lnum(texts) abort
+  return (len(a:texts) + 5) - (&lines - &cmdheight) >= 0
+endfunction
+
 function! DicedPopupOpen(text_list, option) abort
   let opts = get(a:, 1, {})
+
+  if s:is_overflowed_lnum(a:text_list)
+    throw 'vim-diced: too long texts to show in popup'
+  endif
 
   " Close popups which has same group name
   let group = get(a:option, 'group', s:default_popup_group)

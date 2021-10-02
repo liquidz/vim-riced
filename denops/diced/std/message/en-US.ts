@@ -33,6 +33,7 @@ export const Translation = {
   Disconnected: "Disconnected.",
   FailedToInstall: "Failed to install: %s.",
   FailedToRefresh: "Failed to refresh %s: %s.",
+  Fallback: "Fallback to <%= name %>",
   Fetching: "Fetching...",
   FetchingNsAliases: "Fetching existing ns aliases...",
   FetchingPseudoNsPath: "Fetching pseudo ns path...",
