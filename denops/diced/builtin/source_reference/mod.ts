@@ -8,32 +8,8 @@ import * as opsCider from "../../std/nrepl/operation/cider.ts";
 import * as strParedit from "../../std/string/paredit.ts";
 import * as vimPopup from "../../std/vim/popup/mod.ts";
 
-// function! s:__extract_source(resp) abort
-//   let path = get(a:resp, 'file', '')
-//   if empty(path) | return '' | endif
-//
-//   let code = ''
-//   let reg_save = @@
-//   try
-//     call iced#buffer#temporary#begin()
-//     call iced#system#get('ex_cmd').silent_exe(printf(':read %s', path))
-//     call cursor(a:resp['line']+1, get(a:resp, 'column', 0))
-//     silent normal! vaby
-//     let code = @@
-//   finally
-//     let @@ = reg_save
-//     call iced#buffer#temporary#end()
-//   endtry
-//
-//   return code
-// endfunction
-//
-// function! s:__fetch_source(symbol) abort
-//   return iced#promise#call('iced#nrepl#var#get', [a:symbol])
-//         \.then({resp -> (empty(get(resp, 'file', '')))
-//         \               ? iced#promise#reject(iced#message#get('not_found'))
-//         \               : s:__extract_source(resp)})
-// endfunction
+const sleep = (msec: number) =>
+  new Promise((resolve) => setTimeout(resolve, msec));
 
 const ShowSource: Command = {
   name: "ShowSource",
@@ -58,16 +34,23 @@ const ShowSource: Command = {
     const [src, idx] = await bufForm.getAroundSrcAndIdx(
       diced,
       { line: line, column: (unknownutil.isNumber(column) ? column : 1) },
+      // TODO: Make it variable
       100,
       bufNr,
     );
 
+    const winline = await dpsFns.winline(diced.denops);
     const range = strParedit.rangeForDefun(src, idx);
     if (range == null || range === [-1, -1]) {
       await msg.warning(diced, "NotFound");
       return;
     }
     const codes = src.substring(range[0], range[1]).split(/\r?\n/);
+
+    // TODO: Sometimes the value of the winline changes before and after rangeForDefun.
+    while (winline !== await dpsFns.winline(diced.denops)) {
+      await sleep(10);
+    }
 
     try {
       vimPopup.open(diced, codes, {
