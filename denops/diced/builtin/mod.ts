@@ -16,20 +16,22 @@ import * as autoRequiringNs from "./auto_requiring_ns/mod.ts";
 import * as jumpToDefinition from "./jump_to_definition/mod.ts";
 
 export const plugins = [
+  // should be top
   new connected.Plugin(),
   new autoPortDetection.Plugin(),
+  new portSelector.Plugin(),
+  new normalizeRespPath.Plugin(),
+  // any order ok
   new formEvaluation.Plugin(),
   new complete.Plugin(),
   new clojureTest.Plugin(),
   new dicedDebug.Plugin(),
   new documentReference.Plugin(),
   new infoBuffer.Plugin(),
-  new normalizeRespPath.Plugin(),
   new standardOutput.Plugin(),
   new codeEvaluated.Plugin(),
   new normalizeCode.Plugin(),
   new shadowCljs.Plugin(),
-  new portSelector.Plugin(),
   new autoRequiringNs.Plugin(),
   new jumpToDefinition.Plugin(),
 ];
