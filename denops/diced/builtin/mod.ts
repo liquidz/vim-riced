@@ -1,4 +1,4 @@
-import * as connected from "./connected/mod.ts";
+import * as connection from "./connection/mod.ts";
 import * as autoPortDetection from "./auto_port_detection/mod.ts";
 import * as formEvaluation from "./form_evaluation/mod.ts";
 import * as complete from "./complete/mod.ts";
@@ -18,7 +18,7 @@ import * as sourceReference from "./source_reference/mod.ts";
 
 export const plugins = [
   // should be top
-  new connected.Plugin(),
+  new connection.Plugin(),
   new autoPortDetection.Plugin(),
   new portSelector.Plugin(),
   new normalizeRespPath.Plugin(),
