@@ -37,9 +37,8 @@ export class StartingReplInterceptor extends BaseInterceptor {
   readonly requires = ["diced shadow-cljs port detection"];
 
   async leave(ctx: InterceptorContext): Promise<InterceptorContext> {
-    const diced = ctx.request.diced;
-    if (ctx.response == null) return ctx;
-    if (ctx.response.params["name"] !== CandidateName) return ctx;
+    const diced = ctx.arg.diced;
+    if (ctx.arg.params["name"] !== CandidateName) return ctx;
 
     const buildId = await getTargetBuildId(diced);
     if (buildId === "") {
@@ -53,7 +52,7 @@ export class StartingReplInterceptor extends BaseInterceptor {
            (shadow.cljs.devtools.api/nrepl-select :${buildId}))`,
     );
 
-    ctx.response.params["type"] = "cljs";
+    ctx.arg.params["type"] = "cljs";
     return ctx;
   }
 }

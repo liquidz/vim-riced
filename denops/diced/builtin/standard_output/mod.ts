@@ -20,13 +20,11 @@ class StdOutInterceptor extends BaseInterceptor {
   readonly name: string = "diced nrepl read";
 
   leave(ctx: InterceptorContext): Promise<InterceptorContext> {
-    if (ctx.response == null) return Promise.resolve(ctx);
-
-    const res = ctx.response.params["response"] as NreplResponse;
+    const res = ctx.arg.params["response"] as NreplResponse;
     const isVerbose = (res.context["verbose"] !== "false");
 
     if (isVerbose) {
-      const diced = ctx.request.diced;
+      const diced = ctx.arg.diced;
       appendToBuf(diced, res.getFirst("out"));
       appendToBuf(diced, res.getFirst("err"));
       appendToBuf(diced, res.getFirst("ex"));

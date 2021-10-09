@@ -19,13 +19,13 @@ class AutoRequiringNsInterceptor extends BaseInterceptor {
   readonly name: string = "AutoInNsInterceptor";
 
   async leave(ctx: InterceptorContext): Promise<InterceptorContext> {
-    const diced = ctx.request.diced;
+    const diced = ctx.arg.diced;
     if (!await bufConn.isValid(diced)) return ctx;
 
     try {
       const nsName = await bufNs.extractName(diced);
       await requireNs(diced, nsName);
-      await nreplNs.inNs(ctx.request.diced, nsName);
+      await nreplNs.inNs(ctx.arg.diced, nsName);
     } catch (_) {
       // do nothing
     }

@@ -11,7 +11,7 @@ class PortDetectionInterceptor extends BaseInterceptor {
   readonly name: string = "diced port detection";
 
   async enter(ctx: InterceptorContext): Promise<InterceptorContext> {
-    let port: number = ctx.request.params["port"] || NaN;
+    let port: number = ctx.arg.params["port"] || NaN;
     if (!isNaN(port)) return ctx;
 
     const filePath = await denoFs.findFileUpwards(".nrepl-port");
@@ -21,7 +21,7 @@ class PortDetectionInterceptor extends BaseInterceptor {
       throw new Deno.errors.InvalidData("port is nan");
     }
 
-    ctx.request.params["port"] = port;
+    ctx.arg.params["port"] = port;
     return ctx;
   }
 }

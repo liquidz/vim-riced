@@ -11,7 +11,7 @@ export class PortDetectionInterceptor extends BaseInterceptor {
 
   async enter(ctx: InterceptorContext): Promise<InterceptorContext> {
     let port = NaN;
-    const currentPort: number = ctx.request.params["port"] || NaN;
+    const currentPort: number = ctx.arg.params["port"] || NaN;
 
     try {
       const dotShadowCljs = await denoFs.findFileUpwards(".shadow-cljs");
@@ -29,16 +29,15 @@ export class PortDetectionInterceptor extends BaseInterceptor {
     }
 
     if (isNaN(currentPort)) {
-      ctx.request.params["port"] = port;
+      ctx.arg.params["port"] = port;
     } else {
-      const candidates =
-        unknownutil.isArray(ctx.request.params["portCandidates"])
-          ? ctx.request.params["portCandidates"]
-          : [];
+      const candidates = unknownutil.isArray(ctx.arg.params["portCandidates"])
+        ? ctx.arg.params["portCandidates"]
+        : [];
 
       candidates.push({ name: "nREPL", port: currentPort });
       candidates.push({ name: CandidateName, port: port });
-      ctx.request.params["portCandidates"] = candidates;
+      ctx.arg.params["portCandidates"] = candidates;
     }
     return ctx;
   }

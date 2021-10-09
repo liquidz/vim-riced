@@ -110,12 +110,6 @@ class DummyDiced implements Diced {
       session: "dummy",
     });
     connManager.switchConnection(this.connection, "dummy");
-    // this.connectionManager.add({
-    //   port: 9999,
-    //   session: "dummy",
-    //   conn: new DummyNreplClient(dispacher),
-    // });
-    //this.connectionManager.switch(9999);
   }
 }
 

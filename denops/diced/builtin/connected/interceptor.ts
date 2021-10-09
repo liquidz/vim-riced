@@ -13,13 +13,8 @@ export class ConnectedInterceptor extends BaseInterceptor {
   async leave(
     ctx: InterceptorContext,
   ): Promise<InterceptorContext> {
-    const diced = ctx.request.diced;
-    if (ctx.response == null) {
-      await msg.error(diced, "ConnectError");
-      return ctx;
-    }
-
-    if (ctx.response.params["connection"] == null) {
+    const diced = ctx.arg.diced;
+    if (ctx.arg.params["connection"] == null) {
       await msg.error(diced, "ConnectError");
       return ctx;
     }

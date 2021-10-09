@@ -11,18 +11,18 @@ class NormalizeCodeInterceptor extends BaseInterceptor {
   readonly name: string = "normalize code";
 
   async enter(ctx: InterceptorContext): Promise<InterceptorContext> {
-    const msg = ctx.request.params["message"] ?? {};
+    const msg = ctx.arg.params["message"] ?? {};
     const code = msg["code"] ?? "";
     if (code === "") return ctx;
 
     const flag = await dpsVars.g.get(
-      ctx.request.diced.denops,
+      ctx.arg.diced.denops,
       "diced_does_eval_inside_comment",
     );
     if (flag !== true) return ctx;
 
     msg["code"] = code.replace(/^\(comment/, "(do");
-    ctx.request.params["message"] = msg;
+    ctx.arg.params["message"] = msg;
     return ctx;
   }
 }

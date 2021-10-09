@@ -13,11 +13,9 @@ class NormalizeNsPathInterceptor extends BaseInterceptor {
   readonly name: string = "ns-path normalize";
 
   leave(ctx: InterceptorContext): Promise<InterceptorContext> {
-    if (ctx.response == null) return Promise.resolve(ctx);
+    const done = ctx.arg.params["response"] as nrepl.NreplDoneResponse;
 
-    const done = ctx.response.params["response"] as nrepl.NreplDoneResponse;
-
-    ctx.response.params["response"] = dicedInterceptor.updateDoneResponse(
+    ctx.arg.params["response"] = dicedInterceptor.updateDoneResponse(
       done,
       "path",
       (path) => {
@@ -35,11 +33,9 @@ class NormalizeInfoPathInterceptor extends BaseInterceptor {
   readonly name: string = "NormalizeInfoPathInterceptor";
 
   leave(ctx: InterceptorContext): Promise<InterceptorContext> {
-    if (ctx.response == null) return Promise.resolve(ctx);
+    const done = ctx.arg.params["response"] as nrepl.NreplDoneResponse;
 
-    const done = ctx.response.params["response"] as nrepl.NreplDoneResponse;
-
-    ctx.response.params["response"] = dicedInterceptor.updateDoneResponse(
+    ctx.arg.params["response"] = dicedInterceptor.updateDoneResponse(
       done,
       "file",
       (path) => {

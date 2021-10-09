@@ -18,7 +18,7 @@ class PortSelectionInterceptor extends BaseInterceptor {
   readonly requireOthers = true;
 
   async enter(ctx: InterceptorContext): Promise<InterceptorContext> {
-    const portCandidates = ctx.request.params["portCandidates"] || [];
+    const portCandidates = ctx.arg.params["portCandidates"] || [];
 
     if (
       !unknownutil.isArray<PortCandidate>(portCandidates) ||
@@ -28,15 +28,15 @@ class PortSelectionInterceptor extends BaseInterceptor {
     }
 
     const selected = await extSelector.start(
-      ctx.request.diced,
+      ctx.arg.diced,
       portCandidates.map((pc) => pc.name),
     );
 
     const candidate = portCandidates.find((pc) => pc.name === selected.text);
     if (candidate == null) return ctx;
 
-    ctx.request.params["port"] = candidate.port;
-    ctx.request.params["name"] = candidate.name;
+    ctx.arg.params["port"] = candidate.port;
+    ctx.arg.params["name"] = candidate.name;
 
     return ctx;
   }

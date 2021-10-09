@@ -3,19 +3,40 @@ import {
   AnyParams,
   BaseInterceptor,
   Diced,
+  InterceptorContext,
   InterceptorParams,
 } from "../types.ts";
+
+type Handler = (param: InterceptorParams) => Promise<InterceptorParams | Error>;
+
+class HandlerInterceptor extends BaseInterceptor {
+  readonly type: string = "__handler__";
+  readonly name: string = "__handler__";
+  readonly fn: Handler;
+
+  constructor(fn: Handler) {
+    super();
+    this.fn = fn;
+  }
+
+  async enter(ctx: InterceptorContext): Promise<InterceptorContext> {
+    const res = await this.fn(ctx.arg);
+    if (res instanceof Error) throw res;
+    ctx.arg = res;
+    return ctx;
+  }
+}
 
 /// Execute registered interceptors for specified interceptor type
 export async function intercept(
   diced: Diced,
   interceptorType: string,
   params: AnyParams,
-  handler: interceptor.Handler<InterceptorParams>,
+  handler: Handler,
 ): Promise<AnyParams> {
   const interceptors = [
     ...(diced.interceptors[interceptorType] || []),
-    handler,
+    new HandlerInterceptor(handler),
   ];
   const context: InterceptorParams = { diced: diced, params: params };
   const res = await interceptor.execute(interceptors, context);

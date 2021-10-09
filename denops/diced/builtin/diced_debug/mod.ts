@@ -15,17 +15,15 @@ class DebuggingEvaluationInterceptor extends BaseInterceptor {
 
   enter(ctx: InterceptorContext): Promise<InterceptorContext> {
     console.log(">>>>> REQUEST");
-    console.log(ctx.request.params["message"]);
+    console.log(ctx.arg.params["message"]);
     return Promise.resolve(ctx);
   }
 
   leave(ctx: InterceptorContext): Promise<InterceptorContext> {
-    if (ctx.response != null) {
-      const done = ctx.response.params["response"] as NreplDoneResponse;
-      console.log("<<<<< RESPONSE");
-      for (const res of done.responses) {
-        console.log(res.response);
-      }
+    const done = ctx.arg.params["response"] as NreplDoneResponse;
+    console.log("<<<<< RESPONSE");
+    for (const res of done.responses) {
+      console.log(res.response);
     }
     return Promise.resolve(ctx);
   }
