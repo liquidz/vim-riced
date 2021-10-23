@@ -15,6 +15,7 @@ import * as portSelector from "./port_selector/mod.ts";
 import * as autoRequiringNs from "./auto_requiring_ns/mod.ts";
 import * as jumpToDefinition from "./jump_to_definition/mod.ts";
 import * as sourceReference from "./source_reference/mod.ts";
+import * as addMissing from "./add_missing/mod.ts";
 
 export const plugins = [
   // should be top
@@ -36,4 +37,5 @@ export const plugins = [
   new autoRequiringNs.Plugin(),
   new jumpToDefinition.Plugin(),
   new sourceReference.Plugin(),
+  new addMissing.Plugin(),
 ];

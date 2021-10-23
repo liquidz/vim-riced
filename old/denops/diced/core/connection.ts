@@ -29,6 +29,7 @@ async function nReplClientHandler(diced: Diced, conn: nrepl.NreplClient) {
   }
 }
 
+// Connect to a nREPL server
 export async function connect(
   diced: Diced,
   hostname: string,

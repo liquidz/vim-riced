@@ -23,6 +23,7 @@ export async function ready(diced: Diced): Promise<void> {
     silent execute ':split ${bufName}'
     silent execute ':q'
 
+    call setbufvar('${bufName}', 'lsp_diagnostics_enabled', 0)
     call setbufvar('${bufName}', '&bufhidden', 'hide')
     call setbufvar('${bufName}', '&buflisted', 0)
     call setbufvar('${bufName}', '&buftype', 'nofile')

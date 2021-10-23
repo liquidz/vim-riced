@@ -20,6 +20,7 @@ function generateRegisterCommand(diced: Diced, cmd: Command): string {
   const plug =
     `${plugMap} <silent> <Plug>(diced_${plugName}) :<C-u>Diced${cmd.name}<CR>`;
 
+  // FIXME TODO command に -buffer オプションをつけないとグローバルにコマンドを定義してしまうとのこと
   return `
    command! ${range} ${nargs} ${complete} Diced${cmd.name} call denops#notify("${denops.name}", "command", [${args}])
    ${plug}
