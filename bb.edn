@@ -1,8 +1,0 @@
-{:tasks
- {-lint-core-fmt (shell "deno fmt --check core")
-  -lint-core-lint (shell "deno lint --unstable core")
-
-  lint-core {:doc "Lint core files"
-             :depends [-lint-core-fmt -lint-core-lint]}
-  lint {:doc "Lint all files in this project"
-        :depends [lint-core]}}}
