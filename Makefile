@@ -4,5 +4,5 @@ test:
 
 .PHONY: lint
 lint:
-	deno fmt --check *.ts
-	deno lint --unstable
+	cd denops && deno fmt --check
+	cd denops && deno lint --unstable
