@@ -65,6 +65,7 @@ const append = {
   name: "icedon_append_to_info_buffer",
   run: async (app: App, args: unknown[]) => {
     if (unknownutil.isArray<string>(args)) {
+      // TODO: use batch
       for (const line of args) {
         await vimWin.appendLine(app, bufferName, line);
       }
