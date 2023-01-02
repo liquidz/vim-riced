@@ -1,43 +1,46 @@
 import {
-  //App,
   BaseInterceptor,
   InterceptorContext,
   InterceptorPlugin,
 } from "../../../types.ts";
 import { NreplResponse } from "../../../core/types.ts";
+import { appendLinesToInfoBuffer } from "../../api/alias.ts";
 
 class NreplOutputInterceptor extends BaseInterceptor {
   readonly name: string = "icedon_nrepl_output";
   readonly type: string = "read";
 
-  leave(ctx: InterceptorContext): Promise<InterceptorContext> {
+  async leave(ctx: InterceptorContext): Promise<InterceptorContext> {
     const resp = ctx.arg.params["response"] as NreplResponse;
     const isVerbose = (resp.context["verbose"] !== "false");
 
     if (isVerbose) {
-      // ctx.arg.app.denops
       const out = resp.getOne("out");
       if (typeof (out) === "string") {
-        console.log(out);
+        await appendLinesToInfoBuffer(ctx.arg.app, out.split(/\r?\n/));
       }
-      //
-      // appendToBuf(diced, res.getFirst("out"));
-      // appendToBuf(diced, res.getFirst("err"));
-      // appendToBuf(diced, res.getFirst("ex"));
-      // appendToBuf(diced, res.getFirst("pprint-out"));
+
+      const err = resp.getOne("err");
+      if (typeof (err) === "string") {
+        await appendLinesToInfoBuffer(ctx.arg.app, err.split(/\r?\n/));
+      }
+
+      const ex = resp.getOne("ex");
+      if (typeof (ex) === "string") {
+        await appendLinesToInfoBuffer(ctx.arg.app, ex.split(/\r?\n/));
+      }
+
+      const pprintOut = resp.getOne("pprint-out");
+      if (typeof (pprintOut) === "string") {
+        await appendLinesToInfoBuffer(ctx.arg.app, pprintOut.split(/\r?\n/));
+      }
     }
 
-    // if (unknownutil.isObject<NreplResponse>(resp)) {
-    // }
-    return Promise.resolve(ctx);
+    return ctx;
   }
 }
 
 export class Interceptor extends InterceptorPlugin {
   readonly name = "icedon builtin nrepl debug";
   readonly interceptors = [new NreplOutputInterceptor()];
-
-  // onInit(_app: App): Promise<void> {
-  //   return Promise.resolve();
-  // }
 }
