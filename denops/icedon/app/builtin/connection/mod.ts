@@ -22,28 +22,37 @@ const connect = {
     unknownutil.assertArray<string>(args);
     const opt = connectOption(app);
 
-    if (args.length === 0) {
-      // auto connections
-      console.log("Not supported");
-      return;
-    } else if (args.length === 1) {
-      // port only
-      const port = parseInt(args[0]);
-      await app.icedon.connect("0.0.0.0", port, opt);
+    let host: string | undefined;
+    let port: number | undefined;
+
+    if (args.length === 1) {
+      port = parseInt(args[0]);
+    } else if (args.length === 2) {
+      host = args[0];
+      port = parseInt(args[1]);
+    }
+
+    await app.intercept("connect", { host: host, port: port }, async (ctx) => {
+      const host = ctx.params["host"] || "0.0.0.0";
+      const port = ctx.params["port"];
+
+      if (
+        !unknownutil.isString(host) ||
+        !unknownutil.isNumber(port) ||
+        (unknownutil.isNumber(port) && isNaN(port))
+      ) {
+        console.log("FIXME could not connect");
+        return ctx;
+      }
+      if (!await ctx.app.icedon.connect(host, port, opt)) {
+        throw Deno.errors.NotConnected;
+      }
+
+      // FIXME
       console.log("Connected");
 
-      return;
-    } else if (args.length === 2) {
-      // host and port
-      const host = args[0];
-      const port = parseInt(args[1]);
-      const ret = await app.icedon.connect(host, port, opt);
-      if (ret) {
-        console.log("Connected");
-      }
-      return;
-    }
-    return Deno.errors.InvalidData;
+      return ctx;
+    });
   },
 };
 
