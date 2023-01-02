@@ -51,5 +51,5 @@ export async function registerApiCommand(
 }
 
 export function request(app: App, apiName: string, args: unknown[]) {
-  return app.denops.dispatch(app.denops.name, apiName, ...args);
+  return app.denops.dispatch(app.denops.name, "dispatchApi", apiName, args);
 }
