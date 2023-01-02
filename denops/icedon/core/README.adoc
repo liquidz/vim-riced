@@ -1,0 +1,5 @@
+= dps-iced core
+
+* 役割
+  * nREPLとのコネクションの管理
+  * nREPLとの通信(write/read)

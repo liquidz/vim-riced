@@ -1,6 +1,6 @@
-= vim-diced
+= vim-icedon
 
-image:https://github.com/liquidz/vim-diced/actions/workflows/test.yml/badge.svg["GitHub Actions for test workflow", link="https://github.com/liquidz/vim-diced/actions/workflows/test.yml"]
+image:https://github.com/liquidz/vim-icedon/actions/workflows/test.yml/badge.svg["GitHub Actions for test workflow", link="https://github.com/liquidz/vim-icedon/actions/workflows/test.yml"]
 
 Clojure Interactive Development Environment for Vim/Neovim powered by https://deno.land[Deno] and https://github.com/vim-denops/denops.vim[Denops].
 
@@ -8,7 +8,7 @@ WIP
 
 == License
 
-Copyright (c) 2021 http://twitter.com/uochan[Masashi Iizuka]
+Copyright (c) 2021-2023 http://twitter.com/uochan[Masashi Iizuka]
 
 Distributed under the MIT License.
 
