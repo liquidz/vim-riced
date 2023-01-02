@@ -1,6 +1,6 @@
-import { ApiPlugin, App } from "../../types.ts";
+import { ApiPlugin, App } from "../../../types.ts";
 import * as api from "../../api.ts";
-import { unknownutil } from "../../deps.ts";
+import { unknownutil } from "../../../deps.ts";
 
 const evaluate = {
   name: "icedon_eval",

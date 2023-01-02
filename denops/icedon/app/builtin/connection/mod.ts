@@ -1,7 +1,7 @@
-import { ApiPlugin, App } from "../../types.ts";
+import { ApiPlugin, App } from "../../../types.ts";
 import * as api from "../../api.ts";
-import { unknownutil } from "../../deps.ts";
-import { ConnectOption, NreplResponse } from "../../core/types.ts";
+import { unknownutil } from "../../../deps.ts";
+import { ConnectOption, NreplResponse } from "../../../core/types.ts";
 
 function connectOption(app: App): ConnectOption {
   return {

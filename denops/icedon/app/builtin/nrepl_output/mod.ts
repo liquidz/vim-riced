@@ -3,8 +3,8 @@ import {
   BaseInterceptor,
   InterceptorContext,
   InterceptorPlugin,
-} from "../../types.ts";
-import { NreplResponse } from "../../core/types.ts";
+} from "../../../types.ts";
+import { NreplResponse } from "../../../core/types.ts";
 
 class NreplOutputInterceptor extends BaseInterceptor {
   readonly name: string = "icedon_nrepl_output";
