@@ -56,8 +56,6 @@ function _evaluate(app: App, arg: EvalArg) {
     }
 
     ctx.params["response"] = await app.icedon.request(msg, opt);
-    // FIXME
-    console.log(ctx.params["response"]);
     return ctx;
   });
 }
