@@ -2,6 +2,8 @@ import { ApiPlugin, App } from "../../../types.ts";
 import * as api from "../../api.ts";
 import { nrepl, unknownutil } from "../../../deps.ts";
 
+import { getCurrentTopForm } from "../../util/vim/form.ts";
+
 type EvalArg = {
   code: string;
   session?: string;
@@ -74,11 +76,20 @@ const evaluate = {
   },
 };
 
+const evaluateOuterTopList = {
+  name: "icedon_eval_outer_top_list",
+  run: async (app: App, _args: unknown[]) => {
+    const code = await getCurrentTopForm(app);
+    return await _evaluate(app, { code: code });
+  },
+};
+
 export class Api extends ApiPlugin {
   readonly name = "icedon builtin evaluation";
-  readonly apis = [evaluate];
+  readonly apis = [evaluate, evaluateOuterTopList];
 
   async onInit(app: App) {
     await api.registerApiCommand(app, evaluate, { nargs: "1" });
+    await api.registerApiCommand(app, evaluateOuterTopList);
   }
 }
