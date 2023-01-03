@@ -2,7 +2,10 @@ import { unknownutil, vimFn } from "../../../deps.ts";
 import { App } from "../../../types.ts";
 import { rangeForDefun } from "../string/paredit.ts";
 
-export async function getCurrentTopForm(app: App): Promise<string> {
+/**
+ * Returns code and the starting line number
+ */
+export async function getCurrentTopForm(app: App): Promise<[string, number]> {
   const denops = app.denops;
   const startPos = await vimFn.searchpos(denops, "^\\S", "bcnW");
   unknownutil.assertArray<number>(startPos);
@@ -13,5 +16,5 @@ export async function getCurrentTopForm(app: App): Promise<string> {
   const code = lines.join("\n");
   const [_, endIndex] = rangeForDefun(code, 0);
 
-  return code.substring(0, endIndex);
+  return [code.substring(0, endIndex), startPos[0]];
 }
