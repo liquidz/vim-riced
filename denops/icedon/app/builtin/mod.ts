@@ -1,6 +1,7 @@
 import { ApiPlugin, InterceptorPlugin } from "../../types.ts";
 
 import * as apiConnection from "./connection/mod.ts";
+import * as apiParedit from "./paredit/mod.ts";
 import * as apiEvaluation from "./evaluation/mod.ts";
 import * as apiInfoBuffer from "./info_buffer/mod.ts";
 
@@ -9,6 +10,7 @@ import * as interceptorPortDetection from "./port_detection/mod.ts";
 
 export const apiPlugins: ApiPlugin[] = [
   new apiConnection.Api(),
+  new apiParedit.Api(),
   new apiEvaluation.Api(),
   new apiInfoBuffer.Api(),
 ];

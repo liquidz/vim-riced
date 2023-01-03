@@ -1,8 +1,7 @@
 import { ApiPlugin, App } from "../../../types.ts";
 import * as api from "../../api.ts";
+import { getCurrentTopForm } from "../../api/alias.ts";
 import { nrepl, unknownutil } from "../../../deps.ts";
-
-import { getCurrentTopForm } from "../../util/vim/form.ts";
 
 type EvalArg = {
   code: string;
