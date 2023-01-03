@@ -33,6 +33,8 @@ Deno.test("connection manager", async () => {
 
   asserts.assertEquals(resp.isDone(), true);
   asserts.assertEquals(resp.getOne("value"), "hello world!");
+  // session should be completed automatically
+  asserts.assertEquals(resp.getOne("session"), current.session);
 
   const disconnectResult = await cm.disconnect();
   asserts.assertEquals(disconnectResult, true);
