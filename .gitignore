@@ -3,3 +3,7 @@ VIM_AUTO_RTP
 *.bk
 cov
 .denops.vim
+.clj-kondo
+.cache
+.cpcache
+
