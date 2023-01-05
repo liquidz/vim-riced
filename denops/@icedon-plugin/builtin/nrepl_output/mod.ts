@@ -12,7 +12,7 @@ class NreplOutputInterceptor extends BaseInterceptor {
 
   async leave(ctx: InterceptorContext): Promise<InterceptorContext> {
     const resp = ctx.arg.params["response"] as NreplResponse;
-    const isVerbose = (resp.context["verbose"] !== "false");
+    const isVerbose = resp.context["verbose"] !== "false";
 
     if (isVerbose) {
       const out = resp.getOne("out");

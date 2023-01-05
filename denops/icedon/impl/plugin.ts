@@ -34,7 +34,7 @@ export class PluginImpl implements Plugin {
       this.loadedPluginNames.push(plugin.name);
 
       for (const interceptor of plugin.interceptors) {
-        const tmp = (this.interceptorsMap[interceptor.type] || []);
+        const tmp = this.interceptorsMap[interceptor.type] || [];
         if (tmp.find((v) => v.name === interceptor.name) === undefined) {
           this.interceptorsMap[interceptor.type] = tmp.concat([interceptor]);
         }
