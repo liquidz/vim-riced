@@ -2,8 +2,8 @@ import {
   BaseInterceptor,
   InterceptorContext,
   InterceptorPlugin,
+  NreplResponse,
 } from "../../../types.ts";
-import { NreplResponse } from "../../../core/types.ts";
 import { appendLinesToInfoBuffer } from "../../api/alias.ts";
 
 class NreplOutputInterceptor extends BaseInterceptor {

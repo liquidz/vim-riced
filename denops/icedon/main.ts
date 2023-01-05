@@ -1,5 +1,5 @@
 import { Denops, unknownutil } from "./deps.ts";
-import * as core from "./core/mod.ts";
+import * as core from "../@icedon-core/mod.ts";
 import { AppImpl } from "./impl/app.ts";
 import { App } from "./types.ts";
 import * as builtin from "./app/builtin/mod.ts";

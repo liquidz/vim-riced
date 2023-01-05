@@ -1,5 +1,5 @@
 import { Denops, interceptor } from "../deps.ts";
-import * as core from "../core/mod.ts";
+import * as core from "../../@icedon-core/mod.ts";
 import { App, InterceptorHandler, Plugin, UnknownParams } from "../types.ts";
 import { PluginImpl } from "./plugin.ts";
 import { HandlerInterceptor } from "./interceptor.ts";

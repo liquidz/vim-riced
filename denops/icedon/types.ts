@@ -1,5 +1,15 @@
 import { Denops, interceptor } from "./deps.ts";
-import { Icedon } from "./core/mod.ts";
+import { Icedon } from "../@icedon-core/mod.ts";
+
+// Re-export
+export type {
+  ConnectOption,
+  NreplClient,
+  NreplMessage,
+  NreplResponse,
+  NreplStatus,
+  NreplWriteOption,
+} from "../@icedon-core/types.ts";
 
 export type Position = [number, number];
 
