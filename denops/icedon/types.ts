@@ -1,6 +1,8 @@
 import { Denops, interceptor } from "./deps.ts";
 import { Icedon } from "./core/mod.ts";
 
+export type Position = [number, number];
+
 export type App = {
   readonly denops: Denops;
   readonly icedon: Icedon;

@@ -76,8 +76,8 @@ const evaluate = {
 const evaluateOuterTopList = {
   name: "icedon_eval_outer_top_list",
   run: async (app: App, _args: unknown[]) => {
-    const [code, line] = await getCurrentTopForm(app);
-    return await _evaluate(app, { code: code, line: line });
+    const [code, pos] = await getCurrentTopForm(app);
+    return await _evaluate(app, { code: code, line: pos[0] });
   },
 };
 
