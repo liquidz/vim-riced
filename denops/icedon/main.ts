@@ -1,8 +1,38 @@
-import { Denops, unknownutil } from "./deps.ts";
+import { Denops, option, unknownutil, vimFn } from "./deps.ts";
 import * as core from "../@icedon-core/mod.ts";
 import { AppImpl } from "./impl/app.ts";
 import { App } from "./types.ts";
-import * as builtin from "../@icedon-plugin/builtin/mod.ts";
+
+const defaultPlugins = [
+  // api
+  "builtin/connection",
+  "builtin/paredit",
+  "builtin/namespace",
+  "builtin/evaluation",
+  "builtin/info_buffer",
+  // interceptor
+  "builtin/nrepl_output",
+  "builtin/port_detection",
+  "builtin/evaluated_response",
+];
+
+async function searchPluginPaths(
+  denops: Denops,
+  pluginNames: string[],
+): Promise<string[]> {
+  const runtimepath = await option.runtimepath.getGlobal(denops);
+  const result: string[] = [];
+  for (const pluginName of pluginNames) {
+    const path = `denops/@icedon-plugin/${pluginName}.ts`;
+    const searched = await vimFn.globpath(denops, runtimepath, path, 1, 1);
+    unknownutil.assertArray<string>(searched);
+
+    for (const p of searched) {
+      result.push(p);
+    }
+  }
+  return result;
+}
 
 export function main(denops: Denops): Promise<void> {
   const app: App = new AppImpl({
@@ -11,18 +41,15 @@ export function main(denops: Denops): Promise<void> {
   });
 
   denops.dispatcher = {
-    initialize() {
+    async initialize() {
       console.log("kiteruyo");
+
       // register built-in plugins
-      for (const p of builtin.apiPlugins) {
-        app.plugin.registerApiPlugin(app, p);
-      }
-      for (const p of builtin.interceptorPlugins) {
-        app.plugin.registerInterceptorPlugin(app, p);
+      const paths = await searchPluginPaths(denops, defaultPlugins);
+      for (const p of paths) {
+        app.plugin.loadPlugin(app, p);
       }
       app.plugin.sortInterceptors();
-
-      return Promise.resolve();
     },
 
     async dispatchApi(apiName, args) {
