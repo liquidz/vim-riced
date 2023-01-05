@@ -33,7 +33,11 @@ export function main(denops: Denops): Promise<void> {
         return;
       }
 
-      return await api.run(app, args);
+      try {
+        return await api.run(app, args);
+      } catch (err) {
+        console.log(err);
+      }
     },
   };
 
