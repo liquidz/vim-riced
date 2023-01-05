@@ -2,7 +2,7 @@ import { Denops, unknownutil } from "./deps.ts";
 import * as core from "../@icedon-core/mod.ts";
 import { AppImpl } from "./impl/app.ts";
 import { App } from "./types.ts";
-import * as builtin from "./app/builtin/mod.ts";
+import * as builtin from "../@icedon-plugin/builtin/mod.ts";
 
 export function main(denops: Denops): Promise<void> {
   const app: App = new AppImpl({
