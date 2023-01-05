@@ -1,7 +1,7 @@
-import { ApiPlugin, App, NreplMessage, NreplWriteOption } from "../../types.ts";
-import * as api from "../../api.ts";
-import * as apiAlias from "../../api/alias.ts";
-import { unknownutil } from "../../deps.ts";
+import { ApiPlugin, App, NreplMessage, NreplWriteOption } from "../types.ts";
+import * as api from "../api.ts";
+import * as apiAlias from "../api/alias.ts";
+import { unknownutil } from "../deps.ts";
 
 type EvalArg = {
   code: string;

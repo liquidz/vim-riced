@@ -1,10 +1,10 @@
-import { unknownutil } from "../../deps.ts";
+import { unknownutil } from "../deps.ts";
 import {
   BaseInterceptor,
   InterceptorContext,
   InterceptorPlugin,
-} from "../../types.ts";
-import * as denoFs from "../../util/deno/fs.ts";
+} from "../types.ts";
+import * as denoFs from "../util/deno/fs.ts";
 
 class PortDetectionInterceptor extends BaseInterceptor {
   readonly name: string = "icedon_port_detection";

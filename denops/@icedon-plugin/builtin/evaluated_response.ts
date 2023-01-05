@@ -3,7 +3,7 @@ import {
   InterceptorContext,
   InterceptorPlugin,
   NreplResponse,
-} from "../../types.ts";
+} from "../types.ts";
 
 class EvaluatedResponseInterceptor extends BaseInterceptor {
   readonly name: string = "icedon_evaluated_response";
