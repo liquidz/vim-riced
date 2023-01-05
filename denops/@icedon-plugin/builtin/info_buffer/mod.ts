@@ -1,5 +1,5 @@
-import { helper, unknownutil, vimFn } from "../../../deps.ts";
-import { ApiPlugin, App } from "../../../types.ts";
+import { helper, unknownutil, vimFn } from "../../deps.ts";
+import { ApiPlugin, App } from "../../types.ts";
 import * as api from "../../api.ts";
 import * as vimWin from "../../util/vim/window.ts";
 

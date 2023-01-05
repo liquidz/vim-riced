@@ -1,4 +1,4 @@
-import { ApiPlugin, InterceptorPlugin } from "../../types.ts";
+import { ApiPlugin, InterceptorPlugin } from "../types.ts";
 
 import * as apiConnection from "./connection/mod.ts";
 import * as apiParedit from "./paredit/mod.ts";

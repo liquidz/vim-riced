@@ -1,11 +1,6 @@
-import {
-  ApiPlugin,
-  App,
-  ConnectOption,
-  NreplResponse,
-} from "../../../types.ts";
+import { ApiPlugin, App, ConnectOption, NreplResponse } from "../../types.ts";
 import * as api from "../../api.ts";
-import { unknownutil } from "../../../deps.ts";
+import { unknownutil } from "../../deps.ts";
 
 function connectOption(app: App): ConnectOption {
   return {

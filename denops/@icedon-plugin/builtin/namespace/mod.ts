@@ -1,4 +1,4 @@
-import { ApiPlugin, App } from "../../../types.ts";
+import { ApiPlugin, App } from "../../types.ts";
 import * as apiAlias from "../../api/alias.ts";
 import * as paredit from "../../util/string/paredit.ts";
 

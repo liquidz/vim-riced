@@ -1,5 +1,5 @@
-import { Api, App, Command } from "../types.ts";
-import { helper, kase } from "../deps.ts";
+import { Api, App, Command } from "./types.ts";
+import { helper, kase } from "./deps.ts";
 
 function generateRegisterCommand(
   app: App,

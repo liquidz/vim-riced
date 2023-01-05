@@ -1,5 +1,5 @@
-import { unknownutil, vimFn } from "../../../deps.ts";
-import { App } from "../../../types.ts";
+import { unknownutil, vimFn } from "../../deps.ts";
+import { App } from "../../types.ts";
 
 export async function focusByWinNr(app: App, winNr: unknown) {
   await app.denops.cmd(`execute printf('%dwincmd w', ${winNr})`);

@@ -1,7 +1,7 @@
-import { ApiPlugin, App } from "../../../types.ts";
+import { ApiPlugin, App, NreplMessage, NreplWriteOption } from "../../types.ts";
 import * as api from "../../api.ts";
 import * as apiAlias from "../../api/alias.ts";
-import { nrepl, unknownutil } from "../../../deps.ts";
+import { unknownutil } from "../../deps.ts";
 
 type EvalArg = {
   code: string;
@@ -21,12 +21,12 @@ function _evaluate(app: App, arg: EvalArg) {
     if (!unknownutil.isString(code)) {
       throw Deno.errors.InvalidData;
     }
-    const msg: nrepl.NreplMessage = {
+    const msg: NreplMessage = {
       op: "eval",
       "nrepl.middleware.print/stream?": 1,
       code: code,
     };
-    const opt: nrepl.NreplWriteOption = {};
+    const opt: NreplWriteOption = {};
 
     if (unknownutil.isString(ctx.params["session"])) {
       msg["session"] = ctx.params["session"];

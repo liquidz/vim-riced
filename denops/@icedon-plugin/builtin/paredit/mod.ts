@@ -1,5 +1,5 @@
-import { ApiPlugin, App, Position } from "../../../types.ts";
-import { helper, unknownutil, vimFn } from "../../../deps.ts";
+import { ApiPlugin, App, Position } from "../../types.ts";
+import { helper, unknownutil, vimFn } from "../../deps.ts";
 import { memoize } from "../../util/fn/memoize.ts";
 
 const rangeInitialize = memoize(async (app: App) => {

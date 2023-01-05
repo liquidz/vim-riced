@@ -1,5 +1,5 @@
-import { unknownutil } from "../../deps.ts";
-import { App, Position } from "../../types.ts";
+import { unknownutil } from "../deps.ts";
+import { App, Position } from "../types.ts";
 import { request } from "../api.ts";
 
 /**

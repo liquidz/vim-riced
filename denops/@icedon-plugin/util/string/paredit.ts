@@ -1,4 +1,4 @@
-import { paredit } from "../../../deps.ts";
+import { paredit } from "../../deps.ts";
 
 export function forwardSexp(src: string, idx: number): number {
   const ast = paredit.parse(src);

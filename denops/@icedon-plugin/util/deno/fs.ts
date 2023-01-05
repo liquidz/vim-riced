@@ -1,4 +1,4 @@
-import { path } from "../../../deps.ts";
+import { path } from "../../deps.ts";
 
 export function doesFileExists(path: string): boolean {
   try {
