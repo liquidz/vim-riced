@@ -76,8 +76,9 @@ const evaluate = {
 const evaluateOuterTopForm = {
   name: "icedon_eval_outer_top_form",
   run: async (app: App, _args: unknown[]) => {
+    const ns = await apiAlias.getNsName(app);
     const [code, pos] = await apiAlias.getCurrentTopForm(app);
-    return await _evaluate(app, { code: code, line: pos[0] });
+    return await _evaluate(app, { code: code, line: pos[0], ns: ns });
   },
 };
 
