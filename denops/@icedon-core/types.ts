@@ -1,4 +1,4 @@
-import { nrepl } from "../deps.ts";
+import { nrepl } from "./deps.ts";
 
 // Re export
 export type NreplClient = nrepl.NreplClient;

@@ -8,7 +8,7 @@ import {
   NreplResponse,
   NreplWriteOption,
 } from "../types.ts";
-import { async, nrepl, unknownutil } from "../../deps.ts";
+import { async, nrepl, unknownutil } from "../deps.ts";
 
 type Signal = async.Deferred<void>;
 

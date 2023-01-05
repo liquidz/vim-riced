@@ -1,6 +1,6 @@
-import { asserts, nrepl_mock } from "../../test_deps.ts";
+import { asserts, nrepl_mock } from "../test_deps.ts";
 import * as sut from "./connection_manager.ts";
-import { nrepl } from "../../deps.ts";
+import { nrepl } from "../deps.ts";
 
 const relay: nrepl_mock.RelayFunction = (
   msg: nrepl.NreplMessage,
