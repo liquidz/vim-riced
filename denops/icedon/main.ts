@@ -55,13 +55,9 @@ export function main(denops: Denops): Promise<void> {
     async dispatchApi(apiName, args) {
       unknownutil.assertString(apiName);
       unknownutil.assertArray(args);
-      const api = app.plugin.apiMap[apiName];
-      if (api === undefined) {
-        return;
-      }
 
       try {
-        return await api.run(app, args);
+        return await app.requestApi(apiName, args);
       } catch (err) {
         console.log(err);
       }
