@@ -1,6 +1,6 @@
 import { ApiPlugin, App } from "../../../types.ts";
 import * as api from "../../api.ts";
-import { getCurrentTopForm } from "../../api/alias.ts";
+import * as apiAlias from "../../api/alias.ts";
 import { nrepl, unknownutil } from "../../../deps.ts";
 
 type EvalArg = {
@@ -73,20 +73,34 @@ const evaluate = {
   },
 };
 
-const evaluateOuterTopList = {
-  name: "icedon_eval_outer_top_list",
+const evaluateOuterTopForm = {
+  name: "icedon_eval_outer_top_form",
   run: async (app: App, _args: unknown[]) => {
-    const [code, pos] = await getCurrentTopForm(app);
+    const [code, pos] = await apiAlias.getCurrentTopForm(app);
+    return await _evaluate(app, { code: code, line: pos[0] });
+  },
+};
+
+const evaluateNsForm = {
+  name: "icedon_eval_ns_form",
+  run: async (app: App, _args: unknown[]) => {
+    const [code, pos] = await apiAlias.getNsForm(app);
+    console.log(`ns code = ${code}`);
     return await _evaluate(app, { code: code, line: pos[0] });
   },
 };
 
 export class Api extends ApiPlugin {
   readonly name = "icedon builtin evaluation";
-  readonly apis = [evaluate, evaluateOuterTopList];
+  readonly apis = [
+    evaluate,
+    evaluateOuterTopForm,
+    evaluateNsForm,
+  ];
 
   async onInit(app: App) {
     await api.registerApiCommand(app, evaluate, { nargs: "1" });
-    await api.registerApiCommand(app, evaluateOuterTopList);
+    await api.registerApiCommand(app, evaluateOuterTopForm);
+    await api.registerApiCommand(app, evaluateNsForm);
   }
 }
