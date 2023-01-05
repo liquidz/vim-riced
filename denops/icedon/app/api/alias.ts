@@ -32,3 +32,9 @@ export async function getNsForm(app: App): Promise<[string, Position]> {
   unknownutil.assertNumber(res[2]);
   return [res[0], [res[1], res[2]]];
 }
+
+export async function getNsName(app: App): Promise<string> {
+  const res = await request(app, "icedon_ns_name", []);
+  unknownutil.assertString(res);
+  return res;
+}
