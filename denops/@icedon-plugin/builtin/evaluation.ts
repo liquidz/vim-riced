@@ -82,6 +82,15 @@ const evaluateOuterTopForm = {
   },
 };
 
+const evaluateOuterForm = {
+  name: "icedon_eval_outer_form",
+  run: async (app: App, _args: unknown[]) => {
+    const ns = await apiAlias.getNsName(app);
+    const [code, pos] = await apiAlias.getCurrentForm(app);
+    return await _evaluate(app, { code: code, line: pos[0], ns: ns });
+  },
+};
+
 const evaluateNsForm = {
   name: "icedon_eval_ns_form",
   run: async (app: App, _args: unknown[]) => {
@@ -96,12 +105,14 @@ export class Api extends ApiPlugin {
   readonly apis = [
     evaluate,
     evaluateOuterTopForm,
+    evaluateOuterForm,
     evaluateNsForm,
   ];
 
   async onInit(app: App) {
     await api.registerApiCommand(app, evaluate, { nargs: "1" });
     await api.registerApiCommand(app, evaluateOuterTopForm);
+    await api.registerApiCommand(app, evaluateOuterForm);
     await api.registerApiCommand(app, evaluateNsForm);
   }
 }
