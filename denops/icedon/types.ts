@@ -24,7 +24,13 @@ export type Plugin = {
   interceptorsMap: Record<string, BaseInterceptor[]>;
 
   registerApiPlugin(app: App, plugin: ApiPlugin): void;
+  removeApiPlugin(app: App, plugin: ApiPlugin): void;
+  replaceApiPlugin(app: App, plugin: ApiPlugin): void;
+
   registerInterceptorPlugin(app: App, plugin: InterceptorPlugin): void;
+  removeInterceptorPlugin(app: App, plugin: InterceptorPlugin): void;
+  replaceInterceptorPlugin(app: App, plugin: InterceptorPlugin): void;
+
   loadPlugin(app: App, filePath: string): Promise<void>;
   sortInterceptors(): void;
 };
