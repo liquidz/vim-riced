@@ -14,7 +14,7 @@ export class PluginImpl implements Plugin {
 
   loadedPluginNames: string[] = [];
 
-  registerApiPlugin(app: App, plugin: ApiPlugin): void {
+  async registerApiPlugin(app: App, plugin: ApiPlugin): Promise<void> {
     if (this.loadedPluginNames.indexOf(plugin.name) === -1) {
       this.loadedPluginNames.push(plugin.name);
 
@@ -25,13 +25,13 @@ export class PluginImpl implements Plugin {
         this.apiMap[api.name] = api;
       }
 
-      plugin.onInit(app);
+      await plugin.onInit(app);
     }
   }
 
-  removeApiPlugin(_app: App, plugin: ApiPlugin): void {
+  removeApiPlugin(_app: App, plugin: ApiPlugin): Promise<void> {
     if (this.loadedPluginNames.indexOf(plugin.name) === -1) {
-      return;
+      return Promise.resolve();
     }
 
     for (const api of plugin.apis) {
@@ -41,14 +41,19 @@ export class PluginImpl implements Plugin {
     this.loadedPluginNames = this.loadedPluginNames.filter((v) =>
       v !== plugin.name
     );
+
+    return Promise.resolve();
   }
 
-  replaceApiPlugin(app: App, plugin: ApiPlugin): void {
+  async replaceApiPlugin(app: App, plugin: ApiPlugin): Promise<void> {
     this.removeApiPlugin(app, plugin);
-    this.registerApiPlugin(app, plugin);
+    await this.registerApiPlugin(app, plugin);
   }
 
-  registerInterceptorPlugin(app: App, plugin: InterceptorPlugin): void {
+  async registerInterceptorPlugin(
+    app: App,
+    plugin: InterceptorPlugin,
+  ): Promise<void> {
     if (this.loadedPluginNames.indexOf(plugin.name) === -1) {
       this.loadedPluginNames.push(plugin.name);
 
@@ -59,13 +64,13 @@ export class PluginImpl implements Plugin {
         }
       }
 
-      plugin.onInit(app);
+      await plugin.onInit(app);
     }
   }
 
-  removeInterceptorPlugin(_app: App, plugin: InterceptorPlugin): void {
+  removeInterceptorPlugin(_app: App, plugin: InterceptorPlugin): Promise<void> {
     if (this.loadedPluginNames.indexOf(plugin.name) === -1) {
-      return;
+      return Promise.resolve();
     }
     const targetInterceptorNames = plugin.interceptors.map((v) => v.name);
 
@@ -79,22 +84,25 @@ export class PluginImpl implements Plugin {
     this.loadedPluginNames = this.loadedPluginNames.filter((v) =>
       v !== plugin.name
     );
+    return Promise.resolve();
   }
 
-  replaceInterceptorPlugin(app: App, plugin: InterceptorPlugin): void {
+  async replaceInterceptorPlugin(
+    app: App,
+    plugin: InterceptorPlugin,
+  ): Promise<void> {
     this.removeInterceptorPlugin(app, plugin);
-    this.registerInterceptorPlugin(app, plugin);
+    await this.registerInterceptorPlugin(app, plugin);
   }
 
   async loadPlugin(app: App, filePath: string): Promise<void> {
     const mod = await import(path.toFileUrl(filePath).href);
-
     if (mod.Api !== undefined) {
-      this.registerApiPlugin(app, new mod.Api());
+      await this.registerApiPlugin(app, new mod.Api());
     }
 
     if (mod.Interceptor !== undefined) {
-      this.registerInterceptorPlugin(app, new mod.Interceptor());
+      await this.registerInterceptorPlugin(app, new mod.Interceptor());
     }
   }
 
