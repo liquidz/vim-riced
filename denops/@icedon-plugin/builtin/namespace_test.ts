@@ -1,21 +1,44 @@
-import { asserts } from "../test_deps.ts";
-import * as sut from "./namespace.ts";
+import { AppMock, asserts, withDenops } from "../test_deps.ts";
+import { unknownutil } from "../deps.ts";
+import { App } from "../types.ts";
+import { PareditApiMock } from "../test/helper/builtin/paredit.ts";
 
-Deno.test("extractNsName", () => {
-  asserts.assertEquals(
-    sut.extractNsName(`(ns foo.bar\n)`),
-    "foo.bar",
+async function mockGetNsFormAndRequest(
+  app: App,
+  form: string,
+): Promise<string> {
+  await app.plugin.replaceApiPlugin(
+    app,
+    new PareditApiMock({ icedon_get_ns_form: form }),
   );
-  asserts.assertEquals(
-    sut.extractNsName(`(ns ^{:foo :bar} foo.bar)`),
-    "foo.bar",
-  );
-  asserts.assertEquals(
-    sut.extractNsName(`(ns foo.bar (:require))`),
-    "foo.bar",
-  );
-  asserts.assertEquals(
-    sut.extractNsName(`(ns ^{:foo :bar} foo.bar (:require))`),
-    "foo.bar",
-  );
+
+  const resp = await app.requestApi("icedon_ns_name", []);
+  unknownutil.assertString(resp);
+  return resp;
+}
+
+Deno.test("icedon_ns_name", async () => {
+  await withDenops("vim", async (denops) => {
+    const app = await AppMock.build({ denops: denops });
+
+    asserts.assertEquals(
+      await mockGetNsFormAndRequest(app, "(ns foo.core\n)"),
+      "foo.core",
+    );
+    asserts.assertEquals(
+      await mockGetNsFormAndRequest(app, "(ns ^{:foo :bar} foo.core)"),
+      "foo.core",
+    );
+    asserts.assertEquals(
+      await mockGetNsFormAndRequest(app, "(ns foo.core (:require))"),
+      "foo.core",
+    );
+    asserts.assertEquals(
+      await mockGetNsFormAndRequest(
+        app,
+        "(ns ^{:foo :bar} foo.core (:require))",
+      ),
+      "foo.core",
+    );
+  });
 });

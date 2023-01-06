@@ -2,8 +2,7 @@ import { ApiPlugin, App } from "../types.ts";
 import * as apiAlias from "../api/alias.ts";
 import * as paredit from "../util/string/paredit.ts";
 
-// TODO fix not to export
-export function extractNsName(nsForm: string): string {
+function extractNsName(nsForm: string): string {
   const code = nsForm.trim();
   let idx = 0;
 
