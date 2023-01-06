@@ -11,4 +11,3 @@ erDiagram
     Denops ||--o| Nvim : ""
     App ||--o{ Plugin : ""
 ```
-
