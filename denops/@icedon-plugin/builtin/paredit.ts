@@ -49,6 +49,18 @@ const getCurrentTopForm = {
   },
 };
 
+const getCurrentForm = {
+  name: "icedon_get_current_form",
+  run: async (app: App, _args: unknown[]) => {
+    await rangeInitialize(app);
+    const range = await app.denops.call("IcedonGetCurrentFormRange");
+    // NOTE: start and end is 1-based index
+    const [start, end] = unknownToRange(range);
+    const lines = await getLinesByRange(app, start, end);
+    return [lines.join("\n"), start[0], start[1]];
+  },
+};
+
 const getNsForm = {
   name: "icedon_get_ns_form",
   run: async (app: App, _args: unknown[]) => {
@@ -63,5 +75,5 @@ const getNsForm = {
 
 export class Api extends ApiPlugin {
   readonly name = "icedon builtin paredit";
-  readonly apis = [getCurrentTopForm, getNsForm];
+  readonly apis = [getCurrentTopForm, getCurrentForm, getNsForm];
 }

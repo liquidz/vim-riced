@@ -61,6 +61,7 @@ TODO: Generate this document automatically from codes.
 
 - API
   - `icedon_get_current_top_form`
+  - `icedon_get_current_form`
   - `icedon_get_ns_form`
 
 ## port_detection.ts
