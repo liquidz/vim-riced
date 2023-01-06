@@ -49,7 +49,7 @@ class DummyInterceptorPlugin2 extends InterceptorPlugin {
 
 Deno.test("PluginImpl", async () => {
   await denops_test.withDenops("vim", (denops) => {
-    const app = new AppMock({ denops: denops });
+    const app = new AppMock(denops);
     const plg = new sut.PluginImpl();
 
     // registerApiPlugin
