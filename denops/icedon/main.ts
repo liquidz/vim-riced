@@ -3,7 +3,7 @@ import * as core from "../@icedon-core/mod.ts";
 import { AppImpl } from "./impl/app.ts";
 import { App } from "./types.ts";
 
-const defaultPlugins = [
+export const defaultPlugins = [
   // api
   "builtin/connection",
   "builtin/paredit",
@@ -47,7 +47,7 @@ export function main(denops: Denops): Promise<void> {
       // register built-in plugins
       const paths = await searchPluginPaths(denops, defaultPlugins);
       for (const p of paths) {
-        app.plugin.loadPlugin(app, p);
+        await app.plugin.loadPlugin(app, p);
       }
       app.plugin.sortInterceptors();
     },
