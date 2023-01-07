@@ -10,6 +10,8 @@ type EvalArg = {
   ns?: string;
   line?: number;
   column?: number;
+  cursorLine?: number;
+  cursorColumn?: number;
   pprint?: boolean;
   verbose?: boolean;
   wait?: boolean;
@@ -77,8 +79,16 @@ const evaluateOuterTopForm = {
   name: "icedon_eval_outer_top_form",
   run: async (app: App, _args: unknown[]) => {
     const ns = await apiAlias.getNsName(app);
+    const curpos = await apiAlias.getCursorPosition(app);
     const [code, pos] = await apiAlias.getCurrentTopForm(app);
-    return await _evaluate(app, { code: code, line: pos[0], ns: ns });
+    return await _evaluate(app, {
+      code: code,
+      line: pos[0],
+      column: pos[1],
+      cursorLine: curpos[0],
+      cursorColumn: curpos[1],
+      ns: ns,
+    });
   },
 };
 
