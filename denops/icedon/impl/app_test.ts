@@ -4,7 +4,6 @@ import { IcedonMock } from "../../@icedon-core/test/mock.ts";
 import {
   ApiPlugin,
   App,
-  BaseInterceptor,
   InterceptorContext,
   InterceptorPlugin,
   NreplMessage,
@@ -27,9 +26,9 @@ class DummyApiPlugin extends ApiPlugin {
   ];
 }
 
-class DummyInterceptor extends BaseInterceptor {
-  readonly name: string = "icedon_app_test_dummy_interceptor";
-  readonly type: string = "app_test";
+class DummyInterceptorPlugin extends InterceptorPlugin {
+  readonly name = "icedon app test dummy interceptor";
+  readonly type = "app_test";
 
   enter(ctx: InterceptorContext): Promise<InterceptorContext> {
     const i = ctx.arg.params["num"];
@@ -44,11 +43,6 @@ class DummyInterceptor extends BaseInterceptor {
     ctx.arg.params["num"] = i * 2;
     return Promise.resolve(ctx);
   }
-}
-
-class DummyInterceptorPlugin extends InterceptorPlugin {
-  readonly name = "icedon app test dummy interceptor";
-  readonly interceptors = [new DummyInterceptor()];
 }
 
 Deno.test("app", async () => {

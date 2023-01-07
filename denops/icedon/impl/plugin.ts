@@ -1,16 +1,9 @@
 import { interceptor, path } from "../deps.ts";
-import {
-  Api,
-  ApiPlugin,
-  App,
-  BaseInterceptor,
-  InterceptorPlugin,
-  Plugin,
-} from "../types.ts";
+import { Api, ApiPlugin, App, InterceptorPlugin, Plugin } from "../types.ts";
 
 export class PluginImpl implements Plugin {
   apiMap: Record<string, Api> = {};
-  interceptorsMap: Record<string, BaseInterceptor[]> = {};
+  interceptorsMap: Record<string, InterceptorPlugin[]> = {};
 
   loadedPluginNames: string[] = [];
 
@@ -57,12 +50,8 @@ export class PluginImpl implements Plugin {
     if (this.loadedPluginNames.indexOf(plugin.name) === -1) {
       this.loadedPluginNames.push(plugin.name);
 
-      for (const interceptor of plugin.interceptors) {
-        const tmp = this.interceptorsMap[interceptor.type] || [];
-        if (tmp.find((v) => v.name === interceptor.name) === undefined) {
-          this.interceptorsMap[interceptor.type] = tmp.concat([interceptor]);
-        }
-      }
+      const tmp = this.interceptorsMap[plugin.type] || [];
+      this.interceptorsMap[plugin.type] = tmp.concat([plugin]);
 
       await plugin.onInit(app);
     }
@@ -72,14 +61,11 @@ export class PluginImpl implements Plugin {
     if (this.loadedPluginNames.indexOf(plugin.name) === -1) {
       return Promise.resolve();
     }
-    const targetInterceptorNames = plugin.interceptors.map((v) => v.name);
 
-    for (const interceptorKey of Object.keys(this.interceptorsMap)) {
-      this.interceptorsMap[interceptorKey] = this
-        .interceptorsMap[interceptorKey].filter((v) =>
-          targetInterceptorNames.indexOf(v.name) === -1
-        );
-    }
+    const tmp = this.interceptorsMap[plugin.type] || [];
+    this.interceptorsMap[plugin.type] = tmp.filter((v) =>
+      v.name !== plugin.name
+    );
 
     this.loadedPluginNames = this.loadedPluginNames.filter((v) =>
       v !== plugin.name
@@ -109,12 +95,12 @@ export class PluginImpl implements Plugin {
   sortInterceptors() {
     for (const interceptorType of Object.keys(this.interceptorsMap)) {
       const interceptors = this.interceptorsMap[interceptorType];
-      if (interceptors === undefined) {
+      if (interceptors === undefined || interceptors.length === 0) {
         continue;
       }
 
       this.interceptorsMap[interceptorType] = interceptor.reorder<
-        BaseInterceptor
+        InterceptorPlugin
       >(interceptors);
     }
   }

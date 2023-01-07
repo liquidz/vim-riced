@@ -1,10 +1,5 @@
 import { asserts, denops_test } from "../test_deps.ts";
-import {
-  ApiPlugin,
-  App,
-  BaseInterceptor,
-  InterceptorPlugin,
-} from "../types.ts";
+import { ApiPlugin, App, InterceptorPlugin } from "../types.ts";
 import * as sut from "./plugin.ts";
 import { AppMock } from "../test/mock.ts";
 
@@ -25,26 +20,13 @@ class DummyApiPlugin2 extends ApiPlugin {
   ];
 }
 
-class DummyInterceptor1 extends BaseInterceptor {
-  readonly name: string = "icedon_plugin_test_dummy_interceptor1";
-  readonly type: string = "plugin_test";
-}
-class DummyInterceptor2 extends BaseInterceptor {
-  readonly name: string = "icedon_plugin_test_dummy_interceptor2";
-  readonly type: string = "plugin_test";
-}
-class DummyInterceptor3 extends BaseInterceptor {
-  readonly name: string = "icedon_plugin_test_dummy_interceptor3";
-  readonly type: string = "plugin_test";
-}
-
 class DummyInterceptorPlugin1 extends InterceptorPlugin {
   readonly name = "icedon plugin test dummy interceptor1";
-  readonly interceptors = [new DummyInterceptor1()];
+  readonly type = "plugin_test";
 }
 class DummyInterceptorPlugin2 extends InterceptorPlugin {
   readonly name = "icedon plugin test dummy interceptor2";
-  readonly interceptors = [new DummyInterceptor2(), new DummyInterceptor3()];
+  readonly type = "plugin test";
 }
 
 Deno.test("PluginImpl", async () => {
@@ -70,7 +52,7 @@ Deno.test("PluginImpl", async () => {
     asserts.assertEquals(plg.interceptorsMap["plugin_test"], undefined);
     plg.registerInterceptorPlugin(app, new DummyInterceptorPlugin1());
     plg.registerInterceptorPlugin(app, new DummyInterceptorPlugin2());
-    asserts.assertEquals(plg.interceptorsMap["plugin_test"].length, 3);
+    asserts.assertEquals(plg.interceptorsMap["plugin_test"].length, 2);
 
     // removeInterceptorPlugin
     plg.removeInterceptorPlugin(app, new DummyInterceptorPlugin2());

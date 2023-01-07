@@ -1,12 +1,12 @@
 import {
-  BaseInterceptor,
   InterceptorContext,
   InterceptorHandler,
+  InterceptorPlugin,
 } from "../types.ts";
 
-export class HandlerInterceptor extends BaseInterceptor {
-  readonly type: string = "__handler__";
-  readonly name: string = "__handler__";
+export class HandlerInterceptor extends InterceptorPlugin {
+  readonly type = "__handler__";
+  readonly name = "__handler__";
 
   private fn: InterceptorHandler;
 

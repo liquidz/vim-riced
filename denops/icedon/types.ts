@@ -19,9 +19,18 @@ export type App = {
   ): Promise<UnknownParams>;
 };
 
+export type Command = {
+  name?: string;
+  nargs?: string;
+  range?: boolean;
+  complete?: string;
+  args?: string;
+  plug?: string;
+};
+
 export type Plugin = {
   apiMap: Record<string, Api>;
-  interceptorsMap: Record<string, BaseInterceptor[]>;
+  interceptorsMap: Record<string, InterceptorPlugin[]>;
 
   registerApiPlugin(app: App, plugin: ApiPlugin): Promise<void>;
   removeApiPlugin(app: App, plugin: ApiPlugin): Promise<void>;
@@ -35,7 +44,7 @@ export type Plugin = {
   sortInterceptors(): void;
 };
 
-// ===== Interceptor {{{
+// ===== Interceptor
 export type UnknownParams = Record<string, unknown>;
 export type InterceptorParams = {
   app: App;
@@ -47,7 +56,7 @@ export type InterceptorHandler = (
   param: InterceptorParams,
 ) => Promise<InterceptorParams | Error>;
 
-export abstract class BaseInterceptor implements Interceptor {
+export abstract class InterceptorPlugin implements Interceptor {
   readonly name: string = "none";
   readonly type: string = "none";
   readonly requires: string[] = [];
@@ -64,24 +73,17 @@ export abstract class BaseInterceptor implements Interceptor {
   ): Promise<InterceptorContext> {
     return Promise.resolve(ctx);
   }
-}
-// }}}
-
-export abstract class InterceptorPlugin {
-  readonly name: string = "";
-  readonly interceptors: BaseInterceptor[] = [];
 
   onInit(_app: App): Promise<void> {
     return Promise.resolve();
   }
 }
 
-// ===== Api {{{
+// ===== Api
 export type Api = {
   name: string;
   run: (app: App, args: unknown[]) => Promise<unknown>;
 };
-// }}}
 
 export abstract class ApiPlugin {
   readonly name: string = "";
@@ -91,12 +93,3 @@ export abstract class ApiPlugin {
     return Promise.resolve();
   }
 }
-
-export type Command = {
-  name?: string;
-  nargs?: string;
-  range?: boolean;
-  complete?: string;
-  args?: string;
-  plug?: string;
-};
