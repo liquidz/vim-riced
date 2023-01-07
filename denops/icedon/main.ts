@@ -8,6 +8,7 @@ export const defaultPlugins = [
   "builtin/connection",
   "builtin/paredit",
   "builtin/namespace",
+  "builtin/cursor",
   "builtin/evaluation",
   "builtin/info_buffer",
   // interceptor
