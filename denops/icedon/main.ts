@@ -15,6 +15,7 @@ export const defaultPlugins = [
   "builtin/nrepl_output",
   "builtin/port_detection",
   "builtin/evaluated_response",
+  "builtin/code_in_comment",
 ];
 
 async function searchPluginPaths(
