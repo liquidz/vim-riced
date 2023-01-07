@@ -26,7 +26,7 @@ class DummyInterceptorPlugin1 extends InterceptorPlugin {
 }
 class DummyInterceptorPlugin2 extends InterceptorPlugin {
   readonly name = "icedon plugin test dummy interceptor2";
-  readonly type = "plugin test";
+  readonly type = "plugin_test";
 }
 
 Deno.test("PluginImpl", async () => {
@@ -59,7 +59,7 @@ Deno.test("PluginImpl", async () => {
     asserts.assertEquals(plg.interceptorsMap["plugin_test"].length, 1);
     asserts.assertEquals(
       plg.interceptorsMap["plugin_test"][0].name,
-      "icedon_plugin_test_dummy_interceptor1",
+      "icedon plugin test dummy interceptor1",
     );
   });
 });
