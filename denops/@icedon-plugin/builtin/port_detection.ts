@@ -1,14 +1,10 @@
 import { unknownutil } from "../deps.ts";
-import {
-  BaseInterceptor,
-  InterceptorContext,
-  InterceptorPlugin,
-} from "../types.ts";
+import { InterceptorContext, InterceptorPlugin } from "../types.ts";
 import * as denoFs from "../util/deno/fs.ts";
 
-class PortDetectionInterceptor extends BaseInterceptor {
-  readonly name: string = "icedon_port_detection";
-  readonly type: string = "connect";
+export class Interceptor extends InterceptorPlugin {
+  readonly name = "icedon builtin port detection";
+  readonly type = "connect";
 
   async enter(ctx: InterceptorContext): Promise<InterceptorContext> {
     const currentPort = ctx.arg.params["port"];
@@ -26,11 +22,4 @@ class PortDetectionInterceptor extends BaseInterceptor {
     ctx.arg.params["port"] = port;
     return ctx;
   }
-}
-
-export class Interceptor extends InterceptorPlugin {
-  readonly name = "icedon builtin port detection";
-  readonly interceptors = [
-    new PortDetectionInterceptor(),
-  ];
 }

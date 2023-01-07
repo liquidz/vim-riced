@@ -1,14 +1,10 @@
-import {
-  BaseInterceptor,
-  InterceptorContext,
-  InterceptorPlugin,
-} from "../types.ts";
+import { InterceptorContext, InterceptorPlugin } from "../types.ts";
 import { unknownutil } from "../deps.ts";
 import * as paredit from "../util/string/paredit.ts";
 
-class CodeInCommentInterceptor extends BaseInterceptor {
-  readonly name: string = "icedon_code_in_comment";
-  readonly type: string = "evaluate";
+export class Interceptor extends InterceptorPlugin {
+  readonly name = "icedon builtin code in comment";
+  readonly type = "evaluate";
 
   enter(ctx: InterceptorContext): Promise<InterceptorContext> {
     const code = ctx.arg.params["code"];
@@ -52,9 +48,4 @@ class CodeInCommentInterceptor extends BaseInterceptor {
     ctx.arg.params["code"] = code.substring(...range);
     return Promise.resolve(ctx);
   }
-}
-
-export class Interceptor extends InterceptorPlugin {
-  readonly name = "icedon builtin code in comment";
-  readonly interceptors = [new CodeInCommentInterceptor()];
 }
