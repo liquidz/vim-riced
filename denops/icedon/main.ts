@@ -5,6 +5,7 @@ import { App } from "./types.ts";
 
 export const defaultPlugins = [
   // api
+  "builtin/cache",
   "builtin/connection",
   "builtin/paredit",
   "builtin/namespace",
