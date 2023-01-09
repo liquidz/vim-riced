@@ -10,6 +10,7 @@ export const defaultPlugins = [
   "builtin/paredit",
   "builtin/namespace",
   "builtin/cursor",
+  "builtin/nrepl_op",
   "builtin/evaluation",
   "builtin/info_buffer",
   // interceptor
