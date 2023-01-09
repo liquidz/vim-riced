@@ -13,53 +13,55 @@ function now(): number {
   return (new Date()).getTime();
 }
 
+const SetItemArg = z.object({
+  args: z.tuple([
+    z.string(), // key
+    z.unknown(), // value
+  ]),
+  opts: z.object({
+    ttl: z.coerce.number().optional(),
+  }),
+});
+
 const setItem = {
   name: "icedon_cache_set",
   run: (_app: App, args: unknown[]) => {
-    const parsed = parseArguments(args);
+    const parsed = SetItemArg.parse(icedon.arg.parse(args));
     const key = parsed.args[0];
     const val = parsed.args[1];
-    const ttl = parsed.options["ttl"] || defaultTtl;
-
-    if (
-      !unknownutil.isString(key) || val === undefined ||
-      !unknownutil.isNumber(ttl)
-    ) {
-      return Promise.resolve();
-    }
+    const ttl = parsed.opts.ttl || defaultTtl;
 
     cacheRecord[key] = { value: val, ttl: now() + ttl };
     return Promise.resolve();
   },
 };
 
+const GetItemArg = z.object({
+  args: z.tuple([z.string()]),
+});
+
 const getItem = {
   name: "icedon_cache_get",
   run: (_app: App, args: unknown[]) => {
-    const key = args[0];
-    if (!unknownutil.isString(key)) {
-      return Promise.resolve(undefined);
-    }
-
+    const key = GetItemArg.parse(icedon.arg.parse(args)).args[0];
     const item = cacheRecord[key];
     if (item === undefined || item.ttl < now()) {
       // expired
       delete cacheRecord[key];
       return Promise.resolve(undefined);
     }
-
     return Promise.resolve(item.value);
   },
 };
 
+const DeleteItemArg = z.object({
+  args: z.tuple([z.string()]),
+});
+
 const deleteItem = {
   name: "icedon_cache_delete",
   run: (_app: App, args: unknown[]) => {
-    const key = args[0];
-    if (!unknownutil.isString(key)) {
-      return Promise.resolve(false);
-    }
-
+    const key = DeleteItemArg.parse(icedon.arg.parse(args)).args[0];
     if (cacheRecord[key] === undefined) {
       return Promise.resolve(false);
     }
@@ -68,13 +70,14 @@ const deleteItem = {
   },
 };
 
+const HasItemArg = z.object({
+  args: z.tuple([z.string()]),
+});
+
 const hasItem = {
   name: "icedon_cache_has_item",
   run: (_app: App, args: unknown[]) => {
-    const key = args[0];
-    if (!unknownutil.isString(key)) {
-      return Promise.resolve(false);
-    }
+    const key = HasItemArg.parse(icedon.arg.parse(args)).args[0];
     const item = cacheRecord[key];
     if (item === undefined || item.ttl < now()) {
       delete cacheRecord[key];
