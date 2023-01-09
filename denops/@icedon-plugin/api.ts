@@ -1,10 +1,11 @@
-import { Api, App, Command } from "./types.ts";
-import { helper, kase } from "./deps.ts";
+import { helper, icedon, kase } from "./deps.ts";
+
+type App = icedon.App;
 
 function generateRegisterCommand(
   app: App,
-  api: Api,
-  cmd: Command,
+  api: icedon.Api,
+  cmd: icedon.Command,
 ): string {
   const denops = app.denops;
   const name = (cmd.name !== undefined) ? cmd.name : kase.pascalCase(api.name);
@@ -41,8 +42,8 @@ function generateRegisterCommand(
 
 export async function registerApiCommand(
   app: App,
-  api: Api,
-  cmd?: Command,
+  api: icedon.Api,
+  cmd?: icedon.Command,
 ): Promise<void> {
   await helper.execute(
     app.denops,

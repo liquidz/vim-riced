@@ -1,6 +1,8 @@
-import { ApiPlugin, App } from "../types.ts";
+import { icedon } from "../deps.ts";
 import * as apiAlias from "../api/alias.ts";
 import * as paredit from "../util/string/paredit.ts";
+
+type App = icedon.App;
 
 function extractNsName(nsForm: string): string {
   const code = nsForm.trim();
@@ -23,7 +25,7 @@ const getNsName = {
   },
 };
 
-export class Api extends ApiPlugin {
+export class Api extends icedon.ApiPlugin {
   readonly name = "icedon builtin namespace";
   readonly apis = [getNsName];
 }

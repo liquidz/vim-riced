@@ -1,6 +1,6 @@
-import { paredit } from "../../deps.ts";
-import { Position } from "../../types.ts";
+import { icedon, paredit } from "../../deps.ts";
 
+type Position = icedon.Position;
 type AST = Record<string, unknown>;
 type Source = string | AST;
 

@@ -1,7 +1,6 @@
-import { ApiPlugin, App } from "../types.ts";
-import { unknownutil } from "../deps.ts";
-import { parseArguments } from "../util/array/argument.ts";
+import { icedon, z } from "../deps.ts";
 
+type App = icedon.App;
 type CacheItem = {
   value: unknown;
   ttl: number;
@@ -95,7 +94,7 @@ const clearItems = {
   },
 };
 
-export class Api extends ApiPlugin {
+export class Api extends icedon.ApiPlugin {
   readonly name = "icedon builtin cache";
   readonly apis = [setItem, getItem, deleteItem, hasItem, clearItems];
 }

@@ -1,8 +1,9 @@
-import { unknownutil } from "../deps.ts";
-import { InterceptorContext, InterceptorPlugin } from "../types.ts";
+import { icedon, unknownutil } from "../deps.ts";
 import * as denoFs from "../util/deno/fs.ts";
 
-export class Interceptor extends InterceptorPlugin {
+type InterceptorContext = icedon.InterceptorContext;
+
+export class Interceptor extends icedon.InterceptorPlugin {
   readonly name = "icedon builtin port detection";
   readonly type = "connect";
 

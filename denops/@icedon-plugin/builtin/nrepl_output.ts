@@ -1,16 +1,14 @@
-import {
-  InterceptorContext,
-  InterceptorPlugin,
-  NreplResponse,
-} from "../types.ts";
+import { icedon } from "../deps.ts";
 import { appendLinesToInfoBuffer } from "../api/alias.ts";
 
-export class Interceptor extends InterceptorPlugin {
+type InterceptorContext = icedon.InterceptorContext;
+
+export class Interceptor extends icedon.InterceptorPlugin {
   readonly name = "icedon builtin nrepl debug";
   readonly type = "read";
 
   async leave(ctx: InterceptorContext): Promise<InterceptorContext> {
-    const resp = ctx.arg.params["response"] as NreplResponse;
+    const resp = ctx.arg.params["response"] as icedon.NreplResponse;
     const isVerbose = resp.context["verbose"] !== "false";
 
     if (isVerbose) {

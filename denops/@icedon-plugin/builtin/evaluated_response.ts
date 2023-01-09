@@ -1,10 +1,8 @@
-import {
-  InterceptorContext,
-  InterceptorPlugin,
-  NreplResponse,
-} from "../types.ts";
+import { icedon } from "../deps.ts";
 
-export class Interceptor extends InterceptorPlugin {
+type InterceptorContext = icedon.InterceptorContext;
+
+export class Interceptor extends icedon.InterceptorPlugin {
   readonly name = "icedon builtin evaluated response";
   readonly type = "evaluate";
 
@@ -12,7 +10,7 @@ export class Interceptor extends InterceptorPlugin {
     if (ctx.arg.params["response"] === undefined) {
       return Promise.resolve(ctx);
     }
-    const resp = ctx.arg.params["response"] as NreplResponse;
+    const resp = ctx.arg.params["response"] as icedon.NreplResponse;
     for (const v of resp.get("value")) {
       if (v === null) continue;
       console.log(v);

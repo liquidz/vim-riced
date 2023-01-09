@@ -1,6 +1,8 @@
-import { ApiPlugin, App, Position } from "../types.ts";
-import { helper, unknownutil, vimFn } from "../deps.ts";
+import { helper, icedon, unknownutil, vimFn } from "../deps.ts";
 import { memoize } from "../util/fn/memoize.ts";
+
+type App = icedon.App;
+type Position = icedon.Position;
 
 const rangeInitialize = memoize(async (app: App) => {
   const path = new URL(".", import.meta.url);
@@ -73,7 +75,7 @@ const getNsForm = {
   },
 };
 
-export class Api extends ApiPlugin {
+export class Api extends icedon.ApiPlugin {
   readonly name = "icedon builtin paredit";
   readonly apis = [getCurrentTopForm, getCurrentForm, getNsForm];
 }

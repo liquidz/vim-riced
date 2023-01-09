@@ -1,8 +1,10 @@
-import { ApiPlugin, App, ConnectOption, NreplResponse } from "../types.ts";
+import { icedon, unknownutil } from "../deps.ts";
 import * as api from "../api.ts";
-import { unknownutil } from "../deps.ts";
 
-function connectOption(app: App): ConnectOption {
+type App = icedon.App;
+type NreplResponse = icedon.NreplResponse;
+
+function connectOption(app: App): icedon.ConnectOption {
   return {
     handlerCallback: (resp: NreplResponse): NreplResponse => {
       app.intercept(
@@ -65,7 +67,7 @@ const disconnect = {
   },
 };
 
-export class Api extends ApiPlugin {
+export class Api extends icedon.ApiPlugin {
   readonly name = "icedon builtin connect";
   readonly apis = [connect, disconnect];
 

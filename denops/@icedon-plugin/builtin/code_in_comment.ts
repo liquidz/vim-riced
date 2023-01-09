@@ -1,8 +1,9 @@
-import { InterceptorContext, InterceptorPlugin } from "../types.ts";
-import { unknownutil } from "../deps.ts";
+import { icedon, unknownutil } from "../deps.ts";
 import * as paredit from "../util/string/paredit.ts";
 
-export class Interceptor extends InterceptorPlugin {
+type InterceptorContext = icedon.InterceptorContext;
+
+export class Interceptor extends icedon.InterceptorPlugin {
   readonly name = "icedon builtin code in comment";
   readonly type = "evaluate";
 

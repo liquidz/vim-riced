@@ -1,6 +1,8 @@
-import { unknownutil } from "../deps.ts";
-import { App, Position } from "../types.ts";
+import { icedon, unknownutil } from "../deps.ts";
 import { request } from "../api.ts";
+
+type App = icedon.App;
+type Position = icedon.Position;
 
 /**
  * cf ../builtin/info_buffer.ts

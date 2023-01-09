@@ -1,8 +1,8 @@
-import { helper, unknownutil, vimFn } from "../deps.ts";
-import { ApiPlugin, App } from "../types.ts";
+import { helper, icedon, unknownutil, vimFn } from "../deps.ts";
 import * as api from "../api.ts";
 import * as vimWin from "../util/vim/window.ts";
 
+type App = icedon.App;
 const bufferName = "icedon_info";
 
 async function ready(app: App): Promise<void> {
@@ -74,7 +74,7 @@ const append = {
   },
 };
 
-export class Api extends ApiPlugin {
+export class Api extends icedon.ApiPlugin {
   readonly name = "icedon builtin info buffer";
   readonly apis = [open, close, clear, append];
 

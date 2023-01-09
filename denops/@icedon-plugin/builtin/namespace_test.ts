@@ -1,7 +1,8 @@
 import { AppMock, asserts, withDenops } from "../test_deps.ts";
-import { unknownutil } from "../deps.ts";
-import { App } from "../types.ts";
+import { icedon, unknownutil } from "../deps.ts";
 import { PareditApiMock } from "../test/helper/builtin/paredit.ts";
+
+type App = icedon.App;
 
 async function mockGetNsFormAndRequest(
   app: App,

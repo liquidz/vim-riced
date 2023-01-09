@@ -1,5 +1,6 @@
-import { ApiPlugin, App } from "../types.ts";
-import { unknownutil, vimFn } from "../deps.ts";
+import { icedon, unknownutil, vimFn } from "../deps.ts";
+
+type App = icedon.App;
 
 const getPosition = {
   name: "icedon_get_cursor_position",
@@ -10,7 +11,7 @@ const getPosition = {
   },
 };
 
-export class Api extends ApiPlugin {
+export class Api extends icedon.ApiPlugin {
   readonly name = "icedon builtin cursor";
   readonly apis = [getPosition];
 }

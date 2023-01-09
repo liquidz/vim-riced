@@ -1,7 +1,6 @@
-import { ApiPlugin, App, NreplMessage, NreplWriteOption } from "../types.ts";
 import * as api from "../api.ts";
 import * as apiAlias from "../api/alias.ts";
-import { unknownutil } from "../deps.ts";
+import { icedon, z } from "../deps.ts";
 
 type EvalArg = {
   code: string;
@@ -56,6 +55,7 @@ function _evaluate(app: App, arg: EvalArg) {
     if (unknownutil.isBoolean(ctx.params["wait"]) && !ctx.params["wait"]) {
       opt.doesWaitResponse = false;
     }
+type App = icedon.App;
 
     ctx.params["response"] = await app.icedon.request(msg, opt);
     return ctx;
@@ -110,7 +110,7 @@ const evaluateNsForm = {
   },
 };
 
-export class Api extends ApiPlugin {
+export class Api extends icedon.ApiPlugin {
   readonly name = "icedon builtin evaluation";
   readonly apis = [
     evaluate,
