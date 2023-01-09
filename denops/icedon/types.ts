@@ -12,6 +12,8 @@ export type App = {
   readonly plugin: Plugin;
 
   requestApi(name: string, args: unknown[]): Promise<unknown>;
+  requestApi(name: string, args: Record<string, unknown>): Promise<unknown>;
+
   intercept(
     type: string,
     params: UnknownParams,

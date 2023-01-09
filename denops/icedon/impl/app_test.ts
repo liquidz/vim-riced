@@ -1,6 +1,7 @@
 import { asserts, denops_test, nrepl_mock } from "../test_deps.ts";
 import { unknownutil } from "../deps.ts";
 import { IcedonMock } from "../../@icedon-core/test/mock.ts";
+import { parse } from "../util/argument.ts";
 import {
   ApiPlugin,
   App,
@@ -19,8 +20,9 @@ class DummyApiPlugin extends ApiPlugin {
   readonly apis = [
     {
       name: "icedon_app_test_dummy",
-      run: (_app: App, _args: unknown[]) => {
-        return Promise.resolve("this is test");
+      run: (_app: App, args: unknown[]) => {
+        const parsed = parse(args);
+        return Promise.resolve(`this is ${parsed.opts["name"]}`);
       },
     },
   ];
@@ -54,11 +56,21 @@ Deno.test("app", async () => {
     app.plugin.registerApiPlugin(app, new DummyApiPlugin());
     app.plugin.registerInterceptorPlugin(app, new DummyInterceptorPlugin());
 
-    // requestApi
+    // requestApi with array
     asserts.assertEquals(await app.requestApi("unknown", []), undefined);
-    const apiResp = await app.requestApi("icedon_app_test_dummy", []);
-    unknownutil.assertString(apiResp);
-    asserts.assertEquals(apiResp, "this is test");
+    const apiArrResp = await app.requestApi("icedon_app_test_dummy", [
+      ":name",
+      "array",
+    ]);
+    unknownutil.assertString(apiArrResp);
+    asserts.assertEquals(apiArrResp, "this is array");
+
+    // requestApi with record
+    const apiRecResp = await app.requestApi("icedon_app_test_dummy", {
+      name: "record",
+    });
+    unknownutil.assertString(apiRecResp);
+    asserts.assertEquals(apiRecResp, "this is record");
 
     // intercept
     const unknownInterceptResp = await app.intercept(
