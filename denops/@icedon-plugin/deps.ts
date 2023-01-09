@@ -1,3 +1,4 @@
+export * as icedon from "../icedon/mod.ts";
 export * as helper from "https://deno.land/x/denops_std@v3.12.1/helper/mod.ts";
 export * as kase from "https://deno.land/x/case@2.1.1/mod.ts";
 export * as unknownutil from "https://deno.land/x/unknownutil@v2.1.0/mod.ts";
