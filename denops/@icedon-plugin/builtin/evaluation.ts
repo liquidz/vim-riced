@@ -1,77 +1,19 @@
 import * as api from "../api.ts";
 import * as apiAlias from "../api/alias.ts";
 import { icedon, z } from "../deps.ts";
+import { EvalApi, EvalArg } from "./nrepl_op.ts";
 
-type EvalArg = {
-  code: string;
-  session?: string;
-  file?: string;
-  ns?: string;
-  line?: number;
-  column?: number;
-  cursorLine?: number;
-  cursorColumn?: number;
-  pprint?: boolean;
-  verbose?: boolean;
-  wait?: boolean;
-};
-
-function _evaluate(app: App, arg: EvalArg) {
-  return app.intercept("evaluate", arg, async (ctx) => {
-    const code = ctx.params["code"];
-    if (!unknownutil.isString(code)) {
-      throw Deno.errors.InvalidData;
-    }
-    const msg: NreplMessage = {
-      op: "eval",
-      "nrepl.middleware.print/stream?": 1,
-      code: code,
-    };
-    const opt: NreplWriteOption = {};
-
-    if (unknownutil.isString(ctx.params["session"])) {
-      msg["session"] = ctx.params["session"];
-    }
-    if (unknownutil.isString(ctx.params["file"])) {
-      msg["file"] = ctx.params["file"];
-    }
-    if (unknownutil.isString(ctx.params["ns"])) {
-      msg["ns"] = ctx.params["ns"];
-    }
-    if (unknownutil.isNumber(ctx.params["line"])) {
-      msg["line"] = ctx.params["line"];
-    }
-    if (unknownutil.isNumber(ctx.params["column"])) {
-      msg["column"] = ctx.params["column"];
-    }
-    if (unknownutil.isBoolean(ctx.params["pprint"]) && ctx.params["pprint"]) {
-      msg["nrepl.middleware.print/print"] = "cider.nrepl.pprint/pprint";
-    }
-    if (
-      unknownutil.isBoolean(ctx.params["verbose"]) && !ctx.params["verbose"]
-    ) {
-      opt.context = { verbose: "false" };
-    }
-    if (unknownutil.isBoolean(ctx.params["wait"]) && !ctx.params["wait"]) {
-      opt.doesWaitResponse = false;
-    }
 type App = icedon.App;
 
-    ctx.params["response"] = await app.icedon.request(msg, opt);
-    return ctx;
-  });
-}
+const EvaluateArg = z.object({
+  args: z.tuple([z.string()]),
+});
 
 const evaluate = {
   name: "icedon_eval",
   run: async (app: App, args: unknown[]) => {
-    unknownutil.assertArray<string>(args);
-    if (app.icedon.current() === undefined) {
-      return Deno.errors.NotConnected;
-    }
-
-    const code = args[0];
-    return await _evaluate(app, { code: code });
+    const parsed = EvaluateArg.parse(icedon.arg.parse(args));
+    return await app.requestApi(EvalApi, { code: parsed.args[0] } as EvalArg);
   },
 };
 
@@ -81,14 +23,15 @@ const evaluateOuterTopForm = {
     const ns = await apiAlias.getNsName(app);
     const curpos = await apiAlias.getCursorPosition(app);
     const [code, pos] = await apiAlias.getCurrentTopForm(app);
-    return await _evaluate(app, {
+
+    return await app.requestApi(EvalApi, {
       code: code,
       line: pos[0],
       column: pos[1],
       cursorLine: curpos[0],
       cursorColumn: curpos[1],
       ns: ns,
-    });
+    } as EvalArg);
   },
 };
 
@@ -96,17 +39,25 @@ const evaluateOuterForm = {
   name: "icedon_eval_outer_form",
   run: async (app: App, _args: unknown[]) => {
     const ns = await apiAlias.getNsName(app);
+    const curpos = await apiAlias.getCursorPosition(app);
     const [code, pos] = await apiAlias.getCurrentForm(app);
-    return await _evaluate(app, { code: code, line: pos[0], ns: ns });
+
+    return await app.requestApi(EvalApi, {
+      code: code,
+      line: pos[0],
+      column: pos[1],
+      cursorLine: curpos[0],
+      cursorColumn: curpos[1],
+      ns: ns,
+    } as EvalArg);
   },
 };
 
 const evaluateNsForm = {
   name: "icedon_eval_ns_form",
   run: async (app: App, _args: unknown[]) => {
-    const [code, pos] = await apiAlias.getNsForm(app);
-    console.log(`ns code = ${code}`);
-    return await _evaluate(app, { code: code, line: pos[0] });
+    const [code, _pos] = await apiAlias.getNsForm(app);
+    return await app.requestApi(EvalApi, { code: code } as EvalArg);
   },
 };
 
