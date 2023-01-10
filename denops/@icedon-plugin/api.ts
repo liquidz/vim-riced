@@ -50,7 +50,3 @@ export async function registerApiCommand(
     generateRegisterCommand(app, api, cmd || {}),
   );
 }
-
-export function request(app: App, apiName: string, args: unknown[]) {
-  return app.requestApi(apiName, args);
-}
