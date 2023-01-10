@@ -1,4 +1,10 @@
 import { helper, icedon, unknownutil, vimFn } from "../deps.ts";
+import {
+  AppendToInfoBufferApi,
+  ClearInfoBufferApi,
+  CloseInfoBufferApi,
+  OpenInfoBufferApi,
+} from "../types.ts";
 import * as api from "../api.ts";
 import * as vimWin from "../util/vim/window.ts";
 
@@ -31,7 +37,7 @@ async function ready(app: App): Promise<void> {
 }
 
 const open = {
-  name: "icedon_open_info_buffer",
+  name: OpenInfoBufferApi,
   run: async (app: App, _: unknown[]) => {
     const denops = app.denops;
     const currentWin = await vimFn.winnr(denops);
@@ -48,21 +54,21 @@ const open = {
 };
 
 const clear = {
-  name: "icedon_clear_info_buffer",
+  name: ClearInfoBufferApi,
   run: async (app: App, _: unknown[]) => {
     await vimWin.clear(app, bufferName);
   },
 };
 
 const close = {
-  name: "icedon_close_info_buffer",
+  name: CloseInfoBufferApi,
   run: async (app: App, _: unknown[]) => {
     await vimWin.close(app, bufferName);
   },
 };
 
 const append = {
-  name: "icedon_append_to_info_buffer",
+  name: AppendToInfoBufferApi,
   run: async (app: App, args: unknown[]) => {
     if (unknownutil.isArray<string>(args)) {
       // TODO: use batch

@@ -1,4 +1,5 @@
-import { icedon, z } from "../deps.ts";
+import { icedon } from "../deps.ts";
+import { NreplEvalApi, NreplEvalArg } from "../types.ts";
 
 type App = icedon.App;
 
@@ -7,33 +8,17 @@ type App = icedon.App;
 // ===== describe
 
 // ===== eval
-export const EvalApi = "icedon_nrepl_op_eval";
-export const EvalArg = z.object({
-  code: z.string(),
-  session: z.string().optional(),
-  file: z.string().optional(),
-  ns: z.string().optional(),
-  line: z.coerce.number().optional(),
-  column: z.coerce.number().optional(),
-  cursorLine: z.coerce.number().optional(),
-  cursorColumn: z.coerce.number().optional(),
-  pprint: z.coerce.boolean().optional(),
-  verbose: z.coerce.boolean().optional(),
-  wait: z.coerce.boolean().optional(),
-});
-export type EvalArg = z.infer<typeof EvalArg>;
-
 const evalOp = {
-  name: "icedon_nrepl_op_eval",
+  name: NreplEvalApi,
   run: (app: App, args: unknown[]) => {
-    const parsed = EvalArg.parse(icedon.arg.parse(args).opts);
+    const parsed = NreplEvalArg.parse(icedon.arg.parse(args).opts);
 
     if (app.icedon.current() === undefined) {
       throw Deno.errors.NotConnected;
     }
 
     return app.intercept("evaluate", parsed, async (ctx) => {
-      const params = EvalArg.parse(ctx.params);
+      const params = NreplEvalArg.parse(ctx.params);
       const msg: icedon.NreplMessage = {
         op: "eval",
         "nrepl.middleware.print/stream?": 1,

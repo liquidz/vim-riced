@@ -1,5 +1,5 @@
 import { icedon, unknownutil } from "../deps.ts";
-import { request } from "../api.ts";
+import * as t from "../types.ts";
 
 type App = icedon.App;
 type Position = icedon.Position;
@@ -8,14 +8,14 @@ type Position = icedon.Position;
  * cf ../builtin/info_buffer.ts
  */
 export function appendLinesToInfoBuffer(app: App, lines: string[]) {
-  return request(app, "icedon_append_to_info_buffer", lines);
+  return app.requestApi("icedon_append_to_info_buffer", lines);
 }
 
 /**
  * cf ../builtin/paredit.ts
  */
 export async function getCurrentTopForm(app: App): Promise<[string, Position]> {
-  const res = await request(app, "icedon_get_current_top_form", []);
+  const res = await app.requestApi(t.GetCurrentTopFormApi, []);
   unknownutil.assertArray(res);
   unknownutil.assertString(res[0]);
   unknownutil.assertNumber(res[1]);
@@ -27,7 +27,7 @@ export async function getCurrentTopForm(app: App): Promise<[string, Position]> {
  * cf ../builtin/paredit.ts
  */
 export async function getCurrentForm(app: App): Promise<[string, Position]> {
-  const res = await request(app, "icedon_get_current_form", []);
+  const res = await app.requestApi(t.GetCurrentFormApi, []);
   unknownutil.assertArray(res);
   unknownutil.assertString(res[0]);
   unknownutil.assertNumber(res[1]);
@@ -39,7 +39,7 @@ export async function getCurrentForm(app: App): Promise<[string, Position]> {
  * cf ../builtin/paredit.ts
  */
 export async function getNsForm(app: App): Promise<[string, Position]> {
-  const res = await request(app, "icedon_get_ns_form", []);
+  const res = await app.requestApi(t.GetNsFormApi, []);
   unknownutil.assertArray(res);
   unknownutil.assertString(res[0]);
   unknownutil.assertNumber(res[1]);
@@ -51,7 +51,7 @@ export async function getNsForm(app: App): Promise<[string, Position]> {
  * cf ../builtin/namespace.ts
  */
 export async function getNsName(app: App): Promise<string> {
-  const res = await request(app, "icedon_ns_name", []);
+  const res = await app.requestApi(t.GetNsNameApi, []);
   unknownutil.assertString(res);
   return res;
 }
@@ -60,7 +60,7 @@ export async function getNsName(app: App): Promise<string> {
  * cf ../builtin/cursor.ts
  */
 export async function getCursorPosition(app: App): Promise<Position> {
-  const res = await request(app, "icedon_get_cursor_position", []);
+  const res = await app.requestApi(t.GetCursorPositionApi, []);
   unknownutil.assertArray<number>(res);
   return [res[0], res[1]];
 }
@@ -74,7 +74,10 @@ export async function cacheSet(
   val: unknown,
   ttl?: number,
 ): Promise<void> {
-  await app.requestApi("icedon_cache_set", [key, val, ":ttl", ttl]);
+  await app.requestApi(
+    t.CacheSetItemApi,
+    { key: key, value: val, ttl: ttl } as t.CacheSetItemArg,
+  );
   return;
 }
 
@@ -82,14 +85,20 @@ export async function cacheSet(
  * cf ../builtin/cache.ts
  */
 export async function cacheGet(app: App, key: string): Promise<unknown> {
-  return await app.requestApi("icedon_cache_get", [key]);
+  return await app.requestApi(
+    t.CacheGetItemApi,
+    { key: key } as t.CacheGetItemArg,
+  );
 }
 
 /**
  * cf ../builtin/cache.ts
  */
 export async function cacheDelete(app: App, key: string): Promise<boolean> {
-  const res = await app.requestApi("icedon_cache_delete", [key]);
+  const res = await app.requestApi(
+    t.CacheDeleteItemApi,
+    { key: key } as t.CacheDeleteItemArg,
+  );
   unknownutil.assertBoolean(res);
   return res;
 }
@@ -98,7 +107,10 @@ export async function cacheDelete(app: App, key: string): Promise<boolean> {
  * cf ../builtin/cache.ts
  */
 export async function cacheHasItem(app: App, key: string): Promise<boolean> {
-  const res = await app.requestApi("icedon_cache_has_item", [key]);
+  const res = await app.requestApi(
+    t.CacheHasItemApi,
+    { key: key } as t.CacheHasItemArg,
+  );
   unknownutil.assertBoolean(res);
   return res;
 }

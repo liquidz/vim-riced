@@ -1,4 +1,9 @@
 import { helper, icedon, unknownutil, vimFn } from "../deps.ts";
+import {
+  GetCurrentFormApi,
+  GetCurrentTopFormApi,
+  GetNsFormApi,
+} from "../types.ts";
 import { memoize } from "../util/fn/memoize.ts";
 
 type App = icedon.App;
@@ -40,7 +45,7 @@ async function getLinesByRange(
  * Returns code and the starting line number
  */
 const getCurrentTopForm = {
-  name: "icedon_get_current_top_form",
+  name: GetCurrentTopFormApi,
   run: async (app: App, _args: unknown[]) => {
     await rangeInitialize(app);
     const range = await app.denops.call("IcedonGetTopFormRange");
@@ -52,7 +57,7 @@ const getCurrentTopForm = {
 };
 
 const getCurrentForm = {
-  name: "icedon_get_current_form",
+  name: GetCurrentFormApi,
   run: async (app: App, _args: unknown[]) => {
     await rangeInitialize(app);
     const range = await app.denops.call("IcedonGetCurrentFormRange");
@@ -64,7 +69,7 @@ const getCurrentForm = {
 };
 
 const getNsForm = {
-  name: "icedon_get_ns_form",
+  name: GetNsFormApi,
   run: async (app: App, _args: unknown[]) => {
     await rangeInitialize(app);
     const range = await app.denops.call("IcedonGetNsFormRange");

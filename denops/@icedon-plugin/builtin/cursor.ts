@@ -1,9 +1,10 @@
 import { icedon, unknownutil, vimFn } from "../deps.ts";
+import { GetCursorPositionApi } from "../types.ts";
 
 type App = icedon.App;
 
 const getPosition = {
-  name: "icedon_get_cursor_position",
+  name: GetCursorPositionApi,
   run: async (app: App, _args: unknown[]) => {
     const vimpos = await vimFn.getcurpos(app.denops);
     unknownutil.assertArray<number>(vimpos);

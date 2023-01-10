@@ -1,7 +1,7 @@
 import * as api from "../api.ts";
 import * as apiAlias from "../api/alias.ts";
 import { icedon, z } from "../deps.ts";
-import { EvalApi, EvalArg } from "./nrepl_op.ts";
+import { NreplEvalApi, NreplEvalArg } from "../types.ts";
 
 type App = icedon.App;
 
@@ -13,7 +13,10 @@ const evaluate = {
   name: "icedon_eval",
   run: async (app: App, args: unknown[]) => {
     const parsed = EvaluateArg.parse(icedon.arg.parse(args));
-    return await app.requestApi(EvalApi, { code: parsed.args[0] } as EvalArg);
+    return await app.requestApi(
+      NreplEvalApi,
+      { code: parsed.args[0] } as NreplEvalArg,
+    );
   },
 };
 
@@ -24,14 +27,14 @@ const evaluateOuterTopForm = {
     const curpos = await apiAlias.getCursorPosition(app);
     const [code, pos] = await apiAlias.getCurrentTopForm(app);
 
-    return await app.requestApi(EvalApi, {
+    return await app.requestApi(NreplEvalApi, {
       code: code,
       line: pos[0],
       column: pos[1],
       cursorLine: curpos[0],
       cursorColumn: curpos[1],
       ns: ns,
-    } as EvalArg);
+    } as NreplEvalArg);
   },
 };
 
@@ -42,14 +45,14 @@ const evaluateOuterForm = {
     const curpos = await apiAlias.getCursorPosition(app);
     const [code, pos] = await apiAlias.getCurrentForm(app);
 
-    return await app.requestApi(EvalApi, {
+    return await app.requestApi(NreplEvalApi, {
       code: code,
       line: pos[0],
       column: pos[1],
       cursorLine: curpos[0],
       cursorColumn: curpos[1],
       ns: ns,
-    } as EvalArg);
+    } as NreplEvalArg);
   },
 };
 
@@ -57,7 +60,7 @@ const evaluateNsForm = {
   name: "icedon_eval_ns_form",
   run: async (app: App, _args: unknown[]) => {
     const [code, _pos] = await apiAlias.getNsForm(app);
-    return await app.requestApi(EvalApi, { code: code } as EvalArg);
+    return await app.requestApi(NreplEvalApi, { code: code } as NreplEvalArg);
   },
 };
 
