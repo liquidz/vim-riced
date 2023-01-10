@@ -123,3 +123,23 @@ export async function cacheClear(app: App): Promise<boolean> {
   unknownutil.assertBoolean(res);
   return res;
 }
+
+/**
+ * cf ../builtin/nrepl_op.ts
+ */
+export async function isSupportedOp(
+  app: App,
+  op: string,
+  force?: boolean,
+): Promise<boolean> {
+  const res = await app.requestApi(
+    t.NreplDescribeApi,
+    { force: force } as t.NreplDescribeArg,
+  ) as icedon.NreplResponse;
+
+  const ops = res.getOne("ops");
+  if (!unknownutil.isObject(ops)) {
+    return false;
+  }
+  return (ops[op] !== undefined);
+}

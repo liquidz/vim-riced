@@ -1,11 +1,38 @@
 import { icedon } from "../deps.ts";
-import { NreplEvalApi, NreplEvalArg } from "../types.ts";
+import {
+  NreplDescribeApi,
+  NreplDescribeArg,
+  NreplEvalApi,
+  NreplEvalArg,
+} from "../types.ts";
+import * as apiAlias from "../api/alias.ts";
 
 type App = icedon.App;
 
 // ===== add-middleware
 // ===== completions
 // ===== describe
+const describeCacheKey = "__icedon_nrepl_op_describe__";
+const describeCacheTtl = 60 * 60 * 24 * 1000;
+const describeOp = {
+  name: NreplDescribeApi,
+  run: async (app: App, args: unknown[]) => {
+    const parsed = NreplDescribeArg.parse(icedon.arg.parse(args).opts);
+
+    let resp: unknown = undefined;
+    if (!(parsed.force || false)) {
+      resp = await apiAlias.cacheGet(app, describeCacheKey);
+    }
+    if (resp === undefined) {
+      resp = await app.icedon.request({ op: "describe" });
+      if ((resp as icedon.NreplResponse).getOne("ops") != null) {
+        await apiAlias.cacheSet(app, describeCacheKey, resp, describeCacheTtl);
+      }
+    }
+
+    return resp;
+  },
+};
 
 // ===== eval
 const evalOp = {
@@ -66,9 +93,8 @@ const evalOp = {
 // ===== sideloader-start
 // ===== stdin
 // ===== swap-middleware
-//
 
 export class Api extends icedon.ApiPlugin {
   readonly name = "icedon builtin nrepl op";
-  readonly apis = [evalOp];
+  readonly apis = [describeOp, evalOp];
 }
