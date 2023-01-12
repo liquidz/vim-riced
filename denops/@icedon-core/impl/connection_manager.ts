@@ -63,6 +63,11 @@ export class ConnectionManagerImpl implements ConnectionManager {
     }
 
     if (!conn.client.isClosed) {
+      if (conn.session !== undefined) {
+        await conn.client.write({ op: "interrupt", session: conn.session });
+        await conn.client.write({ op: "close", session: conn.session });
+      }
+
       conn.client.close();
     }
 
@@ -146,7 +151,7 @@ export class ConnectionManagerImpl implements ConnectionManager {
       return new Deno.errors.NotConnected();
     }
 
-    if (message["session"] === undefined && conn.session !== undefined) {
+    if (message["session"] == null && conn.session !== undefined) {
       message["session"] = conn.session;
     }
 
