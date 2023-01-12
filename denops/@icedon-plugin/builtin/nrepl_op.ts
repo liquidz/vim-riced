@@ -1,15 +1,31 @@
 import { icedon } from "../deps.ts";
 import {
+  NreplCloseApi,
+  NreplCloseArg,
   NreplDescribeApi,
   NreplDescribeArg,
   NreplEvalApi,
   NreplEvalArg,
+  NreplLsSessionsApi,
 } from "../types.ts";
 import * as apiAlias from "../api/alias.ts";
 
 type App = icedon.App;
 
 // ===== add-middleware
+// ===== clone
+// ===== close
+const closeOp = {
+  name: NreplCloseApi,
+  run: async (app: App, args: unknown[]) => {
+    const parsed = NreplCloseArg.parse(icedon.arg.parse(args).opts);
+    return await app.icedon.request({
+      op: "close",
+      session: parsed.session || null,
+    });
+  },
+};
+
 // ===== completions
 // ===== describe
 const describeCacheKey = "__icedon_nrepl_op_describe__";
@@ -89,6 +105,14 @@ const evalOp = {
 // ===== lookup
 // ===== ls-middleware
 // ===== ls-sessions
+const lsSessionsOp = {
+  name: NreplLsSessionsApi,
+  run: async (app: App, _args: unknown[]) => {
+    return await app.icedon.request({ op: "ls-sessions" });
+  },
+};
+//  let resp = iced#nrepl#sync#send({'op': 'ls-sessions'})
+
 // ===== sideloader-provide
 // ===== sideloader-start
 // ===== stdin
@@ -96,5 +120,5 @@ const evalOp = {
 
 export class Api extends icedon.ApiPlugin {
   readonly name = "icedon builtin nrepl op";
-  readonly apis = [describeOp, evalOp];
+  readonly apis = [closeOp, describeOp, evalOp, lsSessionsOp];
 }
