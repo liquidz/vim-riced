@@ -32,6 +32,14 @@ export const ClearInfoBufferApi = "icedon_clear_info_buffer";
 export const CloseInfoBufferApi = "icedon_close_info_buffer";
 export const AppendToInfoBufferApi = "icedon_append_to_info_buffer";
 
+// ===== message
+export const MessageInfo = "icedon_message_info";
+export const MessageWarn = "icedon_message_warn";
+export const MessageError = "icedon_message_error";
+
+export const MessageArg = z.array(z.string());
+export type MessageArg = z.infer<typeof MessageArg>;
+
 // ===== namespace
 export const GetNsNameApi = "icedon_ns_name";
 
