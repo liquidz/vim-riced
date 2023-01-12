@@ -1,4 +1,4 @@
-import { Denops, option, unknownutil, vimFn } from "./deps.ts";
+import { Denops, option, unknownutil, vars, vimFn } from "./deps.ts";
 import * as core from "../@icedon-core/mod.ts";
 import { AppImpl } from "./impl/app.ts";
 import { App } from "./types.ts";
@@ -71,6 +71,7 @@ export function main(denops: Denops): Promise<void> {
 
   const n = denops.name;
   denops.dispatch(n, "initialize", []);
+  vars.g.set<string>(denops, "icedon_plugin_name", n);
 
   return Promise.resolve();
 }
