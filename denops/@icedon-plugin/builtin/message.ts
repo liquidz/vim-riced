@@ -1,18 +1,10 @@
-import { helper, icedon, printf } from "../deps.ts";
-import {
-  MessageArg,
-  MessageError,
-  MessageInfo,
-  MessageWarn,
-} from "../types.ts";
+import { helper, icedon, printf, unknownutil } from "../deps.ts";
+import * as t from "../types.ts";
 import { memoize } from "../util/fn/memoize.ts";
+import { MessageName } from "./message/names.ts";
+import { enMessages } from "./message/en.ts";
 
 type App = icedon.App;
-
-const messages: Record<string, string> = {
-  hello: "world",
-  foo: "foo %s",
-};
 
 const echoInitialize = memoize(async (app: App) => {
   const path = new URL(".", import.meta.url);
@@ -20,47 +12,69 @@ const echoInitialize = memoize(async (app: App) => {
   await helper.load(app.denops, path);
 }, (_) => "once");
 
-function getMessage(name: string, params: unknown[]): string | undefined {
-  const msg = messages[name];
+function getMessage(args: unknown[]): string | undefined {
+  const params = t.MessageArg.parse(icedon.arg.parse(args).args);
+  // TODO: fix `as`
+  const name = params[0] as MessageName;
+  const sprintfParams = params.slice(1);
+
+  const msg = enMessages[name];
   if (msg === undefined) {
     return undefined;
   }
 
-  if (params.length > 0) {
-    return printf.sprintf(msg, ...params);
+  if (sprintfParams.length > 0) {
+    return printf.sprintf(msg, ...sprintfParams);
   }
   return msg;
 }
 
-async function echoMsg(hl: string, app: App, args: unknown[]) {
+async function echoMsg(app: App, hl: string, text: string | undefined) {
+  if (text === undefined) {
+    return;
+  }
   await echoInitialize(app);
-  const params = MessageArg.parse(icedon.arg.parse(args).args);
-  const msg = getMessage(params[0], params.slice(1));
-  await app.denops.call("IcedonEchoMsg", hl, msg);
+  await app.denops.call("IcedonEchoMsg", hl, text);
 }
 
-const messageInfo = {
-  name: MessageInfo,
+const raw = {
+  name: t.MessageRaw,
   run: async (app: App, args: unknown[]) => {
-    await echoMsg("MoreMsg", app, args);
+    if (unknownutil.isArray<string>(args)) {
+      await echoMsg(app, "Normal", args[0]);
+    }
+  },
+};
+
+const echo = {
+  name: t.MessageEcho,
+  run: async (app: App, args: unknown[]) => {
+    await echoMsg(app, "Normal", getMessage(args));
+  },
+};
+
+const messageInfo = {
+  name: t.MessageInfo,
+  run: async (app: App, args: unknown[]) => {
+    await echoMsg(app, "MoreMsg", getMessage(args));
   },
 };
 
 const messageWarn = {
-  name: MessageWarn,
+  name: t.MessageWarn,
   run: async (app: App, args: unknown[]) => {
-    await echoMsg("WarningMsg", app, args);
+    await echoMsg(app, "WarningMsg", getMessage(args));
   },
 };
 
 const messageError = {
-  name: MessageError,
+  name: t.MessageError,
   run: async (app: App, args: unknown[]) => {
-    await echoMsg("ErrorMsg", app, args);
+    await echoMsg(app, "ErrorMsg", getMessage(args));
   },
 };
 
 export class Api extends icedon.ApiPlugin {
   readonly name = "icedon builtin message";
-  readonly apis = [messageInfo, messageWarn, messageError];
+  readonly apis = [raw, echo, messageInfo, messageWarn, messageError];
 }

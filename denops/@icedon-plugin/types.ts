@@ -33,6 +33,8 @@ export const CloseInfoBufferApi = "icedon_close_info_buffer";
 export const AppendToInfoBufferApi = "icedon_append_to_info_buffer";
 
 // ===== message
+export const MessageRaw = "icedon_message_raw";
+export const MessageEcho = "icedon_message_echo";
 export const MessageInfo = "icedon_message_info";
 export const MessageWarn = "icedon_message_warn";
 export const MessageError = "icedon_message_error";
