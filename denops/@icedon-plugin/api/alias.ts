@@ -12,15 +12,6 @@ export function appendLinesToInfoBuffer(app: App, lines: string[]) {
 }
 
 /**
- * cf ../builtin/namespace.ts
- */
-export async function getNsName(app: App): Promise<string> {
-  const res = await app.requestApi(t.GetNsNameApi, []);
-  unknownutil.assertString(res);
-  return res;
-}
-
-/**
  * cf ../builtin/cursor.ts
  */
 export async function getCursorPosition(app: App): Promise<Position> {
