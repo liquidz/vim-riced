@@ -34,7 +34,7 @@ export class AppMock extends AppImpl {
 
     for (const pluginName of defaultPlugins) {
       const filePath = resolve(`../../@icedon-plugin/${pluginName}.ts`);
-      await app.plugin.loadPlugin(app, filePath);
+      await app.plugin.loadPlugin(app, pluginName, filePath);
     }
 
     return app;

@@ -8,25 +8,33 @@ const dummyRun = (_app: App, _args: unknown[]) => {
 };
 
 class DummyApiPlugin1 extends ApiPlugin {
-  readonly name = "icedon plugin test dummy api1";
   readonly apis = [{ name: "icedon_plugin_test_dummy1", run: dummyRun }];
+  constructor() {
+    super("dummy/api1");
+  }
 }
 
 class DummyApiPlugin2 extends ApiPlugin {
-  readonly name = "icedon plugin test dummy api2";
   readonly apis = [
     { name: "icedon_plugin_test_dummy2", run: dummyRun },
     { name: "icedon_plugin_test_dummy3", run: dummyRun },
   ];
+  constructor() {
+    super("dummy/api2");
+  }
 }
 
 class DummyInterceptorPlugin1 extends InterceptorPlugin {
-  readonly name = "icedon plugin test dummy interceptor1";
-  readonly type = "plugin_test";
+  readonly group = "plugin_test";
+  constructor() {
+    super("dummy/interceptor1");
+  }
 }
 class DummyInterceptorPlugin2 extends InterceptorPlugin {
-  readonly name = "icedon plugin test dummy interceptor2";
-  readonly type = "plugin_test";
+  readonly group = "plugin_test";
+  constructor() {
+    super("dummy/interceptor2");
+  }
 }
 
 Deno.test("PluginImpl", async () => {
@@ -59,7 +67,7 @@ Deno.test("PluginImpl", async () => {
     asserts.assertEquals(plg.interceptorsMap["plugin_test"].length, 1);
     asserts.assertEquals(
       plg.interceptorsMap["plugin_test"][0].name,
-      "icedon plugin test dummy interceptor1",
+      "dummy/interceptor1",
     );
   });
 });

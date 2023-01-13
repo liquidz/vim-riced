@@ -16,7 +16,6 @@ const relay: nrepl_mock.RelayFunction = (_msg, _opt?): NreplMessage => {
 };
 
 class DummyApiPlugin extends ApiPlugin {
-  readonly name = "icedon app test dummy api";
   readonly apis = [
     {
       name: "icedon_app_test_dummy",
@@ -26,11 +25,16 @@ class DummyApiPlugin extends ApiPlugin {
       },
     },
   ];
+  constructor() {
+    super("dummy/api");
+  }
 }
 
 class DummyInterceptorPlugin extends InterceptorPlugin {
-  readonly name = "icedon app test dummy interceptor";
-  readonly type = "app_test";
+  readonly group = "app_test";
+  constructor() {
+    super("dummy/interceptor");
+  }
 
   enter(ctx: InterceptorContext): Promise<InterceptorContext> {
     const i = ctx.arg.params["num"];
@@ -54,7 +58,10 @@ Deno.test("app", async () => {
       icedon: new IcedonMock(relay),
     });
     app.plugin.registerApiPlugin(app, new DummyApiPlugin());
-    app.plugin.registerInterceptorPlugin(app, new DummyInterceptorPlugin());
+    app.plugin.registerInterceptorPlugin(
+      app,
+      new DummyInterceptorPlugin(),
+    );
 
     // requestApi with array
     asserts.assertEquals(await app.requestApi("unknown", []), undefined);

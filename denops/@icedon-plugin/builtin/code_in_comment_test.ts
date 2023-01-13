@@ -2,7 +2,7 @@ import { AppMock, asserts, withDenops } from "../test_deps.ts";
 import * as sut from "./code_in_comment.ts";
 import { buildInterceptorTester } from "../test/helper/interceptor.ts";
 
-const thisPlugin = new sut.Interceptor();
+const thisPlugin = new sut.Interceptor("test");
 const tester = buildInterceptorTester([thisPlugin]);
 
 Deno.test("code in comment", async () => {

@@ -3,7 +3,7 @@ import * as org from "../../../builtin/paredit.ts";
 
 export class PareditApiMock extends org.Api {
   constructor(form: Record<string, string>) {
-    super();
+    super("builtin/paredit");
 
     for (let i = 0; i < this.apis.length; i++) {
       this.apis[i].run = (_app: icedon.App, _args: unknown[]) => {
