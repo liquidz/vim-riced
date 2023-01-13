@@ -5,11 +5,14 @@ export class PluginImpl implements Plugin {
   apiMap: Record<string, Api> = {};
   interceptorsMap: Record<string, InterceptorPlugin[]> = {};
 
-  loadedPluginNames: string[] = [];
+  private loadedPluginNames: string[] = [];
+  private pluginRequirements: Record<string, string[]> = {};
 
   async registerApiPlugin(app: App, plugin: ApiPlugin): Promise<void> {
     if (this.loadedPluginNames.indexOf(plugin.name) === -1) {
       this.loadedPluginNames.push(plugin.name);
+      // Do not check at this point. Will be check on `checkPlugins`.
+      this.pluginRequirements[plugin.name] = plugin.pluginRequires;
 
       for (const api of plugin.apis) {
         if (this.apiMap[api.name] !== undefined) {
@@ -23,7 +26,7 @@ export class PluginImpl implements Plugin {
   }
 
   removeApiPlugin(_app: App, plugin: ApiPlugin): Promise<void> {
-    if (this.loadedPluginNames.indexOf(plugin.name) === -1) {
+    if (!this.loadedPluginNames.includes(plugin.name)) {
       return Promise.resolve();
     }
 
@@ -34,6 +37,7 @@ export class PluginImpl implements Plugin {
     this.loadedPluginNames = this.loadedPluginNames.filter((v) =>
       v !== plugin.name
     );
+    delete this.pluginRequirements[plugin.name];
 
     return Promise.resolve();
   }
@@ -49,6 +53,8 @@ export class PluginImpl implements Plugin {
   ): Promise<void> {
     if (this.loadedPluginNames.indexOf(plugin.name) === -1) {
       this.loadedPluginNames.push(plugin.name);
+      // Do not check at this point. Will be check on `checkPlugins`.
+      this.pluginRequirements[plugin.name] = plugin.pluginRequires;
 
       const tmp = this.interceptorsMap[plugin.type] || [];
       this.interceptorsMap[plugin.type] = tmp.concat([plugin]);
@@ -58,7 +64,7 @@ export class PluginImpl implements Plugin {
   }
 
   removeInterceptorPlugin(_app: App, plugin: InterceptorPlugin): Promise<void> {
-    if (this.loadedPluginNames.indexOf(plugin.name) === -1) {
+    if (!this.loadedPluginNames.includes(plugin.name)) {
       return Promise.resolve();
     }
 
@@ -70,6 +76,8 @@ export class PluginImpl implements Plugin {
     this.loadedPluginNames = this.loadedPluginNames.filter((v) =>
       v !== plugin.name
     );
+    delete this.pluginRequirements[plugin.name];
+
     return Promise.resolve();
   }
 
@@ -89,6 +97,22 @@ export class PluginImpl implements Plugin {
 
     if (mod.Interceptor !== undefined) {
       await this.registerInterceptorPlugin(app, new mod.Interceptor());
+    }
+  }
+
+  checkPlugins() {
+    for (const pluginName of Object.keys(this.pluginRequirements)) {
+      const requires = this.pluginRequirements[pluginName];
+      const missings = requires.filter((v) =>
+        !this.loadedPluginNames.includes(v)
+      );
+      if (missings.length !== 0) {
+        throw new Deno.errors.NotFound(
+          `Plugin '${pluginName}' requires following plugins, but these are not loaded: ${
+            missings.join(", ")
+          }`,
+        );
+      }
     }
   }
 

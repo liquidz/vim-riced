@@ -47,24 +47,36 @@ export function main(denops: Denops): Promise<void> {
 
   denops.dispatcher = {
     async initialize() {
-      console.log("kiteruyo");
+      console.log("Ready");
 
-      // register built-in plugins
-      const paths = await searchPluginPaths(denops, defaultPlugins);
-      for (const p of paths) {
-        await app.plugin.loadPlugin(app, p);
+      try {
+        // register built-in plugins
+        const paths = await searchPluginPaths(denops, defaultPlugins);
+        for (const p of paths) {
+          await app.plugin.loadPlugin(app, p);
+        }
+        app.plugin.checkPlugins();
+        app.plugin.sortInterceptors();
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error(err.message);
+        } else {
+          console.error(err);
+        }
       }
-      app.plugin.sortInterceptors();
     },
 
     async dispatchApi(apiName, args) {
-      unknownutil.assertString(apiName);
-      unknownutil.assertArray(args);
-
       try {
+        unknownutil.assertString(apiName);
+        unknownutil.assertArray(args);
         return await app.requestApi(apiName, args);
       } catch (err) {
-        console.log(err);
+        if (err instanceof Error) {
+          console.error(err.message);
+        } else {
+          console.error(err);
+        }
       }
     },
   };
