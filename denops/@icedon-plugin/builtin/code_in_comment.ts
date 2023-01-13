@@ -4,7 +4,7 @@ import * as paredit from "../util/string/paredit.ts";
 type InterceptorContext = icedon.InterceptorContext;
 
 export class Interceptor extends icedon.InterceptorPlugin {
-  readonly name = "icedon builtin code in comment";
+  readonly name = "com.github.liquidz.builtin.code_in_comment";
   readonly type = "evaluate";
 
   enter(ctx: InterceptorContext): Promise<InterceptorContext> {

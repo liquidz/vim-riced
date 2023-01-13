@@ -67,8 +67,9 @@ const disconnect = {
 };
 
 export class Api extends icedon.ApiPlugin {
-  readonly name = "icedon builtin connect";
+  readonly name = "com.github.liquidz.builtin.connect";
   readonly apis = [connect, disconnect];
+  readonly pluginRequires = ["com.github.liquidz.builtin.message"];
 
   async onInit(app: App) {
     await api.registerApiCommand(app, connect, { nargs: "*" });

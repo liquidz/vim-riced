@@ -1,6 +1,6 @@
-import * as api from "../api.ts";
 import { icedon, z } from "../deps.ts";
 import { NreplEvalApi, NreplEvalArg } from "../types.ts";
+import * as api from "../api.ts";
 
 type App = icedon.App;
 
@@ -64,12 +64,17 @@ const evaluateNsForm = {
 };
 
 export class Api extends icedon.ApiPlugin {
-  readonly name = "icedon builtin evaluation";
+  readonly name = "com.github.liquidz.builtin.evaluation";
   readonly apis = [
     evaluate,
     evaluateOuterTopForm,
     evaluateOuterForm,
     evaluateNsForm,
+  ];
+  readonly pluginRequires = [
+    "com.github.liquidz.builtin.cursor",
+    "com.github.liquidz.builtin.namespace",
+    "com.github.liquidz.builtin.paredit",
   ];
 
   async onInit(app: App) {

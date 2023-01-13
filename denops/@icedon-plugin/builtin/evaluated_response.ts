@@ -4,8 +4,9 @@ import * as api from "../api.ts";
 type InterceptorContext = icedon.InterceptorContext;
 
 export class Interceptor extends icedon.InterceptorPlugin {
-  readonly name = "icedon builtin evaluated response";
+  readonly name = "com.github.liquidz.builtin.evaluated_response";
   readonly type = "evaluate";
+  readonly pluginRequires = ["com.github.liquidz.builtin.message"];
 
   async leave(ctx: InterceptorContext): Promise<InterceptorContext> {
     if (ctx.arg.params["response"] === undefined) {

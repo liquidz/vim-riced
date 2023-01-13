@@ -85,6 +85,6 @@ const clearItems = {
 };
 
 export class Api extends icedon.ApiPlugin {
-  readonly name = "icedon builtin cache";
+  readonly name = "com.github.liquidz/builtin/cache";
   readonly apis = [setItem, getItem, deleteItem, hasItem, clearItems];
 }

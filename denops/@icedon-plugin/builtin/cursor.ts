@@ -13,6 +13,6 @@ const getPosition = {
 };
 
 export class Api extends icedon.ApiPlugin {
-  readonly name = "icedon builtin cursor";
+  readonly name = "com.github.liquidz.builtin.cursor";
   readonly apis = [getPosition];
 }
