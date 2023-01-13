@@ -42,15 +42,14 @@ const connect = {
         !unknownutil.isNumber(port) ||
         (unknownutil.isNumber(port) && isNaN(port))
       ) {
-        console.log("FIXME could not connect");
+        await api.log.warn(app, "failedToConnect", `${host}:${port}`);
         return ctx;
       }
       if (!await ctx.app.icedon.connect(host, port, opt)) {
         throw Deno.errors.NotConnected;
       }
 
-      // FIXME
-      console.log("Connected");
+      await api.log.info(app, "connected", `${host}:${port}`);
 
       return ctx;
     });
@@ -62,7 +61,7 @@ const disconnect = {
   run: async (app: App, _args: unknown[]) => {
     const ret = await app.icedon.disconnect();
     if (ret) {
-      console.log("Disconnected");
+      await api.log.info(app, "disconnected");
     }
   },
 };
