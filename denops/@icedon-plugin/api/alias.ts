@@ -12,15 +12,6 @@ export function appendLinesToInfoBuffer(app: App, lines: string[]) {
 }
 
 /**
- * cf ../builtin/cursor.ts
- */
-export async function getCursorPosition(app: App): Promise<Position> {
-  const res = await app.requestApi(t.GetCursorPositionApi, []);
-  unknownutil.assertArray<number>(res);
-  return [res[0], res[1]];
-}
-
-/**
  * cf ../builtin/cache.ts
  */
 export async function cacheSet(
