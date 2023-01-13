@@ -1,5 +1,4 @@
 import * as api from "../api.ts";
-import * as apiAlias from "../api/alias.ts";
 import { icedon, z } from "../deps.ts";
 import { NreplEvalApi, NreplEvalArg } from "../types.ts";
 
@@ -23,9 +22,9 @@ const evaluate = {
 const evaluateOuterTopForm = {
   name: "icedon_eval_outer_top_form",
   run: async (app: App, _args: unknown[]) => {
-    const ns = await apiAlias.getNsName(app);
-    const curpos = await apiAlias.getCursorPosition(app);
-    const [code, pos] = await apiAlias.getCurrentTopForm(app);
+    const ns = await api.namespace.getName(app);
+    const curpos = await api.cursor.getPosition(app);
+    const [code, pos] = await api.paredit.getCurrentTopForm(app);
 
     return await app.requestApi(NreplEvalApi, {
       code: code,
@@ -41,9 +40,9 @@ const evaluateOuterTopForm = {
 const evaluateOuterForm = {
   name: "icedon_eval_outer_form",
   run: async (app: App, _args: unknown[]) => {
-    const ns = await apiAlias.getNsName(app);
-    const curpos = await apiAlias.getCursorPosition(app);
-    const [code, pos] = await apiAlias.getCurrentForm(app);
+    const ns = await api.namespace.getName(app);
+    const curpos = await api.cursor.getPosition(app);
+    const [code, pos] = await api.paredit.getCurrentForm(app);
 
     return await app.requestApi(NreplEvalApi, {
       code: code,
@@ -59,7 +58,7 @@ const evaluateOuterForm = {
 const evaluateNsForm = {
   name: "icedon_eval_ns_form",
   run: async (app: App, _args: unknown[]) => {
-    const [code, _pos] = await apiAlias.getNsForm(app);
+    const [code, _pos] = await api.paredit.getNsForm(app);
     return await app.requestApi(NreplEvalApi, { code: code } as NreplEvalArg);
   },
 };

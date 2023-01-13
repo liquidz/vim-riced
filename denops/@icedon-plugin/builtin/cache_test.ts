@@ -1,11 +1,5 @@
 import { AppMock, asserts, withDenops } from "../test_deps.ts";
-import {
-  cacheClear,
-  cacheDelete,
-  cacheGet,
-  cacheHasItem,
-  cacheSet,
-} from "../api/alias.ts";
+import * as api from "../api.ts";
 
 const ttl = 100;
 
@@ -21,38 +15,38 @@ Deno.test("cache", async () => {
     const key = crypto.randomUUID();
     const extraKey = crypto.randomUUID();
 
-    asserts.assertEquals(await cacheGet(app, key), undefined);
-    asserts.assertEquals(await cacheHasItem(app, key), false);
+    asserts.assertEquals(await api.cache.get(app, key), undefined);
+    asserts.assertEquals(await api.cache.hasItem(app, key), false);
 
     // set
-    await cacheSet(app, key, "hello", ttl);
-    asserts.assertEquals(await cacheGet(app, key), "hello");
-    asserts.assertEquals(await cacheHasItem(app, key), true);
+    await api.cache.set(app, key, "hello", ttl);
+    asserts.assertEquals(await api.cache.get(app, key), "hello");
+    asserts.assertEquals(await api.cache.hasItem(app, key), true);
 
     // overwrite
-    await cacheSet(app, key, "world", ttl);
-    asserts.assertEquals(await cacheGet(app, key), "world");
+    await api.cache.set(app, key, "world", ttl);
+    asserts.assertEquals(await api.cache.get(app, key), "world");
 
     // delete
-    asserts.assertEquals(await cacheDelete(app, key), true);
-    asserts.assertEquals(await cacheDelete(app, key), false);
-    asserts.assertEquals(await cacheGet(app, key), undefined);
-    asserts.assertEquals(await cacheHasItem(app, key), false);
+    asserts.assertEquals(await api.cache.remove(app, key), true);
+    asserts.assertEquals(await api.cache.remove(app, key), false);
+    asserts.assertEquals(await api.cache.get(app, key), undefined);
+    asserts.assertEquals(await api.cache.hasItem(app, key), false);
 
     // expire
-    await cacheSet(app, key, "hello", ttl);
-    asserts.assertEquals(await cacheGet(app, key), "hello");
+    await api.cache.set(app, key, "hello", ttl);
+    asserts.assertEquals(await api.cache.get(app, key), "hello");
     await sleep(ttl);
-    asserts.assertEquals(await cacheGet(app, key), undefined);
-    asserts.assertEquals(await cacheHasItem(app, key), false);
+    asserts.assertEquals(await api.cache.get(app, key), undefined);
+    asserts.assertEquals(await api.cache.hasItem(app, key), false);
 
     // clear
-    await cacheSet(app, key, "hello", ttl);
-    await cacheSet(app, extraKey, "world", ttl);
-    asserts.assertEquals(await cacheHasItem(app, key), true);
-    asserts.assertEquals(await cacheHasItem(app, extraKey), true);
-    await cacheClear(app);
-    asserts.assertEquals(await cacheHasItem(app, key), false);
-    asserts.assertEquals(await cacheHasItem(app, extraKey), false);
+    await api.cache.set(app, key, "hello", ttl);
+    await api.cache.set(app, extraKey, "world", ttl);
+    asserts.assertEquals(await api.cache.hasItem(app, key), true);
+    asserts.assertEquals(await api.cache.hasItem(app, extraKey), true);
+    await api.cache.clear(app);
+    asserts.assertEquals(await api.cache.hasItem(app, key), false);
+    asserts.assertEquals(await api.cache.hasItem(app, extraKey), false);
   });
 });

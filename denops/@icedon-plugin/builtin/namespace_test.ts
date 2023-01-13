@@ -1,5 +1,6 @@
 import { AppMock, asserts, withDenops } from "../test_deps.ts";
 import { icedon, unknownutil } from "../deps.ts";
+import { GetNsNameApi } from "../types.ts";
 import { PareditApiMock } from "../test/helper/builtin/paredit.ts";
 
 type App = icedon.App;
@@ -13,7 +14,7 @@ async function mockGetNsFormAndRequest(
     new PareditApiMock({ icedon_get_ns_form: form }),
   );
 
-  const resp = await app.requestApi("icedon_ns_name", []);
+  const resp = await app.requestApi(GetNsNameApi, []);
   unknownutil.assertString(resp);
   return resp;
 }

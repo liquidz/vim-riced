@@ -1,6 +1,6 @@
 import { icedon } from "../deps.ts";
 import { GetNsNameApi } from "../types.ts";
-import * as apiAlias from "../api/alias.ts";
+import * as api from "../api.ts";
 import * as paredit from "../util/string/paredit.ts";
 
 type App = icedon.App;
@@ -21,7 +21,7 @@ function extractNsName(nsForm: string): string {
 const getNsName = {
   name: GetNsNameApi,
   run: async (app: App, _args: unknown[]) => {
-    const [code] = await apiAlias.getNsForm(app);
+    const [code] = await api.paredit.getNsForm(app);
     return extractNsName(code);
   },
 };
