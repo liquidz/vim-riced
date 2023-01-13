@@ -12,42 +12,6 @@ export function appendLinesToInfoBuffer(app: App, lines: string[]) {
 }
 
 /**
- * cf ../builtin/paredit.ts
- */
-export async function getCurrentTopForm(app: App): Promise<[string, Position]> {
-  const res = await app.requestApi(t.GetCurrentTopFormApi, []);
-  unknownutil.assertArray(res);
-  unknownutil.assertString(res[0]);
-  unknownutil.assertNumber(res[1]);
-  unknownutil.assertNumber(res[2]);
-  return [res[0], [res[1], res[2]]];
-}
-
-/**
- * cf ../builtin/paredit.ts
- */
-export async function getCurrentForm(app: App): Promise<[string, Position]> {
-  const res = await app.requestApi(t.GetCurrentFormApi, []);
-  unknownutil.assertArray(res);
-  unknownutil.assertString(res[0]);
-  unknownutil.assertNumber(res[1]);
-  unknownutil.assertNumber(res[2]);
-  return [res[0], [res[1], res[2]]];
-}
-
-/**
- * cf ../builtin/paredit.ts
- */
-export async function getNsForm(app: App): Promise<[string, Position]> {
-  const res = await app.requestApi(t.GetNsFormApi, []);
-  unknownutil.assertArray(res);
-  unknownutil.assertString(res[0]);
-  unknownutil.assertNumber(res[1]);
-  unknownutil.assertNumber(res[2]);
-  return [res[0], [res[1], res[2]]];
-}
-
-/**
  * cf ../builtin/namespace.ts
  */
 export async function getNsName(app: App): Promise<string> {

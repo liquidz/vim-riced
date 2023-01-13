@@ -1,5 +1,7 @@
 import { helper, icedon, kase } from "./deps.ts";
 
+export * as paredit from "./api/paredit.ts";
+
 type App = icedon.App;
 
 function generateRegisterCommand(
