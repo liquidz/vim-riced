@@ -12,65 +12,6 @@ export function appendLinesToInfoBuffer(app: App, lines: string[]) {
 }
 
 /**
- * cf ../builtin/cache.ts
- */
-export async function cacheSet(
-  app: App,
-  key: string,
-  val: unknown,
-  ttl?: number,
-): Promise<void> {
-  await app.requestApi(
-    t.CacheSetItemApi,
-    { key: key, value: val, ttl: ttl } as t.CacheSetItemArg,
-  );
-  return;
-}
-
-/**
- * cf ../builtin/cache.ts
- */
-export async function cacheGet(app: App, key: string): Promise<unknown> {
-  return await app.requestApi(
-    t.CacheGetItemApi,
-    { key: key } as t.CacheGetItemArg,
-  );
-}
-
-/**
- * cf ../builtin/cache.ts
- */
-export async function cacheDelete(app: App, key: string): Promise<boolean> {
-  const res = await app.requestApi(
-    t.CacheDeleteItemApi,
-    { key: key } as t.CacheDeleteItemArg,
-  );
-  unknownutil.assertBoolean(res);
-  return res;
-}
-
-/**
- * cf ../builtin/cache.ts
- */
-export async function cacheHasItem(app: App, key: string): Promise<boolean> {
-  const res = await app.requestApi(
-    t.CacheHasItemApi,
-    { key: key } as t.CacheHasItemArg,
-  );
-  unknownutil.assertBoolean(res);
-  return res;
-}
-
-/**
- * cf ../builtin/cache.ts
- */
-export async function cacheClear(app: App): Promise<boolean> {
-  const res = await app.requestApi("icedon_cache_clear", []);
-  unknownutil.assertBoolean(res);
-  return res;
-}
-
-/**
  * cf ../builtin/nrepl_op.ts
  */
 export async function isSupportedOp(
