@@ -2,6 +2,7 @@ import { helper, icedon, kase } from "./deps.ts";
 
 export * as cache from "./api/cache.ts";
 export * as cursor from "./api/cursor.ts";
+export * as log from "./api/log.ts";
 export * as namespace from "./api/namespace.ts";
 export * as nrepl from "./api/nrepl.ts";
 export * as paredit from "./api/paredit.ts";
