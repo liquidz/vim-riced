@@ -2,7 +2,16 @@
 
 TODO: Generate this document automatically from codes.
 
-## connection.ts
+## directory
+
+- builtin
+  - API implementations
+- api
+  - API aliases which allows you to use API more easily
+
+## builtn
+
+### connection.ts
 
 - API
   - `icedon_connect`
@@ -12,11 +21,11 @@ TODO: Generate this document automatically from codes.
         - `port`
   - `icedon_disconnect`
 
-## evaluated_response.ts
+### evaluated_response.ts
 
 - Interceptor
 
-## evaluation.ts
+### evaluation.ts
 
 - API
   - `icedon_eval`
@@ -43,7 +52,7 @@ TODO: Generate this document automatically from codes.
     - Could intercept via `evaluate` type.
       - Parameters on enter and leave are as same as `icedon_eval`.
 
-## info buffer.ts
+### info buffer.ts
 
 - API
   - `icedon_open_info_buffer`
@@ -51,22 +60,22 @@ TODO: Generate this document automatically from codes.
   - `icedon_close_info_buffer`
   - `icedon_append_to_info_buffer`
 
-## namespace.ts
+### namespace.ts
 
 - API
   - `icedon_ns_name`
 
-## nrepl_output.ts
+### nrepl_output.ts
 
 - Interceptor
 
-## paredit.ts
+### paredit.ts
 
 - API
   - `icedon_get_current_top_form`
   - `icedon_get_current_form`
   - `icedon_get_ns_form`
 
-## port_detection.ts
+### port_detection.ts
 
 - Interceptor
