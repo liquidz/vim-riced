@@ -8,7 +8,6 @@ import {
   NreplEvalArg,
   NreplLsSessionsApi,
 } from "../types.ts";
-import * as apiAlias from "../api/alias.ts";
 
 type App = icedon.App;
 
@@ -28,25 +27,15 @@ const closeOp = {
 
 // ===== completions
 // ===== describe
-const describeCacheKey = "__icedon_nrepl_op_describe__";
-const describeCacheTtl = 60 * 60 * 24 * 1000;
 const describeOp = {
   name: NreplDescribeApi,
   run: async (app: App, args: unknown[]) => {
     const parsed = NreplDescribeArg.parse(icedon.arg.parse(args).opts);
-
-    let resp: unknown = undefined;
-    if (!(parsed.force || false)) {
-      resp = await apiAlias.cacheGet(app, describeCacheKey);
+    const msg: icedon.NreplMessage = { op: "describe" };
+    if (parsed.verbose) {
+      msg["verbose"] = 1;
     }
-    if (resp === undefined) {
-      resp = await app.icedon.request({ op: "describe" });
-      if ((resp as icedon.NreplResponse).getOne("ops") != null) {
-        await apiAlias.cacheSet(app, describeCacheKey, resp, describeCacheTtl);
-      }
-    }
-
-    return resp;
+    return await app.icedon.request(msg);
   },
 };
 

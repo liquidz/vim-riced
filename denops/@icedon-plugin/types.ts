@@ -86,7 +86,6 @@ export type NreplCompletionsArg = z.infer<typeof NreplCompletionsArg>;
 
 export const NreplDescribeArg = z.object({
   verbose: z.coerce.boolean().optional(),
-  force: z.coerce.boolean().optional(),
 });
 export type NreplDescribeArg = z.infer<typeof NreplDescribeArg>;
 
