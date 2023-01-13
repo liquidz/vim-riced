@@ -1,5 +1,5 @@
 import { icedon } from "../deps.ts";
-import { appendLinesToInfoBuffer } from "../api/alias.ts";
+import * as api from "../api.ts";
 
 type InterceptorContext = icedon.InterceptorContext;
 
@@ -14,22 +14,22 @@ export class Interceptor extends icedon.InterceptorPlugin {
     if (isVerbose) {
       const out = resp.getOne("out");
       if (typeof (out) === "string") {
-        await appendLinesToInfoBuffer(ctx.arg.app, out.split(/\r?\n/));
+        await api.infoBuffer.append(ctx.arg.app, out.split(/\r?\n/));
       }
 
       const err = resp.getOne("err");
       if (typeof (err) === "string") {
-        await appendLinesToInfoBuffer(ctx.arg.app, err.split(/\r?\n/));
+        await api.infoBuffer.append(ctx.arg.app, err.split(/\r?\n/));
       }
 
       const ex = resp.getOne("ex");
       if (typeof (ex) === "string") {
-        await appendLinesToInfoBuffer(ctx.arg.app, ex.split(/\r?\n/));
+        await api.infoBuffer.append(ctx.arg.app, ex.split(/\r?\n/));
       }
 
       const pprintOut = resp.getOne("pprint-out");
       if (typeof (pprintOut) === "string") {
-        await appendLinesToInfoBuffer(ctx.arg.app, pprintOut.split(/\r?\n/));
+        await api.infoBuffer.append(ctx.arg.app, pprintOut.split(/\r?\n/));
       }
     }
 
