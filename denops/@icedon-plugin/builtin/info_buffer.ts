@@ -69,14 +69,17 @@ const close = {
 
 const append = {
   name: AppendToInfoBufferApi,
-  run: async (app: App, args: unknown[]) => {
-    if (unknownutil.isArray<string>(args)) {
-      // TODO: use batch
-      for (const line of args) {
-        await vimWin.appendLine(app, bufferName, line);
+  run: (app: App, args: unknown[]) => {
+    return app.intercept("info_buffer_append", { lines: args }, async (ctx) => {
+      if (unknownutil.isArray<string>(ctx.params["lines"])) {
+        // TODO: use batch
+        for (const line of ctx.params["lines"]) {
+          await vimWin.appendLine(ctx.app, bufferName, line);
+        }
+        await app.denops.redraw();
       }
-      await app.denops.redraw();
-    }
+      return ctx;
+    });
   },
 };
 

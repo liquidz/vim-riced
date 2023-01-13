@@ -59,6 +59,9 @@ TODO: Generate this document automatically from codes.
   - `icedon_clear_info_buffer`
   - `icedon_close_info_buffer`
   - `icedon_append_to_info_buffer`
+    - Could intercept via `info_buffer_append` type.
+      - enter
+        - `lines`
 
 ### namespace.ts
 
