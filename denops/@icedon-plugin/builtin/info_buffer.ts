@@ -84,7 +84,6 @@ const append = {
 };
 
 export class Api extends icedon.ApiPlugin {
-  readonly name = "com.github.liquidz.builtin.info_buffer";
   readonly apis = [open, close, clear, append];
 
   async onInit(app: App) {

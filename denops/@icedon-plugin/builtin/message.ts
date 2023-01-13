@@ -75,6 +75,5 @@ const messageError = {
 };
 
 export class Api extends icedon.ApiPlugin {
-  readonly name = "com.github.liquidz.builtin.message";
   readonly apis = [raw, echo, messageInfo, messageWarn, messageError];
 }

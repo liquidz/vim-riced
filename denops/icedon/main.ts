@@ -24,17 +24,28 @@ export const defaultPlugins = [
 async function searchPluginPaths(
   denops: Denops,
   pluginNames: string[],
-): Promise<string[]> {
+): Promise<Record<string, string>> {
   const runtimepath = await option.runtimepath.getGlobal(denops);
-  const result: string[] = [];
+  const result: Record<string, string> = {};
   for (const pluginName of pluginNames) {
     const path = `denops/@icedon-plugin/${pluginName}.ts`;
     const searched = await vimFn.globpath(denops, runtimepath, path, 1, 1);
     unknownutil.assertArray<string>(searched);
 
-    for (const p of searched) {
-      result.push(p);
+    if (searched.length === 0) {
+      continue;
     }
+
+    if (searched.length > 1) {
+      console.error(
+        `Plugin name '${pluginName}' is matched to several paths(${
+          searched.join(", ")
+        }). A plugin name must be unique. Loading this plugin is skipped.`,
+      );
+      continue;
+    }
+
+    result[pluginName] = searched[0];
   }
   return result;
 }
@@ -52,9 +63,10 @@ export function main(denops: Denops): Promise<void> {
       try {
         // register built-in plugins
         const paths = await searchPluginPaths(denops, defaultPlugins);
-        for (const p of paths) {
-          await app.plugin.loadPlugin(app, p);
+        for (const pluginName of Object.keys(paths)) {
+          await app.plugin.loadPlugin(app, pluginName, paths[pluginName]);
         }
+
         app.plugin.checkPlugins();
         app.plugin.sortInterceptors();
       } catch (err) {

@@ -42,7 +42,7 @@ export type Plugin = {
   removeInterceptorPlugin(app: App, plugin: InterceptorPlugin): Promise<void>;
   replaceInterceptorPlugin(app: App, plugin: InterceptorPlugin): Promise<void>;
 
-  loadPlugin(app: App, filePath: string): Promise<void>;
+  loadPlugin(app: App, name: string, filePath: string): Promise<void>;
   checkPlugins(): void;
   sortInterceptors(): void;
 };
@@ -60,12 +60,16 @@ export type InterceptorHandler = (
 ) => Promise<InterceptorParams | Error>;
 
 export abstract class InterceptorPlugin implements Interceptor {
-  readonly name: string = "none";
+  readonly name: string;
   // TODO rename to `group`
   readonly type: string = "none";
   readonly requires: string[] = [];
   readonly requireOthers: boolean = false;
   readonly pluginRequires: string[] = [];
+
+  constructor(name: string) {
+    this.name = name;
+  }
 
   enter(
     ctx: InterceptorContext,
@@ -105,6 +109,10 @@ export abstract class ApiPlugin {
    * API plugin names requiring by this plugin
    */
   readonly pluginRequires: string[] = [];
+
+  constructor(name: string) {
+    this.name = name;
+  }
 
   onInit(_app: App): Promise<void> {
     return Promise.resolve();

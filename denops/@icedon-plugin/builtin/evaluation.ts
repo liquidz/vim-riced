@@ -64,7 +64,6 @@ const evaluateNsForm = {
 };
 
 export class Api extends icedon.ApiPlugin {
-  readonly name = "com.github.liquidz.builtin.evaluation";
   readonly apis = [
     evaluate,
     evaluateOuterTopForm,
@@ -72,9 +71,9 @@ export class Api extends icedon.ApiPlugin {
     evaluateNsForm,
   ];
   readonly pluginRequires = [
-    "com.github.liquidz.builtin.cursor",
-    "com.github.liquidz.builtin.namespace",
-    "com.github.liquidz.builtin.paredit",
+    "builtin/cursor",
+    "builtin/namespace",
+    "builtin/paredit",
   ];
 
   async onInit(app: App) {

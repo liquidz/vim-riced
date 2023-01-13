@@ -4,9 +4,8 @@ import * as api from "../api.ts";
 type InterceptorContext = icedon.InterceptorContext;
 
 export class Interceptor extends icedon.InterceptorPlugin {
-  readonly name = "com.github.liquidz.builtin.nrepl_output";
   readonly type = "read";
-  readonly pluginRequires = ["com.github.liquidz.builtin.info_buffer"];
+  readonly pluginRequires = ["builtin/info_buffer"];
 
   async leave(ctx: InterceptorContext): Promise<InterceptorContext> {
     const resp = ctx.arg.params["response"] as icedon.NreplResponse;

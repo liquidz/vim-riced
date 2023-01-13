@@ -89,14 +89,14 @@ export class PluginImpl implements Plugin {
     await this.registerInterceptorPlugin(app, plugin);
   }
 
-  async loadPlugin(app: App, filePath: string): Promise<void> {
+  async loadPlugin(app: App, name: string, filePath: string): Promise<void> {
     const mod = await import(path.toFileUrl(filePath).href);
     if (mod.Api !== undefined) {
-      await this.registerApiPlugin(app, new mod.Api());
+      await this.registerApiPlugin(app, new mod.Api(name));
     }
 
     if (mod.Interceptor !== undefined) {
-      await this.registerInterceptorPlugin(app, new mod.Interceptor());
+      await this.registerInterceptorPlugin(app, new mod.Interceptor(name));
     }
   }
 

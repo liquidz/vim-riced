@@ -108,6 +108,5 @@ const lsSessionsOp = {
 // ===== swap-middleware
 
 export class Api extends icedon.ApiPlugin {
-  readonly name = "com.github.liquidz.builtin.nrepl_op";
   readonly apis = [closeOp, describeOp, evalOp, lsSessionsOp];
 }

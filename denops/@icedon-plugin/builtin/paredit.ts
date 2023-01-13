@@ -81,6 +81,5 @@ const getNsForm = {
 };
 
 export class Api extends icedon.ApiPlugin {
-  readonly name = "com.github.liquidz.builtin.paredit";
   readonly apis = [getCurrentTopForm, getCurrentForm, getNsForm];
 }

@@ -27,7 +27,6 @@ const getNsName = {
 };
 
 export class Api extends icedon.ApiPlugin {
-  readonly name = "com.github.liquidz.builtin.namespace";
   readonly apis = [getNsName];
-  readonly pluginRequires = ["com.github.liquidz.builtin.paredit"];
+  readonly pluginRequires = ["builtin/paredit"];
 }

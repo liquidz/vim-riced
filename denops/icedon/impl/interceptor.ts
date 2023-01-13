@@ -6,12 +6,11 @@ import {
 
 export class HandlerInterceptor extends InterceptorPlugin {
   readonly type = "__handler__";
-  readonly name = "__handler__";
 
   private fn: InterceptorHandler;
 
   constructor(fn: InterceptorHandler) {
-    super();
+    super("__handler__");
     this.fn = fn;
   }
 
