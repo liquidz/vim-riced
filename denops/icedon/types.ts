@@ -61,8 +61,7 @@ export type InterceptorHandler = (
 
 export abstract class InterceptorPlugin implements Interceptor {
   readonly name: string;
-  // TODO rename to `group`
-  readonly type: string = "none";
+  readonly group: string = "none";
   readonly requires: string[] = [];
   readonly requireOthers: boolean = false;
   readonly pluginRequires: string[] = [];

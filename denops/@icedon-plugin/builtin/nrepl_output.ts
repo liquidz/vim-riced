@@ -4,7 +4,7 @@ import * as api from "../api.ts";
 type InterceptorContext = icedon.InterceptorContext;
 
 export class Interceptor extends icedon.InterceptorPlugin {
-  readonly type = "read";
+  readonly group = "read";
   readonly pluginRequires = ["builtin/info_buffer"];
 
   async leave(ctx: InterceptorContext): Promise<InterceptorContext> {

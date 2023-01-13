@@ -4,7 +4,7 @@ import * as denoFs from "../util/deno/fs.ts";
 type InterceptorContext = icedon.InterceptorContext;
 
 export class Interceptor extends icedon.InterceptorPlugin {
-  readonly type = "connect";
+  readonly group = "connect";
 
   async enter(ctx: InterceptorContext): Promise<InterceptorContext> {
     const currentPort = ctx.arg.params["port"];

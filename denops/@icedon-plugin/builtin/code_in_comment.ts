@@ -4,7 +4,7 @@ import * as paredit from "../util/string/paredit.ts";
 type InterceptorContext = icedon.InterceptorContext;
 
 export class Interceptor extends icedon.InterceptorPlugin {
-  readonly type = "evaluate";
+  readonly group = "evaluate";
 
   enter(ctx: InterceptorContext): Promise<InterceptorContext> {
     const code = ctx.arg.params["code"];

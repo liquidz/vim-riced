@@ -32,12 +32,12 @@ export class AppImpl implements App {
   }
 
   async intercept(
-    interceptorType: string,
+    interceptorGroup: string,
     params: UnknownParams,
     handler: InterceptorHandler,
   ): Promise<UnknownParams> {
     const interceptors = [
-      ...(this.plugin.interceptorsMap[interceptorType] || []),
+      ...(this.plugin.interceptorsMap[interceptorGroup] || []),
       new HandlerInterceptor(handler),
     ];
     const res = await interceptor.execute(interceptors, {

@@ -56,8 +56,8 @@ export class PluginImpl implements Plugin {
       // Do not check at this point. Will be check on `checkPlugins`.
       this.pluginRequirements[plugin.name] = plugin.pluginRequires;
 
-      const tmp = this.interceptorsMap[plugin.type] || [];
-      this.interceptorsMap[plugin.type] = tmp.concat([plugin]);
+      const tmp = this.interceptorsMap[plugin.group] || [];
+      this.interceptorsMap[plugin.group] = tmp.concat([plugin]);
 
       await plugin.onInit(app);
     }
@@ -68,8 +68,8 @@ export class PluginImpl implements Plugin {
       return Promise.resolve();
     }
 
-    const tmp = this.interceptorsMap[plugin.type] || [];
-    this.interceptorsMap[plugin.type] = tmp.filter((v) =>
+    const tmp = this.interceptorsMap[plugin.group] || [];
+    this.interceptorsMap[plugin.group] = tmp.filter((v) =>
       v.name !== plugin.name
     );
 
