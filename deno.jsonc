@@ -1,0 +1,11 @@
+{
+  "lock": false,
+  "tasks": {
+    "test": "deno test --unstable -A --doc --parallel --shuffle",
+    "lint": "deno lint --unstable",
+    "format-check": "deno fmt --check $(find . -name '*.ts')",
+    "check": "deno task lint && deno task format-check && deno check --unstable $(find . -name '*.ts')",
+    "upgrade": "deno run -A https://deno.land/x/udd/main.ts $(find . -name '*.ts' | grep -v integration_test)"
+  }
+}
+
