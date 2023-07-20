@@ -80,3 +80,13 @@ export type InterceptorManager = {
     handler: InterceptorHandler<T>,
   ): Promise<T>;
 };
+
+// ===== Loader =====
+
+export type Loader = {
+  loadFunctions(app: App, names: string[]): Promise<void>;
+  loadBaseInterceptors(app: App, names: string[]): Promise<void>;
+
+  loadedFunctions(): Function[];
+  loadedBaseInterceptors(): BaseInterceptor<unknown>[];
+};
