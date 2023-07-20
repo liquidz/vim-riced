@@ -1,8 +1,8 @@
-import { core, InterceptorContext, std } from "../deps.ts";
+import { core, InterceptorContext, std } from "./deps.ts";
 
 type Arg = core.nrepl.NreplOutput;
 
-export class OutputInterceptor extends std.connect.BaseOutputInterceptor {
+export class Interceptor extends std.connect.BaseOutputInterceptor {
   leave(ctx: InterceptorContext<Arg>): Promise<InterceptorContext<Arg>> {
     const parsedContext = std.evaluate.EvaluationContextSchema.safeParse(
       ctx.arg.params.context,

@@ -1,8 +1,8 @@
-import { InterceptorContext, InterceptorExecutionError, std } from "../deps.ts";
+import { InterceptorContext, InterceptorExecutionError, std } from "./deps.ts";
 
 type Arg = std.connect.Arg;
 
-export class ConnectedInterceptor extends std.connect.BaseConnectInterceptor {
+export class Interceptor extends std.connect.BaseConnectInterceptor {
   async leave(ctx: InterceptorContext<Arg>): Promise<InterceptorContext<Arg>> {
     if (ctx.arg.params.doesConnected === true) {
       await std.message.info(

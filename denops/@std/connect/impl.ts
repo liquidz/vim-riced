@@ -1,4 +1,4 @@
-import { App, BaseInterceptor, Command, core, z } from "../deps.ts";
+import { App, BaseInterceptor, core, z } from "../deps.ts";
 
 const CONNECT_GROUP = "connect";
 const OUTPUT_GROUP = "output";
@@ -46,10 +46,3 @@ export async function connect(app: App, arg: Arg): Promise<boolean> {
 
   return res.doesConnected ?? false;
 }
-
-export const ConnectCommand: Command = {
-  name: "connect",
-  exec: (app, arg) => {
-    return connect(app, ArgSchema.parse(arg));
-  },
-};

@@ -1,8 +1,8 @@
-import { core, InterceptorContext, std } from "../deps.ts";
+import { core, InterceptorContext, std } from "./deps.ts";
 
 type Arg = std.evaluate.Arg;
 
-export class EvaluatedInterceptor extends std.evaluate.BaseEvaluateInterceptor {
+export class Interceptor extends std.evaluate.BaseEvaluateInterceptor {
   async leave(ctx: InterceptorContext<Arg>): Promise<InterceptorContext<Arg>> {
     const resp = ctx.arg.params.response as core.nrepl.NreplResponse;
     const parsedContext = std.evaluate.EvaluationContextSchema.safeParse(

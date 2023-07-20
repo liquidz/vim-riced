@@ -1,8 +1,8 @@
-import { App, BencodeObjectSchema, Command, core, z } from "../deps.ts";
+import { App, BencodeObjectSchema, core, z } from "../deps.ts";
 
 export const interceptGroup = "request";
 
-const ContextSchema = z.record(z.string());
+const ContextSchema = z.record(z.unknown());
 export const ArgSchema = z.object({
   // input
   message: BencodeObjectSchema,
@@ -36,12 +36,3 @@ export async function request(
 
   return res.response;
 }
-
-export const RequestCommand: Command = {
-  name: "request",
-  exec: async (app, arg) => {
-    const resp = await request(app, ArgSchema.parse(arg));
-    console.log(resp);
-    return resp;
-  },
-};

@@ -12,10 +12,21 @@ export type App = {
   ): Promise<T>;
 };
 
-export type Command = {
+// ===== FUNCTION =====
+
+export type Function = {
   readonly name: string;
   readonly exec: (app: App, args: unknown) => Promise<unknown>;
 };
+
+export abstract class BaseFunction {
+  readonly name: string;
+  readonly functions: Function[] = [];
+
+  constructor(name: string) {
+    this.name = name;
+  }
+}
 
 // ===== INTERCEPTOR =====
 
@@ -32,11 +43,6 @@ export type InterceptorHandler<T> = (
 export type InterceptorExecutionError<T> = interceptor.ExecutionError<
   InterceptorParams<T>
 >;
-
-export type CommandManager = {
-  registerCommand(command: Command): boolean;
-  getCommand(name: string): Command | undefined;
-};
 
 export abstract class BaseInterceptor<T> implements Interceptor<T> {
   readonly name: string;

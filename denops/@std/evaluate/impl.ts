@@ -1,4 +1,5 @@
-import { App, BaseInterceptor, Command, core, vimFn, z } from "../deps.ts";
+import { App, BaseInterceptor, core, vimFn, z } from "../deps.ts";
+import * as request from "../request/impl.ts";
 import * as sexp from "../sexp/impl.ts";
 
 const EVALUATE_GROUP = "evaluate";
@@ -40,10 +41,10 @@ export async function evaluateCode(
       silent: ctx.params.silent ?? false,
     };
 
-    ctx.params.response = await ctx.app.core.request({
-      op: "eval",
-      code: ctx.params.code,
-    }, { context: context });
+    ctx.params.response = await request.request(ctx.app, {
+      message: { op: "eval", code: ctx.params.code },
+      option: { context },
+    });
 
     return ctx;
   });
@@ -59,20 +60,6 @@ export async function evaluateCurrentForm(
   const code = await sexp.getForm(app, row, col);
   return evaluateCode(app, { code, ...option });
 }
-
-export const EvaluateCodeCommand: Command = {
-  name: "evaluate",
-  exec: (app, arg) => {
-    return evaluateCode(app, ArgSchema.parse(arg));
-  },
-};
-
-export const EvaluateCurrentFormCommand: Command = {
-  name: "evaluateCurrentForm",
-  exec: (app, _arg) => {
-    return evaluateCurrentForm(app);
-  },
-};
 
 // function! iced#nrepl#eval(code, ...) abort
 //   if !iced#nrepl#is_connected() && !iced#nrepl#auto_connect()
