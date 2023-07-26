@@ -20,8 +20,22 @@ function! riced#request(name, args, ...) abort
   endif
 endfunction
 
-function! riced#intercept(group, json_args) abort
-  let x = get(g:, 'riced_interceptors', {})
+function! riced#autocmd_intercept(group) abort
+  if !exists('g:riced_plugin_name')
+    return
+  endif
 
-  get(x, a:group, [])
+  let json_arg = json_encode({
+        \ 'cwd': getcwd(),
+        \ 'file': expand('%:p'),
+        \ 'bufnr': bufnr('%'),
+        \ 'winid': win_getid(),
+        \ })
+
+  if a:group ==# 'VimLeave'
+    " Wait
+    return denops#request(g:riced_plugin_name, 'intercept', [a:group, json_arg])
+  else
+    return denops#notify(g:riced_plugin_name, 'intercept', [a:group, json_arg])
+  endif
 endfunction

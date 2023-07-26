@@ -1,6 +1,7 @@
-import { core, Denops, unknownutil, vars } from "./deps.ts";
+import { autocmd, core, Denops, unknownutil, vars } from "./deps.ts";
 import { AppImpl } from "./impl/app.ts";
 import { LoaderImpl } from "./impl/loader.ts";
+import { EVENTS } from "./autocmd/types.ts";
 
 export function main(denops: Denops): Promise<void> {
   const app = new AppImpl({
@@ -26,6 +27,17 @@ export function main(denops: Denops): Promise<void> {
       for (const interceptor of loader.loadedBaseInterceptors()) {
         app.interceptorManager.registerInterceptor(interceptor);
       }
+
+      await autocmd.group(denops, "riced-autocmd", (helper) => {
+        const pattern = "*.clj,*.cljs,*.cljc";
+        for (const event of EVENTS) {
+          helper.define(
+            event,
+            pattern,
+            `call riced#autocmd_intercept('autocmd_${event}')`,
+          );
+        }
+      });
     },
 
     request(name: unknown, argsJson: unknown) {
@@ -41,6 +53,13 @@ export function main(denops: Denops): Promise<void> {
       }
 
       return fn.exec(app, args);
+    },
+
+    intercept(group: unknown, argJson: unknown) {
+      if (typeof group !== "string" || typeof argJson !== "string") {
+        return;
+      }
+      app.intercept(group, JSON.parse(argJson), (ctx) => Promise.resolve(ctx));
     },
   };
 
