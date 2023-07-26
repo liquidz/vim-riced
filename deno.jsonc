@@ -5,6 +5,7 @@
     "lint": "deno lint --unstable",
     "format-check": "deno fmt --check $(find . -name '*.ts')",
     "check": "deno task lint && deno task format-check && deno check --unstable $(find . -name '*.ts')",
+    "example-nrepl-server": "clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version \"RELEASE\"}}}' -M -m nrepl.cmdline --port 12345",
     "upgrade": "deno run -A https://deno.land/x/udd/main.ts $(find . -name '*.ts' | grep -v integration_test)"
   }
 }
