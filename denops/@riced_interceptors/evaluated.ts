@@ -1,11 +1,11 @@
 import { core, InterceptorContext, std } from "./deps.ts";
 
-type Arg = std.evaluate.Arg;
+type Arg = std.op.nrepl.EvalArg;
 
-export class Interceptor extends std.evaluate.BaseEvaluateInterceptor {
+export class Interceptor extends std.op.nrepl.BaseEvaluateInterceptor {
   async leave(ctx: InterceptorContext<Arg>): Promise<InterceptorContext<Arg>> {
     const resp = ctx.arg.params.response as core.nrepl.NreplResponse;
-    const parsedContext = std.evaluate.EvaluationContextSchema.safeParse(
+    const parsedContext = std.op.nrepl.EvalContextSchema.safeParse(
       resp.context,
     );
     const value = resp.getOne("value");

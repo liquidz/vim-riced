@@ -5,11 +5,11 @@ export class Function extends BaseFunction {
     {
       name: "evaluate",
       exec: (app: App, arg: unknown) => {
-        const parsed = std.evaluate.ArgSchema.safeParse(arg);
+        const parsed = std.op.nrepl.EvalArgSchema.safeParse(arg);
         if (!parsed.success) {
           return Promise.reject(new Deno.errors.InvalidData());
         }
-        return std.evaluate.evaluateCode(app, parsed.data);
+        return std.op.nrepl.evaluate(app, parsed.data);
       },
     },
     {
