@@ -82,10 +82,13 @@ export class LoaderImpl implements Loader {
     );
 
     for (const functionName of functionNames) {
-      const baseFn = await loadBaseFunction(
-        functionName,
-        functionRecord[functionName],
-      );
+      const filePath = functionRecord[functionName];
+      if (filePath == null) {
+        console.error(`function not found: ${functionName}`);
+        continue;
+      }
+
+      const baseFn = await loadBaseFunction(functionName, filePath);
       if (baseFn == null) {
         continue;
       }
@@ -107,9 +110,15 @@ export class LoaderImpl implements Loader {
     );
 
     for (const interceptorName of interceptorNames) {
+      const filePath = interceptorRecord[interceptorName];
+      if (filePath == null) {
+        console.error(`interceptor not found: ${interceptorName}`);
+        continue;
+      }
+
       const baseInterceptor = await loadBaseInterceptor(
         interceptorName,
-        interceptorRecord[interceptorName],
+        filePath,
       );
       if (baseInterceptor == null) {
         continue;
