@@ -18,5 +18,17 @@ export class Function extends BaseFunction {
         return std.evaluate.evaluateCurrentForm(app);
       },
     },
+    {
+      name: "evaluateCurrentList",
+      exec: (app: App, _arg: unknown) => {
+        return std.evaluate.evaluateCurrentList(app);
+      },
+    },
+    {
+      name: "evaluateCurrentTopList",
+      exec: (app: App, _arg: unknown) => {
+        return std.evaluate.evaluateCurrentTopList(app);
+      },
+    },
   ];
 }
