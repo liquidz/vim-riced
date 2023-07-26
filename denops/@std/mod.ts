@@ -1,5 +1,10 @@
+export * as cache from "./cache/impl.ts";
 export * as connect from "./connect/impl.ts";
+export * as disconnect from "./disconnect/impl.ts";
+export * as evaluate from "./evaluate/impl.ts";
 export * as message from "./message/impl.ts";
+export * as namespace from "./namespace/impl.ts";
+export * as op from "./op/impl.ts";
+export * as paredit from "./paredit/impl.ts";
 export * as request from "./request/impl.ts";
 export * as sexp from "./sexp/impl.ts";
-export * as evaluate from "./evaluate/impl.ts";

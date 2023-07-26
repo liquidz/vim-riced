@@ -14,12 +14,17 @@ export function main(denops: Denops): Promise<void> {
     async initialize() {
       await loader.loadFunctions(app, [
         "connect",
+        "disconnect",
         "request",
         "evaluate",
       ]);
 
       await loader.loadBaseInterceptors(app, [
+        "autocmd_buf_enter",
+        "autocmd_buf_read",
+        "autocmd_vim_leave",
         "connected",
+        "disconnected",
         "evaluated",
         "output",
       ]);
