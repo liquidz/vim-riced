@@ -4,7 +4,7 @@ type Arg = std.connect.Arg;
 
 export class Interceptor extends std.connect.BaseConnectInterceptor {
   async leave(ctx: InterceptorContext<Arg>): Promise<InterceptorContext<Arg>> {
-    if (ctx.arg.params.doesConnected === true) {
+    if (ctx.arg.params.isConnected === true) {
       await std.message.info(
         ctx.arg.app,
         "connected",

@@ -10,7 +10,7 @@ export const ArgSchema = z.object({
   port: z.number(),
   baseDirectory: z.string().optional(),
   // output
-  doesConnected: z.boolean().optional(),
+  isConnected: z.boolean().optional(),
 });
 export type Arg = z.infer<typeof ArgSchema>;
 
@@ -26,9 +26,9 @@ export class BaseOutputInterceptor
 export async function connect(app: App, arg: Arg): Promise<boolean> {
   const res = await app.intercept<Arg>(CONNECT_GROUP, arg, async (ctx) => {
     ctx.params.hostname ??= DEFAULT_HOSTNAME;
-    ctx.params.doesConnected = await ctx.app.core.connect(ctx.params);
+    ctx.params.isConnected = await ctx.app.core.connect(ctx.params);
 
-    if (ctx.params.doesConnected && ctx.app.core.current != null) {
+    if (ctx.params.isConnected && ctx.app.core.current != null) {
       const client = ctx.app.core.current.client;
       // Fetch standard outputs/errors from stream
       Promise.race([
@@ -44,5 +44,5 @@ export async function connect(app: App, arg: Arg): Promise<boolean> {
     return ctx;
   });
 
-  return res.doesConnected ?? false;
+  return res.isConnected ?? false;
 }
