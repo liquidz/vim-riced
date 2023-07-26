@@ -34,6 +34,7 @@ export type Core = {
   connect(param: ConnectParameter): Promise<boolean>;
 
   disconnect(): Promise<boolean>;
+  disconnectAll(): Promise<boolean>;
 
   current: Connection | undefined;
 

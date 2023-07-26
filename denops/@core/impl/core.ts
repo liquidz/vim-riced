@@ -36,6 +36,13 @@ export class CoreImpl implements Core {
   }
 
   disconnect(): Promise<boolean> {
+    if (this.#currentId == null) {
+      return Promise.resolve(false);
+    }
+    return this.connectionManager.removeConnection(this.#currentId);
+  }
+
+  disconnectAll(): Promise<boolean> {
     return this.connectionManager.removeAllConnections();
   }
 
