@@ -32,7 +32,6 @@ async function getCurrentForm(
   cursor_row: number,
   cursor_col: number,
 ): Promise<string> {
-  console.log("kiteruyo");
   const res = await denops.call(
     "luaeval",
     `require('vim-riced.sexp').get_form(${cursor_row - 1}, ${cursor_col - 1})`,
