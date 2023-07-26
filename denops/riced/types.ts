@@ -47,6 +47,8 @@ export type InterceptorExecutionError<T> = interceptor.ExecutionError<
 export abstract class BaseInterceptor<T> implements Interceptor<T> {
   readonly name: string;
   readonly group: string = "default";
+  readonly requires?: string[];
+  readonly requireOthers?: boolean;
 
   constructor(name: string) {
     this.name = name;
