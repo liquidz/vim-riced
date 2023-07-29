@@ -9,9 +9,8 @@ import { ConnectionManagerImpl } from "./connection_manager.ts";
 import { nrepl } from "../deps.ts";
 
 export class CoreImpl implements Core {
-  readonly connectionManager: ConnectionManager;
-
-  #currentId: string | undefined;
+  protected connectionManager: ConnectionManager;
+  protected currentId: string | undefined;
 
   constructor() {
     this.connectionManager = new ConnectionManagerImpl();
@@ -31,34 +30,50 @@ export class CoreImpl implements Core {
 
     const conn = await createConnection({ hostname, port, baseDirectory });
     this.connectionManager.addConnection(conn);
-    this.#currentId = conn.id;
+    this.currentId = conn.id;
     return true;
   }
 
-  disconnect(): Promise<boolean> {
-    if (this.#currentId == null) {
-      return Promise.resolve(false);
+  async disconnect(): Promise<boolean> {
+    if (this.currentId == null) {
+      return false;
     }
-    return this.connectionManager.removeConnection(this.#currentId);
+    const res = await this.connectionManager.removeConnection(this.currentId);
+    if (!res) {
+      return false;
+    }
+
+    const ids = Object.keys(this.connectionManager.connections).sort();
+    if (ids.length === 0) {
+      this.currentId = undefined;
+    } else {
+      this.currentId = ids[0];
+    }
+    return true;
   }
 
   disconnectAll(): Promise<boolean> {
+    this.currentId = undefined;
     return this.connectionManager.removeAllConnections();
   }
 
   get current(): Connection | undefined {
-    if (this.#currentId == null) {
+    if (this.currentId == null) {
       return undefined;
     }
 
-    return this.connectionManager.getConnection(this.#currentId);
+    return this.connectionManager.getConnection(this.currentId);
+  }
+
+  get connections(): Connection[] {
+    return Object.values(this.connectionManager.connections);
   }
 
   switchConnection(id: string): boolean {
     if (this.connectionManager.getConnection(id) == null) {
       return false;
     }
-    this.#currentId = id;
+    this.currentId = id;
     return true;
   }
 

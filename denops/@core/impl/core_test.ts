@@ -14,21 +14,15 @@ Deno.test("connect", async () => {
   try {
     const core = new sut.CoreImpl();
     asserts.assertEquals(core.current, undefined);
-    asserts.assertEquals(
-      Object.keys(core.connectionManager.connections).length,
-      0,
-    );
+    asserts.assertEquals(core.connections.map((v) => v.id), []);
 
-    asserts.assertEquals(
-      await core.connect({ hostname: "", port: 0, baseDirectory: "" }),
-      true,
-    );
+    const param = { hostname: "", port: 0, baseDirectory: "" };
+    asserts.assertEquals(await core.connect(param), true);
 
     asserts.assertNotEquals(core.current, undefined);
-    asserts.assertEquals(
-      Object.keys(core.connectionManager.connections).length,
-      1,
-    );
+    asserts.assertEquals(core.connections.map((v) => v.id), [
+      connection.getConnectionId(param),
+    ]);
   } finally {
     nreplConnectStub.restore();
   }
@@ -43,22 +37,31 @@ Deno.test("disconnect", async () => {
 
   try {
     const core = new sut.CoreImpl();
-    await core.connect({ hostname: "", port: 0, baseDirectory: "" });
+    const a = { hostname: "a", port: 1, baseDirectory: "" };
+    const b = { hostname: "b", port: 2, baseDirectory: "" };
+    const aId = connection.getConnectionId(a);
+    const bId = connection.getConnectionId(b);
 
-    asserts.assertNotEquals(core.current, undefined);
-    asserts.assertEquals(
-      Object.keys(core.connectionManager.connections).length,
-      1,
-    );
+    await core.connect(a);
+    await core.connect(b);
+    asserts.assertEquals(core.current?.id, bId);
+    asserts.assertEquals(core.connections.length, 2);
 
+    // Disconnect from b
     asserts.assertEquals(await core.disconnect(), true);
+    asserts.assertEquals(core.connections.length, 1);
+
+    // Should be switched to a
+    asserts.assertEquals(core.current?.id, aId);
+
+    // Disconnect from a
+    asserts.assertEquals(await core.disconnect(), true);
+    asserts.assertEquals(core.connections.length, 0);
+    // Already disconnected
     asserts.assertEquals(await core.disconnect(), false);
+    asserts.assertEquals(core.connections.length, 0);
 
     asserts.assertEquals(core.current, undefined);
-    asserts.assertEquals(
-      Object.keys(core.connectionManager.connections).length,
-      0,
-    );
   } finally {
     nreplConnectStub.restore();
   }
@@ -77,18 +80,12 @@ Deno.test("disconnectAll", async () => {
     await core.connect({ hostname: "b", port: 2, baseDirectory: "" });
 
     asserts.assertNotEquals(core.current, undefined);
-    asserts.assertEquals(
-      Object.keys(core.connectionManager.connections).length,
-      2,
-    );
+    asserts.assertEquals(core.connections.length, 2);
 
     await core.disconnectAll();
 
     asserts.assertEquals(core.current, undefined);
-    asserts.assertEquals(
-      Object.keys(core.connectionManager.connections).length,
-      0,
-    );
+    asserts.assertEquals(core.connections.length, 0);
   } finally {
     nreplConnectStub.restore();
   }

@@ -29,14 +29,13 @@ export type ConnectParameter = {
 };
 
 export type Core = {
-  readonly connectionManager: ConnectionManager;
-
   connect(param: ConnectParameter): Promise<boolean>;
 
   disconnect(): Promise<boolean>;
   disconnectAll(): Promise<boolean>;
 
   current: Connection | undefined;
+  connections: Connection[];
 
   switchConnection(id: string): boolean;
 
