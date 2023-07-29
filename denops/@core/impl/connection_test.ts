@@ -6,7 +6,7 @@ import * as helper from "./test_helper.ts";
 Deno.test("getConnectionId", () => {
   asserts.assertEquals(
     sut.getConnectionId({ hostname: "localhost", port: 1234 }),
-    "localhost:1234",
+    "localhost:1234:unknown",
   );
 });
 
@@ -47,8 +47,9 @@ Deno.test("createConnection", async () => {
     const conn = await sut.createConnection({
       hostname: "localhost",
       port: 1234,
+      type: "clojure",
     });
-    asserts.assertEquals(conn.id, "localhost:1234");
+    asserts.assertEquals(conn.id, "localhost:1234:clojure");
     asserts.assertEquals(conn.session, "test-session");
   } finally {
     nreplConnectStub.restore();

@@ -7,11 +7,13 @@ const nreplConnect = nrepl.connect;
 export function getConnectionId({
   hostname,
   port,
+  type,
 }: {
   hostname?: string;
   port: number;
+  type?: ConnectionType;
 }): string {
-  return `${hostname ?? defaultHostname}:${port}`;
+  return `${hostname ?? defaultHostname}:${port}:${type ?? "unknown"}`;
 }
 
 export async function getSupportedOps(conn: Connection): Promise<Set<string>> {
@@ -39,7 +41,7 @@ export async function createConnection({
   const client = await _internals.nreplConnect({ hostname, port });
 
   const conn: Connection = {
-    id: getConnectionId({ hostname, port }),
+    id: getConnectionId({ hostname, port, type }),
     hostname: hostname ?? defaultHostname,
     port,
     client,
